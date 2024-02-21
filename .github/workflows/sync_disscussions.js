@@ -249,7 +249,7 @@ async function main() {
   });
 
   README += "\n如果觉得文章不错，可以关注公众号哟！\n\n";
-  README += "![干货输出机](https://file.zhangpeng.site/wechat/qrcode.jpg)\n";
+  README += "![干货输出机](https://file.onnttf.site/wechat/qrcode.jpg)\n";
 
   writePromises.push(writeToFileSync("README.md", README));
 
