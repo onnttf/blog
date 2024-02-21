@@ -1,10 +1,13 @@
 const { graphql } = require("@octokit/graphql");
+const { promises: fs } = require("fs");
+const path = require("path");
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
-const fs = require("fs").promises;
-const path = require("path");
 
 dayjs.extend(utc);
+
+const GITHUB_SERVER_URL = process.env.GITHUB_SERVER_URL;
+const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
 
 async function writeToFileSync(filePath, data) {
   try {
@@ -18,9 +21,9 @@ async function writeToFileSync(filePath, data) {
 }
 
 async function fetchDiscussions(token, owner, repo, limit = 10) {
+  const allDiscussions = [];
   let hasMore = true;
   let afterCursor = null;
-  const allDiscussions = [];
 
   const graphqlWithAuth = graphql.defaults({
     headers: {
@@ -28,9 +31,7 @@ async function fetchDiscussions(token, owner, repo, limit = 10) {
     },
   });
 
-  while (hasMore) {
-    try {
-      const DISCUSSIONS_QUERY = `
+  const DISCUSSIONS_QUERY = `
         query get_discussions(
           $owner: String!,
           $repo: String!,
@@ -38,7 +39,7 @@ async function fetchDiscussions(token, owner, repo, limit = 10) {
           $limit: Int = 10
         ) {
           repository(owner: $owner, name: $repo) {
-            discussions(first: $limit, after: $after) {
+            discussions(first: $limit, after: $after, orderBy: {field: UPDATED_AT, direction: DESC}) {
               pageInfo {
                 endCursor
                 startCursor
@@ -83,6 +84,8 @@ async function fetchDiscussions(token, owner, repo, limit = 10) {
         }
       `;
 
+  while (hasMore) {
+    try {
       const response = await graphqlWithAuth(DISCUSSIONS_QUERY, {
         owner,
         repo,
@@ -112,8 +115,7 @@ async function fetchDiscussions(token, owner, repo, limit = 10) {
 }
 
 async function main() {
-  const repo = process.env.GITHUB_REPOSITORY;
-  const [username, repoName] = repo.split("/");
+  const [username, repoName] = GITHUB_REPOSITORY.split("/");
 
   console.log("Fetching discussions...");
   let allDiscussions = await fetchDiscussions(
@@ -121,7 +123,7 @@ async function main() {
     username,
     repoName
   );
-  console.log("Fetched", allDiscussions.length, "discussions.");
+  console.log("Fetched", allDiscussions.length, " discussions.");
 
   const discussionMap = new Map();
 
@@ -140,51 +142,60 @@ async function main() {
     discussionMap.set(key, v);
   }
 
-  const finalDiscussions = Array.from(discussionMap.values());
+  const DISCUSSION_CATEGORY_ANNOUNCEMENTS = "announcements";
+  const DISCUSSION_CATEGORY_SHOWANDTELL = "show-and-tell";
 
-  const categoryOrder = ["announcements", "show-and-tell"];
+  const categoryOrder = {
+    [DISCUSSION_CATEGORY_ANNOUNCEMENTS]: 0,
+    [DISCUSSION_CATEGORY_SHOWANDTELL]: 1,
+  };
+
+  const finalDiscussions = discussionMap.values();
 
   finalDiscussions.sort((a, b) => {
-    const indexA = categoryOrder.indexOf(a.category.slug);
-    const indexB = categoryOrder.indexOf(b.category.slug);
+    const orderA = categoryOrder[a.category?.slug] || Number.MAX_SAFE_INTEGER;
+    const orderB = categoryOrder[b.category?.slug] || Number.MAX_SAFE_INTEGER;
 
-    if (indexA !== indexB) {
-      return indexA - indexB;
-    }
-
-    return dayjs(b.updatedAt).diff(dayjs(a.updatedAt));
+    return orderA - orderB;
   });
+
+  if (finalDiscussions.length === 0) {
+    return;
+  }
 
   const writePromises = [];
   const readmeContents = [];
   const summaryContents = new Map();
 
   for (const v of finalDiscussions) {
-    const createdAtInCST = dayjs(v.createdAt).utcOffset(8);
-    const year = createdAtInCST.year();
-    const month = createdAtInCST.month() + 1;
-
     const jsonFilePath = `discussions/${year}/${month}/${v.number}_${v.id}.json`;
 
     writePromises.push(
       writeToFileSync(jsonFilePath, JSON.stringify(v, null, 2))
     );
 
+    const createdAtInCST = dayjs(v.createdAt).utcOffset(8);
+    const year = createdAtInCST.year();
+    const month = createdAtInCST.month() + 1;
+
     const category = `${
       v.category?.emojiHTML
         ? v.category.emojiHTML.match(/>(.*?)</)?.[1] + " "
         : ""
     }${v.category?.name || ""}`;
-    const updatedAtInCST = dayjs(v.updatedAt).utcOffset(8);
+
     const labels = (v.labels?.nodes || [])
       .map((label) => label.name)
       .join(", ");
+
+    const updatedAtInCST = dayjs(v.updatedAt).utcOffset(8);
+
     const metadata = {
       author: v.author?.login || '"-"',
       category: category || '"-"',
       labels: labels || '"-"',
       discussion: v.url || '"-"',
-      updatedAt: `"${updatedAtInCST.format()}"` || '"-"',
+      updatedAt: `${updatedAtInCST.format()}` || '"-"',
     };
 
     const frontMatter = Object.entries(metadata)
@@ -199,17 +210,17 @@ async function main() {
 
     writePromises.push(writeToFileSync(markdownPath, markdownData));
 
-    const GITHUB_SERVER_URL = process.env.GITHUB_SERVER_URL;
-    const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
     const categoryInREADME = category
       ? `[${category}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/discussions/categories/${v.category?.slug}?discussions_q=)`
       : "";
-    const labelsInREADME = v.labels?.nodes
+
+    const labelsInREADME = (v.labels?.nodes || [])
       .map(
         (label) =>
           `[${label.name}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/discussions?discussions_q=label%3A${label.name})`
       )
       .join(", ");
+
     readmeContents.push([
       categoryInREADME || "-",
       `[${v.title}](${year}/${month}/${v.number}_${v.id}.md)`,
@@ -217,7 +228,10 @@ async function main() {
       updatedAtInCST.format() || "-",
     ]);
 
-    const key = `${year}/${month}`;
+    let key = `${year}/${month}`;
+    if (a.category?.slug === DISCUSSION_CATEGORY_ANNOUNCEMENTS) {
+      key = "announcements";
+    }
     summaryContents.set(key, [
       ...(summaryContents.get(key) || []),
       `[${v.title}](${year}/${month}/${v.number}_${v.id}.md)`,
@@ -235,7 +249,7 @@ async function main() {
   });
 
   README += "\n如果觉得文章不错，可以关注公众号哟！\n\n";
-  README += "![干货输出机](https://file.zhangpeng.site/wechat/qrcode.jpg)\n\n";
+  README += "![干货输出机](https://file.zhangpeng.site/wechat/qrcode.jpg)\n";
 
   writePromises.push(writeToFileSync("README.md", README));
 
@@ -252,9 +266,6 @@ async function main() {
     });
     lastKey = key;
   });
-
-  SUMMARY.trim();
-  SUMMARY += "\n";
 
   writePromises.push(writeToFileSync("SUMMARY.md", SUMMARY));
 
