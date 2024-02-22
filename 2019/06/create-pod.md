@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 如何创建一个公有 Pod 库
 
 **注意：** 文中使用 `{}` 包裹的位置都需要根据您自身情况进行设置。

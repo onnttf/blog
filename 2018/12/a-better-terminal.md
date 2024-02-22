@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # iTerm2 一个更好用的终端
 
 本文意图是给终端小白提供一个 **效 (fang) 率 (bian) 更 (zhuang) 高 (bi)** 的终端使用方式。

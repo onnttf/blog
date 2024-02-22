@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 类的初始化方法
 
 **原文链接：**[**深入了解 iOS 的初始化**](https://mp.weixin.qq.com/s/Qs5JDavftrlpnGkb1BTlnw)**，本文是阅读以后的摘抄。**

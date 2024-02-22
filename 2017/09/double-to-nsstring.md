@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # double 转 NSString 出现精度异常
 
 在日常开发中，后台再给我们返回数字类型的数据时，很有可能是带小数点的。我们只能用 `float` 或者 `double` 去接，我们如果需要显示给用户时，就会造成精度异常。

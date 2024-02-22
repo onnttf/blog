@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-10-19T23:04:21+08:00
+---
+
 # macOS 设置文件的默认打开程序
 
 当刚开始使用 `macOS` 系统时，有很多地方会不适应，比如打开文件的默认程序不是之前常用的。例如：

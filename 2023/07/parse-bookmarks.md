@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 掌握书签文件：高效管理收藏
 
 在我们日常的网络活动中，我们每天都会浏览大量的网页，为了方便管理和保存这些网址，几乎所有现代浏览器都提供了“书签”功能。而导出书签文件，是一种备份和共享书签的常见做法。本文将带您了解浏览器导出的书签文件的结构和内容，帮助您更好地理解书签文件的格式、内容和可能的应用场景。
@@ -127,7 +135,7 @@ func parseBookmarks(doc *goquery.Document) []Bookmark {
 func buildTree(bookmarks []Bookmark) Bookmark {
 	// function to find the root folder by looking for a bookmark without a parent.
 	findRootFolder := func(bookmarks []Bookmark) *Bookmark {
-		for i := range bookmarks {
+  		for i := range bookmarks {
 			if bookmarks[i].Parent == "" {
 				return &bookmarks[i]
 			}

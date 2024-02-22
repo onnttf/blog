@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # URI、URL、URN 的差异与联系
 
 ![图片](https://file.onnttf.site/2018/02/24/1.png)

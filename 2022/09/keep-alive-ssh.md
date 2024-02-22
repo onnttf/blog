@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-10-19T23:04:21+08:00
+---
+
 # 如何保持 SSH 服务不掉线
 
 常见的保持 `SSH` 服务不掉线的方法有两种：

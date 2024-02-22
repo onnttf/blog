@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:52:41+08:00
+---
+
 # 快速生成表结构的结构体
 
 ## 前言

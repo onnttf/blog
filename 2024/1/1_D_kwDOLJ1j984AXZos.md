@@ -6,17 +6,19 @@ discussion: https://github.com/onnttf/blog/discussions/1
 updatedAt: "2024-01-26T14:14:46+08:00"
 ---
 
-# Welcome to blog Discussions!
+# Welcome to blog Discussions
 
 <!--
     ✏️ Optional: Customize the content below to let your community know what you intend to use Discussions for.
 -->
-## 👋 Welcome!
+## 👋 Welcome
+
   We’re using Discussions as a place to connect with other members of our community. We hope that you:
-  * Ask questions you’re wondering about.
-  * Share ideas.
-  * Engage with other community members.
-  * Welcome others and are open-minded. Remember that this is a community we
+
+* Ask questions you’re wondering about.
+* Share ideas.
+* Engage with other community members.
+* Welcome others and are open-minded. Remember that this is a community we
   build together 💪.
 
   To get started, comment below with an introduction of yourself and tell us about what you do with this community.

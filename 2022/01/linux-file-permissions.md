@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:52:41+08:00
+---
+
 # 搞懂 Linux 的文件权限
 
 ![图片](https://file.onnttf.site/2022/01/27/1.png)

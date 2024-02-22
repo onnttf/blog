@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-10-19T23:04:21+08:00
+---
+
 # 如何构建 docker 镜像
 
 ## 镜像是什么

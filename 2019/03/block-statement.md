@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # Block 的声明方式
 
 原文链接：[How Do I Declare A Block in Objective-C?](http://fuckingblocksyntax.com)

@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:43:50+08:00
+---
+
 # macOS 系统显示隐藏文件
 
 ![图片](https://file.onnttf.site/2021/12/05/1.png)

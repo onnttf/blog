@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-10-19T23:04:21+08:00
+---
+
 # Shell 入门教程
 
 **本文为译文，原文链接**：[shell](https://missing.csail.mit.edu/2019/shell/)

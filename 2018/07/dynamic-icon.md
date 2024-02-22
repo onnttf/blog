@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 动态更换 App 图标
 
 在`iOS 10.3`苹果添加了更换图标的功能，通过这个功能，我们可以在适当的时候采取特定的方式为我们的`App`更换图标。听似很好很方便，实则并没有。原因如下：

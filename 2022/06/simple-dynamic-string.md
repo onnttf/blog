@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-10-19T23:04:21+08:00
+---
+
 # 简单动态字符串
 
 简单动态字符串（simple dynamic string, SDS），是由 `Redis` 构建的一种抽象类型。**`Redis` 中默认字符串表示就是使用简单动态字符串**。

@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:43:50+08:00
+---
+
 # 修饰符 const
 
 通过使用 `const` 修饰，可以限定一个变量不允许被改变（只读），产生静态作用。

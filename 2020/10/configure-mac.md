@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # Mac 的开机设置
 
 > 最近换了台新电脑，在即将与老友挥别之时，我竟然忘了对老友做过什么。于是，我决定写一篇文章，从头记录我与新朋友的点点滴滴。

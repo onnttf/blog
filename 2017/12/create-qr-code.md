@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 二维码生成及定制
 
 目前比较常见的二维码库有[ZXing](https://github.com/zxing/zxing)，[ZBar](https://github.com/ZBar/ZBar)等，网上对于这些知名库的使用及分析已经很多了，在这就不做赘述了。

@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:43:50+08:00
+---
+
 # macOS 升级 Git 版本
 
 **不吹牛的说，这篇文章绝对是目前网上最简单的 macOS 系统的 `Git` 升级教程了**

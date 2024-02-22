@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # SiriKit 人机界面指南
 
 **本文为译文，原文连接：**[**Human Interface Guidelines-Siri**](https://developer.apple.com/design/human-interface-guidelines/ios/system-capabilities/siri/)

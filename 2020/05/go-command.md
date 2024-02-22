@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # Go 1.13 中 Go command 修改
 
 `go1.13` 已经发布了一个多月了，本次的大部分修改都是工具链、运行时和核心库。而本文主要是记录的命令行的修改。

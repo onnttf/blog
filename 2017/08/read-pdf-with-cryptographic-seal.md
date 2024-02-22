@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 读取一个带有加密印章的 PDF
 
 之前公司在和一个做电子签章的公司合作时，他们给我们提供了一份带有加密印章的 `PDF`。在测试中发现，不论通过 `UIWebView` 或者 `WKWebView` 打开，`PDF` 中的加密印章都不能成功展示。
@@ -25,38 +33,37 @@
 
 1. 添加 `WKWebView`
 
-   ```objc
+    ```objc
+    #import <WebKit/WebKit.h>
 
-   **import <WebKit/WebKit.h>**
+    WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
 
-   WKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];
+    WKUserContentController *wkUController = [[WKUserContentController alloc]init];
 
-   WKUserContentController *wkUController = [[WKUserContentController alloc]init];
+    config.userContentController = wkUController;
 
-   config.userContentController = wkUController;
+    // 注入JS对象名称AppModel，当JS通过AppModel来调用时，我们可以在WKScriptMessageHandler代理中接收到 // 此处是为了得到PDF加载完成或失败的反馈 [config.userContentController addScriptMessageHandler:self name:@"AppModel"];
 
-   // 注入JS对象名称AppModel，当JS通过AppModel来调用时，我们可以在WKScriptMessageHandler代理中接收到 // 此处是为了得到PDF加载完成或失败的反馈 [config.userContentController addScriptMessageHandler:self name:@"AppModel"];
+    // 改变页面内容宽度，适配屏幕大小 NSString *js = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
 
-   // 改变页面内容宽度，适配屏幕大小 NSString *js = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
-
-   WKUserScript *wkUserScript = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]; [wkUController addUserScript:wkUserScript];
+    WKUserScript *wkUserScript = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]; [wkUController addUserScript:wkUserScript];
 
     WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH - 64)
-                                        configuration:config];
+                                            configuration:config];
     webView.backgroundColor = [UIColor whiteColor];
     webView.UIDelegate = self;
     webView.navigationDelegate = self;
     [self.view addSubview:webView];
     ```
 
-1. 下载PDF
+2. 下载PDF
 
-   ```objc
+    ```objc
     NSString *urlStr = @"";
-
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];
     NSURLSession *session = [NSURLSession sharedSession];
-
+    
     NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         NSLog(@"从服务器获取到 pdf 数据");
         //对从服务器获取到的数据 data 进行相应的处理：
@@ -72,7 +79,7 @@
                 NSURL *baseURL = [NSURL fileURLWithPath:[self getHtmlBasePath]];
                 NSString *path = [self getHtmlPath];
                 NSString *htmlStr = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-
+                
                 [self.webView loadHTMLString:htmlStr baseURL:baseURL];
             }
         });
@@ -80,31 +87,31 @@
     [sessionDataTask resume];
     ```
 
-2. 打开 `PDF`
+3. 打开 `PDF`
 
-   ```objc
-   - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-       [self loadPDF];
-   }
+    ```objc
+    - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
+        [self loadPDF];
+    }
 
-   - (void)loadPDF {
-       NSString *path = [DOCUMENTS_DIRECTORY stringByAppendingPathComponent:@"contract.pdf"];
-       NSData *data = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedAlways error:nil];
+    - (void)loadPDF {
+        NSString *path = [DOCUMENTS_DIRECTORY stringByAppendingPathComponent:@"contract.pdf"];
+        NSData *data = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedAlways error:nil];
+        
+        NSString *paraStr = [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];
+        NSString *js = [NSString stringWithFormat:@"loadMyJS('%@')",paraStr];
+        //NSLOG(@"%@",method);
+        
+        [self.webView evaluateJavaScript:js completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+            if (error) {
+                NSLog(@"%@", error);
+                NSLog(@"当前手机系统版本较低，不支持查看，请升级系统或者到 PC 端查看。");
+            }
+        }];
+    }
+    ```
 
-       NSString *paraStr = [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];
-       NSString *js = [NSString stringWithFormat:@"loadMyJS('%@')",paraStr];
-       //NSLOG(@"%@",method);
-
-       [self.webView evaluateJavaScript:js completionHandler:^(id _Nullable response, NSError * _Nullable error) {
-           if (error) {
-               NSLog(@"%@", error);
-               NSLog(@"当前手机系统版本较低，不支持查看，请升级系统或者到 PC 端查看。");
-           }
-       }];
-   }
-   ```
-
-3. 在 `WKWebView` 的代理中，我们可以知道 `PDF` 是否成功打开，
+4. 在 `WKWebView` 的代理中，我们可以知道 `PDF` 是否成功打开，
 
    ```objc
    - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
@@ -118,38 +125,40 @@
    }
    ```
 
-4. `PDF` 是否读取成功是在 `customview.js` 中通知控制器的，具体可以查看下面的代码。
+5. `PDF` 是否读取成功是在 `customview.js` 中通知控制器的，具体可以查看下面的代码。
 
-   ```javascript
-    function handlePages(page)
-    {
-        //create new canvas
-        var viewport = page.getViewport(1);
-        var canvas = document.createElement( "canvas" );
-        canvas.style.display="block";
+    ```js
+    function handlePages(page) {
+    //create new canvas
+    var viewport = page.getViewport(1);
+    var canvas = document.createElement("canvas");
+    canvas.style.display = "block";
 
-        var context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+    var context = canvas.getContext("2d");
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
 
-        //render page
-        page.render({canvasContext: context, viewport: viewport});
+    //render page
+    page.render({ canvasContext: context, viewport: viewport });
 
-        //add canvas to body
-        document.body.appendChild(canvas);
+    //add canvas to body
+    document.body.appendChild(canvas);
 
-        //render new page
-        pageNum++;
-        if(pdfDoc!=null && pageNum<=numPages){
-            pdfDoc.getPage(pageNum).then(handlePages);
-            // PDF 加载失败
-        }else{
-            console.log("pdf load complete");
-            // PDF 加载完毕，body的内容可以根据具体的业务需求进行修改
-            window.webkit.messageHandlers.AppModel.postMessage({ code: "00000", msg: "pdf load complete" });//和wkWebView交互
-        }
+    //render new page
+    pageNum++;
+    if (pdfDoc != null && pageNum <= numPages) {
+        pdfDoc.getPage(pageNum).then(handlePages);
+        // PDF 加载失败
+    } else {
+        console.log("pdf load complete");
+        // PDF 加载完毕，body的内容可以根据具体的业务需求进行修改
+        window.webkit.messageHandlers.AppModel.postMessage({
+        code: "00000",
+        msg: "pdf load complete",
+        }); //和wkWebView交互
     }
-   ```
+    }
+    ```
 
 到此，我们已经可以在 `iOS9` 以上的系统中，成功打开带加密印章的 `PDF`。至于 `iOS8` 为什么不行呢？下面给大家讲解及提供方案。
 

@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 搭建 Hexo Blog
 
 `Hexo` 需要 `Git` 和 `Node` 的支持，所以烦请各位想用 `Hexo` 搭建博客的同学自行安装 `Git` 和 `Node`，然后再来阅读本文档。

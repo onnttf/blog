@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:52:41+08:00
+---
+
 # 如何修改 git 配置
 
 ![图片](https://file.onnttf.site/2021/12/06/1.png)

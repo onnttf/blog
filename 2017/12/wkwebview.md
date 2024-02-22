@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # WKWebView 使用及注意事项
 
 `WKWebView` 是苹果提供的用于在 App 中进行网页浏览的控件，不过只能在 `iOS8` 后使用，如果还需要适配 `iOS7`，那我只能摆一张无奈脸了ㄟ ( ▔， ▔ ) ㄏ
@@ -279,4 +287,3 @@ window.webkit.messageHandlers.test1.postMessage({msg: "test1"});
 1.[WKWebView 那些坑](https://www.cnblogs.com/NSong/p/6489802.html)
 
 本文的所有代码均以上传至 `GitHub`，如需[自取](https://github.com/onnttf/P_App_OC.git)～
-

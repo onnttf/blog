@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 如何解决端口占用问题
 
 当我们启动某项服务时，经常会出现 **address already in use** 这个错误。该错误是指**当前使用的端口被某个进程占用，导致本次服务无法正常启动**。通常情况下，导致端口被占用的原因有两个：

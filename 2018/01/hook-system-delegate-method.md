@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # Hook 系统代理方法
 
 本篇文章主要叙述的是通过 **`Runtime`** 相关知识，完成对 `UIScrollView` 的代理方法进行 `hook`。从而添加一个停止滚动的回调。
@@ -273,4 +281,3 @@ scrollView.stopScrollBlock = ^(UIScrollView *scrollView) {
 
 1. [UITableView、UICollectionView 滚动结束的监测](https://www.jianshu.com/p/718862ee13b0)
 2. [Method Swizzling 实战：Hook 系统代理方法](https://www.jianshu.com/p/3fafb68b1d11)
-

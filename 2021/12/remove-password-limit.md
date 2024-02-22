@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-10-19T23:04:21+08:00
+---
+
 # 解除 macOS 系统的密码限制
 
 ![图片](https://file.onnttf.site/2021/12/01/1.png)

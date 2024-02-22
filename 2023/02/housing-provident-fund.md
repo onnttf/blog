@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-09T10:43:50+08:00
+---
+
 # 变更住房公积金提取周期
 
 大家好，今天讲一个技术之外的话题：**住房公积金**。

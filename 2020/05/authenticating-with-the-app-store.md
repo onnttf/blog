@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # 上传应用时，卡在 Authenticating with the App Store
 
 ![图片](https://file.onnttf.site/2020/05/26/1.jpg)

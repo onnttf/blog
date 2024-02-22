@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # iOS 消息转发机制
 
 当对象接收到无法解读的消息（`unrecognized selector sent to instance 0x87`），就会启动消息转发机制，由程序员指定处理方法。

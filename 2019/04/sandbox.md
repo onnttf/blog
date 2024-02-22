@@ -1,3 +1,11 @@
+---
+author: Zhang Peng
+category: 🙌 Show and tell
+labels: 
+discussion: 
+updatedAt: 2023-11-20T19:54:49+08:00
+---
+
 # App 沙盒
 
 **从 `iOS8` 以后，每次 App 重新运行后，沙盒路径都会变化。**
