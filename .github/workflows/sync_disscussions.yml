@@ -16,24 +16,20 @@ jobs:
         run: |
           npm install @octokit/graphql
           npm install dayjs
-      - name: Run Markdown Generation Script
+      - name: Run Sync Disscussions Script
         run: node .github/workflows/sync_disscussions.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Update Repository Content
+      - name: Clean Files
         run: |
           # Enable extended globbing for advanced pattern matching
           shopt -s extglob
 
-          # Remove all content in the current directory except for specified files and directories
-          rm -r !(markdowns|discussions|README.md|SUMMARY.md)
-
-          # Copy all files from the 'markdowns' directory to the current directory
-          cp -r -f markdowns/* .
+          # # Remove all content in the current directory except for specified files and directories
+          rm -r !(.git|.github|discussions|README.md|SUMMARY.md|archive_data.json|[0-9]*)
 
           # List the contents of the current directory
           ls
-
       - name: Commit and Push Changes
         run: |
           git config user.name github-actions
