@@ -25,8 +25,8 @@ jobs:
           # Enable extended globbing for advanced pattern matching
           shopt -s extglob
 
-          # # Remove all content in the current directory except for specified files and directories
-          rm -r !(.git|.github|discussions|README.md|SUMMARY.md|archive_data.json|[0-9]*)
+          # Remove all content in the current directory except for specified files and directories
+          rm -r !(discussions|README.md|SUMMARY.md|archive_data.json|[0-9]*)
 
           # List the contents of the current directory
           ls
@@ -35,5 +35,5 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
-          git commit -m "Sync disscussions to repo"
+          git commit -m "sync disscussions to repo"
           git push origin HEAD:${{ github.ref }}
