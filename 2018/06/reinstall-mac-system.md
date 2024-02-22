@@ -58,7 +58,7 @@ updatedAt: 2023-11-20T19:54:49+08:00
 
 2. 进入恢复模式后，我们可以看到下面四个功能：
 
-    ![图片](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d0d87aacfd674425a6a892f90e42f795~tplv-k3u1fbpfcp-zoom-1.image)
+    ![image](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d0d87aacfd674425a6a892f90e42f795~tplv-k3u1fbpfcp-zoom-1.image)
 
     选择重新安装 `macOS`，根据提示我们就可以完成新系统的安装了。
 

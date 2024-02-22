@@ -149,7 +149,7 @@ CIImage *outPutImage = [filter outputImage];
 
 > 通过上面两部，就可以得到一张清晰的二维码图片了。
 
-![图片](https://file.onnttf.site/2017/12/15/1.jpeg)
+![image](https://file.onnttf.site/2017/12/15/1.jpeg)
 
 ## 定制二维码
 
@@ -219,7 +219,7 @@ CIImage *outPutImage = [filter outputImage];
 }
 ```
 
-![图片](https://file.onnttf.site/2017/12/15/2.jpeg)
+![image](https://file.onnttf.site/2017/12/15/2.jpeg)
 
 ### 添加水印图片（Logo）
 
@@ -301,7 +301,7 @@ CIImage *outPutImage = [filter outputImage];
 }
 ```
 
-![图片](https://file.onnttf.site/2017/12/15/3.jpeg)
+![image](https://file.onnttf.site/2017/12/15/3.jpeg)
 
 ## 附
 

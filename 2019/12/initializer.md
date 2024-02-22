@@ -30,7 +30,7 @@ updatedAt: 2023-11-20T19:54:49+08:00
 
 如果文字不好理解，可以根据下面的图，进行理解：
 
-![图片](https://docs.swift.org/swift-book/_images/initializerDelegation02_2x.png)
+![image](https://docs.swift.org/swift-book/_images/initializerDelegation02_2x.png)
 
 ## Objective-C 和 Swift 的差异
 

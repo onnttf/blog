@@ -8,7 +8,7 @@ updatedAt: 2023-11-20T19:54:49+08:00
 
 # 上传应用时，卡在 Authenticating with the App Store
 
-![图片](https://file.onnttf.site/2020/05/26/1.jpg)
+![image](https://file.onnttf.site/2020/05/26/1.jpg)
 
 本文主要解决的是在上传应用时，卡在 `Authenticating with the App Store...` 的问题。
 

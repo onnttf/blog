@@ -8,7 +8,7 @@ updatedAt: 2023-11-09T10:43:50+08:00
 
 # 安装与使用
 
-![图片](https://file.onnttf.site/2021/09/13/1.jpg)
+![image](https://file.onnttf.site/2021/09/13/1.jpg)
 
 `Charles` 是一个开发人员常用的工具，通过它可以对 `HTTP` 进行代理、监听或者反向代理等操作，它使开发人员能够查看他们的机器和 `Internet` 之间的所有 `HTTP` 和 `SSL/HTTPS` 通信。包括请求、响应和 `HTTP` 报头 (其中包含 `cookie` 和缓存信息)。
 
@@ -18,23 +18,23 @@ updatedAt: 2023-11-09T10:43:50+08:00
 
 打开 [Charles 下载页面](https://www.charlesproxy.com/download/), 根据自己设备类型进行下载。
 
-![图片](https://file.onnttf.site/2021/09/13/2.png)
+![image](https://file.onnttf.site/2021/09/13/2.png)
 
 ## 安装
 
 双击上面下载的安装包，可以看到如下界面，然后将左侧的花瓶图标拖到右侧的 `Applications` 文件夹上。当软件复制到应用程序完成之后，就可以在应用程序中找到 `Charles` 了。
 
-![图片](https://file.onnttf.site/2021/09/13/3.png)
+![image](https://file.onnttf.site/2021/09/13/3.png)
 
 ## 使用
 
 第一次打开 `Charles` 时，会看到这个弹框，大概是说“`Charles` 会自动进行配置，但是需要权限”，因此直接点击蓝色的按钮进行授权，然后按提示输入电脑密码就行。
 
-![图片](https://file.onnttf.site/2021/09/13/4.png)
+![image](https://file.onnttf.site/2021/09/13/4.png)
 
 密码输入完成后，就可以看到 `Charles` 的使用界面了。
 
-![图片](https://file.onnttf.site/2021/09/13/5.png)
+![image](https://file.onnttf.site/2021/09/13/5.png)
 
 ######
 

@@ -8,7 +8,7 @@ updatedAt: 2023-11-09T10:43:50+08:00
 
 # 你好，jwt
 
-![图片](https://file.onnttf.site/2022/10/09/1.jpg)
+![image](https://file.onnttf.site/2022/10/09/1.jpg)
 
 ## jwt 是什么
 

@@ -8,7 +8,7 @@ updatedAt: 2023-11-09T10:52:41+08:00
 
 # 搞懂 Linux 的文件权限
 
-![图片](https://file.onnttf.site/2022/01/27/1.png)
+![image](https://file.onnttf.site/2022/01/27/1.png)
 
 `permission denied` 这个错误应该很多人都见到过，一般常见于执行脚本、读写文件等。它是什么原因造成的？我们又该如何解决它？本文将带给你答案。如果迫不及待地想要看解决办法，请直接翻到本文最下方。
 
@@ -39,7 +39,7 @@ total 32
 
 文件的权限可以从第一部分的字符中解读：
 
-![图片](https://www.runoob.com/wp-content/uploads/2014/08/file-permissions-rwx.jpg)
+![image](https://www.runoob.com/wp-content/uploads/2014/08/file-permissions-rwx.jpg)
 
 第 1 位代表类型，用来表示这个文件是目录、文件或链接文件等等。常见的有两种：
 
@@ -56,7 +56,7 @@ total 32
 
 ## 如何修改文件权限
 
-![图片](https://www.runoob.com/wp-content/uploads/2014/08/rwx-standard-unix-permission-bits.png)
+![image](https://www.runoob.com/wp-content/uploads/2014/08/rwx-standard-unix-permission-bits.png)
 
 如果想要修改文件的权限，需要使用 [`chmod`](https://www.runoob.com/linux/linux-comm-chmod.html) 命令。`chmod` 命令有两种使用方式：符号模式和数字模式。
 

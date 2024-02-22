@@ -21,7 +21,7 @@ added 67 packages from 317 contributors in 6.685s
 
 如果因为权限问题安装失败的，那么在命令前添加 `sudo`，输入密码后就可以安装了
 
-![图片](https://file.onnttf.site/2017/11/26/1.png)
+![image](https://file.onnttf.site/2017/11/26/1.png)
 
 通过 `hexo -v` 可以检查 `hexo-cli` 是否安装成功
 
@@ -55,11 +55,11 @@ unicode: 12.1
 hexo init
 ```
 
-![图片](https://file.onnttf.site/2017/11/26/2.png)
+![image](https://file.onnttf.site/2017/11/26/2.png)
 
 创建完毕后，我们可以看到生成了很多的文件及文件夹，如下：
 
-![图片](https://file.onnttf.site/2017/11/26/3.png)
+![image](https://file.onnttf.site/2017/11/26/3.png)
 
 其中比较主要的有：
 
@@ -77,7 +77,7 @@ hexo init
 
 在终端中，执行 `hexo s` 启动服务器，我们就可以在浏览器中看到我们博客了。默认情况下，访问网址为 `http：//localhost：4000/`。
 
-![图片](https://file.onnttf.site/2017/11/26/4.png)
+![image](https://file.onnttf.site/2017/11/26/4.png)
 
 ## 发布博客
 
@@ -91,7 +91,7 @@ hexo init
 
 2. 创建一个用于存放博客的仓库
 
-   ![图片](https://file.onnttf.site/2017/11/26/5.png)
+   ![image](https://file.onnttf.site/2017/11/26/5.png)
 
    网上大多数的人都建议创建一个如图所示的项目，即`xxx.github.io`，红框中的内容与账户名保持一致。PS.忽略图中红色的报错，我这边报错是因为我已经创建了相同名字的项目✧(≖ ◡ ≖✿)
 
@@ -106,7 +106,7 @@ hexo init
 
    在博客的根目录执行 `npm install hexo-deployer-git --save`
 
-   ![图片](https://file.onnttf.site/2017/11/26/6.png)
+   ![image](https://file.onnttf.site/2017/11/26/6.png)
 
 2. 修改配置文件
 
@@ -124,7 +124,7 @@ hexo init
    1.上面的配置中，冒号和你填写的内容间一定要有个空格，这是标准的格式，没得谈！！！
    2.有的同学可能会问可不可以发布到某个分支上，答案是不能。原因请看下图，箭头所指处，明确说明`User pages must be built from the master branch.`
 
-   ![图片](https://file.onnttf.site/2017/11/26/7.png)
+   ![image](https://file.onnttf.site/2017/11/26/7.png)
 
 ### 编译&部署博客
 

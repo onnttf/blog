@@ -16,9 +16,9 @@ updatedAt: 2023-11-20T19:54:49+08:00
 
 创建完成后，会生成如下图的几个文件。
 
-![图片](https://file.onnttf.site/2017/09/07/1.jpeg)
+![image](https://file.onnttf.site/2017/09/07/1.jpeg)
 
-![图片](https://file.onnttf.site/2017/09/07/2.jpeg)
+![image](https://file.onnttf.site/2017/09/07/2.jpeg)
 
 ### 修改 `Today Extension` 的 `Info.plist`
 
@@ -33,7 +33,7 @@ updatedAt: 2023-11-20T19:54:49+08:00
   1. 请删除 `NSExtensionMainStoryboard` 的键值对和 `MainInterface.storyboard` 文件
   2. 请添加 `NSExtensionPrincipalClass` 这个 `key`，并将 `value` 设置为控制器（如 `TodayViewController`）
 
-     ![图片](https://file.onnttf.site/2017/09/07/3.jpeg)
+     ![image](https://file.onnttf.site/2017/09/07/3.jpeg)
 
 ### 准备工作都已经完成，可以进入开发工作
 
@@ -116,7 +116,7 @@ self.preferredContentSize = CGSizeMake(kScreenW, 100);
 2. 不怕安装包变大的话，可以考虑将需要的第三方库在主 `App` 和 `Widget` 中分别复制一份 **（推荐）**
 3. 将需要共享的文件按图中进行勾选配置
 
-   ![图片](https://file.onnttf.site/2017/09/07/4.jpeg)
+   ![image](https://file.onnttf.site/2017/09/07/4.jpeg)
 
 4. 通过 `Pods` 导入，不太建议通过 `Pods` 分别向两个 `Target` 中导入第三方库，因为很容易发生一些不好处理的问题
 
@@ -182,7 +182,7 @@ self.preferredContentSize = CGSizeMake(kScreenW, 100);
 ### 打开 `App`
 
 1. 设置 `App` 的 `URLSchemes`，打开 `APP` 主要通过 `URLScheme` 打开和传递参数值。设置 `URLSchemes` 时，要独特一些，避免与其他 `App` 重复
-   ![图片](https://file.onnttf.site/2017/09/07/5.jpeg)
+   ![image](https://file.onnttf.site/2017/09/07/5.jpeg)
 2. 在 `Widget` 中添加点击事件，用于触发打开 `App` 的操作和传递参数
 
    ```objc

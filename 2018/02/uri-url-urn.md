@@ -8,7 +8,7 @@ updatedAt: 2023-11-20T19:54:49+08:00
 
 # URI、URL、URN 的差异与联系
 
-![图片](https://file.onnttf.site/2018/02/24/1.png)
+![image](https://file.onnttf.site/2018/02/24/1.png)
 
 在开发过程中，经常见到有同事把链接命名为 `uri_xxx_yyy` 或者 `url_xxx_yyy`，可是`uri`和`url`分别是什么意思呢？希望在阅读这篇文章后，您可以明白～
 
@@ -54,7 +54,7 @@ updatedAt: 2023-11-20T19:54:49+08:00
 
 首先我们要弄清楚一件事：**`URL` 和 `URN` 都是 `URI` 的子集。** 换言之，`URL` 和 `URN`都是 `URI`，但是 `URI` 不一定是 `URL` 或者 `URN`。为了更好的理解这个概念，看下面这张图片。
 
-![图片](https://file.onnttf.site/2018/02/24/2.jpg)
+![image](https://file.onnttf.site/2018/02/24/2.jpg)
 
 `URI` 负责识别，`URL` 负责定位;然而，定位符也是标识符的一种，因此每个 `URL` 都是 `URI`，但是每个 `URI` 并不全是 `URL`。
 
