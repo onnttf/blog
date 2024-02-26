@@ -40,7 +40,7 @@ function discussionToBlog(discussion) {
                 ? `${year}/${month}`
                 : category.name,
         // author: discussion.author.login,
-        author: 'Zhang Peng',
+        author: 'ZHANG PENG',
         discussion_url: discussion.url,
         // discussion_file_path: `discussions/${year}/${month}/${key}.json`,
         // markdown_file_path: `${year}/${month}/${key}.md`,
