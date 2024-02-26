@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4Rk",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABgw2Rtw",
+                "name": "MacOS",
+                "resourcePath": "/onnttf/blog/labels/MacOS",
+                "url": "https://github.com/onnttf/blog/labels/MacOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 43,
+    "title": "MacOS 系统显示隐藏文件",
+    "body": "![image](https://file.onnttf.site/2021/12/05/1.png)\r\n\r\n话不多说，上**干货**。\r\n\r\n## 显示隐藏文件\r\n\r\n`MacOS` 系统显示隐藏文件只需要两步，比把大象关进冰箱还少一步哦～\r\n\r\n1. 打开电脑中的 `Finder`（中文名字叫**访达**）\r\n2. 同时按下 `Command`、`Shift` 和 `.` 三个按键\r\n\r\n`dang dang dang dang~` 隐藏的文件和文件夹在此！此时应该已经可以看到隐藏的文件或文件夹了～\r\n\r\n## 隐藏隐藏文件\r\n\r\n如果此时 `Finder` 还没有被关闭，那么恭喜您！隐藏文件您只需要一步就可以完成！直接跳到步骤 2！\r\n\r\n1. 打开电脑中的 `Finder`（中文名字叫**访达**）\r\n2. 同时按下 `Command`、`Shift` 和 `.` 三个按键\r\n\r\n`deng deng deng deng~` 隐藏的文件和文件夹已经跑远了！此时应该看不到隐藏的文件或文件夹了～\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T17:01:35Z",
+    "updatedAt": "2024-02-23T17:03:02Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/43",
+    "resourcePath": "/onnttf/blog/discussions/43"
+}

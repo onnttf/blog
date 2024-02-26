@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4RO",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZtGNw",
+                "name": "Git",
+                "resourcePath": "/onnttf/blog/labels/Git",
+                "url": "https://github.com/onnttf/blog/labels/Git"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 41,
+    "title": "如何修改 git 配置",
+    "body": "![image](https://file.onnttf.site/2021/12/06/1.png)\r\n\r\n在开始修改配置前，我们需要明确修改配置的目的是什么？是需要当前电脑的全部 `git` 仓库生效？还是只对某个 `git` 仓库生效？不同的目的需要修改的配置文件不一样。\r\n\r\n## git 配置文件\r\n\r\n我们常用的配置文件有两个：\r\n\r\n1. **全局级别**的配置文件：`~/.gitconfig`\r\n2. **仓库级别**的配置文件：`git` 仓库中的`.git/config`\r\n\r\n除了上面这两个，还有两个不怎么常用的配置文件：\r\n\r\n1. **系统级别**的配置文件：`/etc/gitconfig`\r\n2. **工作区级别**的配置文件：`git` 仓库中的`.git/config.worktree`\r\n\r\n这四个配置文件的优先级由高至低为：\r\n\r\n工作区（`.git/config.worktree`） > 仓库（`.git/config`） > 用户（`~/.gitconfig`） > 系统（`/etc/gitconfig`）\r\n\r\n## 修改 git 配置\r\n\r\n### 可视化\r\n\r\n使用文本编辑器（如 `Sublime Text`）打开配置文件，然后对需要修改的配置项进行修改即可。至于什么配置该如何修改，请参照 `git` 的[官方文档](https://git-scm.com/docs/git-config)\r\n\r\n### 命令行\r\n\r\n命令行修改 `git` 配置的命令如下：\r\n\r\n```shell\r\ngit config [--local|--global|--system] [key] [value]\r\n```\r\n\r\n举个例子，修改全局级别的用户信息：\r\n\r\n```shell\r\ngit config --global user.name \"您的名字\"\r\ngit config --global user.email \"您的邮箱\"\r\n```\r\n\r\n######\r\n\r\n如果觉得本篇文章不错，麻烦给个**点赞👍、收藏🌟、分享👊、在看👀**四连！\r\n\r\n![干货输出机](https://file.onnttf.site/wechat/qrcode.jpg)\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:57:39Z",
+    "updatedAt": "2024-02-23T16:57:40Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/41",
+    "resourcePath": "/onnttf/blog/discussions/41"
+}

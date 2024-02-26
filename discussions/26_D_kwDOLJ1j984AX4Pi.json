@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4Pi",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "resourcePath": "/onnttf/blog/labels/iOS",
+                "url": "https://github.com/onnttf/blog/labels/iOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 26,
+    "title": "+load 与 +initialize",
+    "body": "|          | +load                | +initialize                  |\r\n| :------- | :------------------- | :--------------------------- |\r\n| 调用方式 | 根据函数地址直接调用 | 通过 objc_msgSend 调用       |\r\n| 调用时刻 | 类、分类加载时调用   | 类第一次接收到消息的时候调用 |\r\n\r\n## +load\r\n\r\n1. 按照编译先后顺序调用\r\n2. 先调用父类的 `+load` 再调用子类的 `+load`\r\n3. 最后调用分类的 `+load` 方法\r\n\r\n**调用方式：** 通过函数指针指向函数，拿到函数地址，分开来直接调用。\r\n\r\n## +initialize\r\n\r\n1. 先调用父类的 `+initialize`，再调用子类的 `+initialize`；(先初始化父类，再初始化子类，每个类只会初始化 1 次）\r\n2. 子类内部 `+initialize` 会主动调用父类的 `+initialize`\r\n\r\n**调用方式：** 通过 `objc_msgSend` 调用。\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:42:46Z",
+    "updatedAt": "2024-02-23T16:42:47Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/26",
+    "resourcePath": "/onnttf/blog/discussions/26"
+}

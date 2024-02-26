@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4OO",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "resourcePath": "/onnttf/blog/labels/iOS",
+                "url": "https://github.com/onnttf/blog/labels/iOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 11,
+    "title": "常见的编译失败",
+    "body": "## -fobjv-weak is not supported on the current deloyment target\r\n\r\n![image](https://file.onnttf.site/2018/02/09/1.jpg)\r\n\r\n**解决方案：**\r\n更新 `xcodeproj` 版本。\r\n\r\n1. 通过终端进到项目目录\r\n2. 查看 `xcodeproj` 版本\r\n\r\n   ```shell\r\n   gem list xcodeproj\r\n   ```\r\n\r\n3. 安装 `xcodeproj` 最新版本 可以在 [rubygems.org](https://rubygems.org/gems/xcodeproj)查看到最新的版本，目前应该是 1.5.6。\r\n\r\n   ```shell\r\n   gem install xcodeproj -v 1.5.6\r\n   ```\r\n\r\n4. 再次查看 `xcodeproj` 版本\r\n\r\n   ```shell\r\n   gem list xcodeproj\r\n   ```\r\n\r\n5. 卸载旧版本的 `xcodeproj`\r\n\r\n   ```shell\r\n   gem uninstall xcodeproj -v 1.5.6\r\n   ```\r\n\r\n按下 `command + b`，你会发现已经可以成功编译了！\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:25:58Z",
+    "updatedAt": "2024-02-23T16:25:59Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/11",
+    "resourcePath": "/onnttf/blog/discussions/11"
+}

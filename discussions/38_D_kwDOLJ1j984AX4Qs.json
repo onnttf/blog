@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4Qs",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZr8SA",
+                "name": "Ubuntu",
+                "resourcePath": "/onnttf/blog/labels/Ubuntu",
+                "url": "https://github.com/onnttf/blog/labels/Ubuntu"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 38,
+    "title": "Ubuntu 安装 NodeJS",
+    "body": "为了省事儿，麻烦少，本文所有操作都是使用 **ubuntu** 用户操作。\r\n\r\n## 安装 NodeJS\r\n\r\n1. 下载脚本\r\n\r\n   ```shell\r\n   curl -sL https://deb.nodesource.com/setup_15.x | sudo bash -\r\n   ```\r\n\r\n   如需安装其他版本的 `NodeJS`，脚本下载地址可以在[常用的 NodeJS 版本以及脚本下载地址](install-nodejs.md#附录)中找到，替换上面命令中的 `https://deb.nodesource.com/setup_15.x` 即可。\r\n\r\n2. 更新可用包的列表\r\n\r\n   ```shell\r\n   sudo apt update\r\n   ```\r\n\r\n3. 安装 `NodeJS`\r\n\r\n   ```shell\r\n   sudo apt install nodejs\r\n   ```\r\n\r\n   中途会提示一个 `Do you want to continue? [Y/n]`，直接回车就行。\r\n\r\n4. 确认是否安装成功\r\n\r\n   ```shell\r\n   $ node -v\r\n   v15.3.0\r\n   $ npm -v\r\n   7.0.14\r\n   ```\r\n\r\n## 常用 `NodeJS` 版本以及脚本下载地址\r\n\r\n目前常用的 `NodeJS` 版本以及脚本下载地址如下：\r\n\r\n| 版本           | 脚本下载地址                            |\r\n| :------------- | :-------------------------------------- |\r\n| Node.js 10 LTS | `https://deb.nodesource.com/setup_10.x` |\r\n| Node.js 12 LTS | `https://deb.nodesource.com/setup_12.x` |\r\n| Node.js 14 LTS | `https://deb.nodesource.com/setup_14.x` |\r\n| Node.js 15     | `https://deb.nodesource.com/setup_15.x` |\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:53:41Z",
+    "updatedAt": "2024-02-23T16:53:41Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/38",
+    "resourcePath": "/onnttf/blog/discussions/38"
+}

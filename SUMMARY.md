@@ -1,143 +1,99 @@
 # SUMMARY
 
-- [2024/1](2024/1)
-
-  - [Welcome to blog Discussions!](2024/1/1_D_kwDOLJ1j984AXZos.md)
-  - [Keep using short password on MacOS](2024/1/2_D_kwDOLJ1j984AXecM.md)
-
+- [Announcements](Announcements)
+  - [Welcome to blog Discussions!](Announcements/1_D_kwDOLJ1j984AXZos.md)
+- [2024/2](2024/2)
+  - [Keep using short password on MacOS(2024)](2024/2/59_D_kwDOLJ1j984AX4Vz.md)
 - [2023/09](2023/09)
-  - [Excel 教程：如何使用公式取两列的交集](2023/09/find-intersection-of-two-columns.md)
-
+  - [Excel 教程：如何使用公式取两列的交集](2023/09/58_D_kwDOLJ1j984AX4Th.md)
 - [2023/07](2023/07)
-  - [掌握书签文件：高效管理收藏](2023/07/parse-bookmarks.md)
-
+  - [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md)
 - [2023/03](2023/03)
-  - [如何构建 docker 镜像](2023/03/shebang.md)
-
+  - [如何构建 docker 镜像](2023/03/54_D_kwDOLJ1j984AX4S7.md)
 - [2023/02](2023/02)
-  - [变更住房公积金提取周期](2023/02/housing-provident-fund.md)
-  - [Shell 入门教程](2023/02/introduction-to-shell.md)
-  - [如何构建 docker 镜像](2023/02/how-to-create-image.md)
-  - [Solidity 从入门到放弃](2023/02/solidity.md)
-
+  - [Shebang 是什么](2023/02/56_D_kwDOLJ1j984AX4Tc.md)
+  - [Shell 入门教程](2023/02/55_D_kwDOLJ1j984AX4TF.md)
+  - [变更住房公积金提取周期](2023/02/53_D_kwDOLJ1j984AX4S2.md)
 - [2022/10](2022/10)
-  - [你好，jwt](2022/10/hello-jwt.md)
-
-- [2022/09](2022/09)
-  - [如何保持 SSH 服务不掉线](2022/09/keep-alive-ssh.md)
-
-- [2022/08](2022/08)
-  - [web3](2022/08/web3.md)
-
+  - [jwt 是什么](2022/10/52_D_kwDOLJ1j984AX4Sy.md)
 - [2022/06](2022/06)
-  - [简单动态字符串](2022/06/simple-dynamic-string.md)
-  - [git 使用小技巧](2022/06/tips-for-git.md)
-  - [macOS 设置文件的默认打开程序](2022/06/set-file-default-opening-mode.md)
-
+  - [简单动态字符串](2022/06/50_D_kwDOLJ1j984AX4SP.md)
+  - [MacOS 设置文件的默认打开程序](2022/06/49_D_kwDOLJ1j984AX4SO.md)
 - [2022/03](2022/03)
-  - [神奇的位运算](2022/03/bit-operation.md)
-
+  - [神奇的位运算](2022/03/48_D_kwDOLJ1j984AX4SD.md)
 - [2022/02](2022/02)
-  - [快速生成表结构的结构体](2022/02/generate-table-struct.md)
-  - [macOS 升级 Git 版本](2022/02/update-git-version.md)
-  - [如何创建自己 module](2022/02/create-personal-module.md)
-
+  - [MacOS 升级 Git 版本](2022/02/47_D_kwDOLJ1j984AX4R9.md)
+  - [快速生成表结构的结构体](2022/02/46_D_kwDOLJ1j984AX4R5.md)
+  - [如何创建自己 module](2022/02/45_D_kwDOLJ1j984AX4R1.md)
 - [2022/01](2022/01)
-  - [搞懂 Linux 的文件权限](2022/01/linux-file-permissions.md)
-
+  - [搞懂 Linux 的文件权限](2022/01/44_D_kwDOLJ1j984AX4Rw.md)
 - [2021/12](2021/12)
-  - [macOS 系统显示隐藏文件](2021/12/show-hidden-files.md)
-  - [解除 macOS 系统的密码限制](2021/12/remove-password-limit.md)
-  - [如何修改 git 配置](2021/12/modify-git-configuration.md)
-
+  - [MacOS 系统显示隐藏文件](2021/12/43_D_kwDOLJ1j984AX4Rk.md)
+  - [解除 MacOS 系统的密码限制](2021/12/42_D_kwDOLJ1j984AX4RQ.md)
+  - [如何修改 git 配置](2021/12/41_D_kwDOLJ1j984AX4RO.md)
 - [2021/09](2021/09)
-  - [安装与使用](2021/09/setup-and-use.md)
-
+  - [Charles 安装与使用](2021/09/40_D_kwDOLJ1j984AX4Q8.md)
 - [2021/07](2021/07)
-  - [如何解决端口占用问题](2021/07/resolve-port-occupancy.md)
-
-- [2021/06](2021/06)
-  - [修饰符 const](2021/06/const.md)
-
+  - [如何解决端口占用](2021/07/39_D_kwDOLJ1j984AX4Q5.md)
 - [2020/12](2020/12)
-  - [Ubuntu 安装 NodeJS](2020/12/install-nodejs.md)
-
+  - [Ubuntu 安装 NodeJS](2020/12/38_D_kwDOLJ1j984AX4Qs.md)
 - [2020/10](2020/10)
-  - [Mac 的开机设置](2020/10/configure-mac.md)
-
+  - [Mac 的开机设置](2020/10/37_D_kwDOLJ1j984AX4Qj.md)
 - [2020/08](2020/08)
-  - [Flutter 安装和环境配置](2020/08/install-flutter.md)
-
+  - [Flutter 安装和环境配置](2020/08/36_D_kwDOLJ1j984AX4Qc.md)
 - [2020/07](2020/07)
-  - [如何清理 Git 仓库](2020/07/clean-up-git-repository.md)
-  - [如何评判算法好坏](2020/07/judge-algorithm-quality.md)
-
+  - [如何评判算法好坏](2020/07/35_D_kwDOLJ1j984AX4QZ.md)
+  - [如何清理 Git 仓库](2020/07/34_D_kwDOLJ1j984AX4QU.md)
 - [2020/05](2020/05)
-  - [上传应用时，卡在 Authenticating with the App Store](2020/05/authenticating-with-the-app-store.md)
-  - [Go 1.13 中 Go command 修改](2020/05/go-command.md)
-
+  - [Go 1.13 中 Go command 修改](2020/05/33_D_kwDOLJ1j984AX4QP.md)
+  - [上传应用时，卡在 Authenticating with the App Store](2020/05/32_D_kwDOLJ1j984AX4QJ.md)
+- [2020/03](2020/03)
+  - [如何保持 SSH 服务不掉线](2020/03/51_D_kwDOLJ1j984AX4St.md)
 - [2019/12](2019/12)
-  - [类的初始化方法](2019/12/initializer.md)
-
+  - [类的初始化方法](2019/12/31_D_kwDOLJ1j984AX4QC.md)
 - [2019/07](2019/07)
-  - [Go 基础](2019/07/go.md)
-
+  - [Go 基础](2019/07/30_D_kwDOLJ1j984AX4P4.md)
 - [2019/06](2019/06)
-  - [如何创建一个公有 Pod 库](2019/06/create-pod.md)
-
+  - [如何创建一个公有 Pod 库](2019/06/29_D_kwDOLJ1j984AX4P1.md)
 - [2019/04](2019/04)
-  - [Ubuntu 安装 MySQL](2019/04/install-mysql.md)
-  - [App 沙盒](2019/04/sandbox.md)
-
+  - [App 沙盒](2019/04/28_D_kwDOLJ1j984AX4Pw.md)
+  - [Ubuntu 安装 MySQL](2019/04/27_D_kwDOLJ1j984AX4Pq.md)
 - [2019/03](2019/03)
-  - [RESTful 笔记](2019/03/introduction-to-restful.md)
-  - [Block 的声明方式](2019/03/block-statement.md)
-  - [+load 与 +initialize](2019/03/load-and-initialize.md)
-
+  - [+load 与 +initialize](2019/03/26_D_kwDOLJ1j984AX4Pi.md)
+  - [RESTful 笔记](2019/03/25_D_kwDOLJ1j984AX4Pf.md)
+  - [Block 的声明方式](2019/03/24_D_kwDOLJ1j984AX4PY.md)
 - [2019/01](2019/01)
-  - [Charles 安装证书](2019/01/install-charles-certificate.md)
-
+  - [Charles 安装证书](2019/01/23_D_kwDOLJ1j984AX4PV.md)
 - [2018/12](2018/12)
-  - [iTerm2 一个更好用的终端](2018/12/a-better-terminal.md)
-  - [Rac EventBus RxJava](2018/12/rac-eventbus-rxjava.md)
-
+  - [Rac EventBus RxJava](2018/12/22_D_kwDOLJ1j984AX4PI.md)
+  - [iTerm2 一个更好用的终端](2018/12/21_D_kwDOLJ1j984AX4O4.md)
 - [2018/07](2018/07)
-  - [SiriKit 人机界面指南](2018/07/sirikit.md)
-  - [动态更换 App 图标](2018/07/dynamic-icon.md)
-
+  - [SiriKit 人机界面指南](2018/07/20_D_kwDOLJ1j984AX4Oy.md)
+  - [动态更换 App 图标](2018/07/19_D_kwDOLJ1j984AX4Ox.md)
 - [2018/06](2018/06)
-  - [macOS 系统重装](2018/06/reinstall-mac-system.md)
-
+  - [MacOS 系统重装](2018/06/18_D_kwDOLJ1j984AX4Ou.md)
 - [2018/05](2018/05)
-  - [GCD 同步异步与串行并行](2018/05/gcd.md)
-  - [CocoaPods 安装及错误处理](2018/05/cocoapods.md)
-  - [AppleScript 入门与实践](2018/05/introduction-to-applescript.md)
-
+  - [AppleScript 入门与实践](2018/05/17_D_kwDOLJ1j984AX4Oo.md)
+  - [GCD 同步异步与串行并行](2018/05/16_D_kwDOLJ1j984AX4Ok.md)
+  - [CocoaPods 安装及错误处理](2018/05/15_D_kwDOLJ1j984AX4Oh.md)
 - [2018/04](2018/04)
-  - [iOS 消息转发机制](2018/04/message-forwarding.md)
-
+  - [iOS 消息转发机制](2018/04/14_D_kwDOLJ1j984AX4Od.md)
 - [2018/03](2018/03)
-  - [NSMethodSignature 和 NSInvocation](2018/03/nsmethodsignature-nsinvocation.md)
-
+  - [NSMethodSignature 和 NSInvocation](2018/03/13_D_kwDOLJ1j984AX4OV.md)
 - [2018/02](2018/02)
-  - [常见的编译失败](2018/02/build-failed.md)
-  - [URI、URL、URN 的差异与联系](2018/02/uri-url-urn.md)
-
+  - [URI、URL、URN 的差异与联系](2018/02/12_D_kwDOLJ1j984AX4OS.md)
+  - [常见的编译失败](2018/02/11_D_kwDOLJ1j984AX4OO.md)
 - [2018/01](2018/01)
-  - [Hook 系统代理方法](2018/01/hook-system-delegate-method.md)
-
+  - [Hook 系统代理方法](2018/01/10_D_kwDOLJ1j984AX4OK.md)
 - [2017/12](2017/12)
-  - [WKWebView 使用及注意事项](2017/12/wkwebview.md)
-  - [二维码生成及定制](2017/12/create-qr-code.md)
-
+  - [WKWebView 使用及注意事项](2017/12/9_D_kwDOLJ1j984AX4N_.md)
+  - [二维码生成及定制](2017/12/8_D_kwDOLJ1j984AX4N5.md)
 - [2017/11](2017/11)
-  - [面试啊面试~](2017/11/interview.md)
-  - [搭建 Hexo Blog](2017/11/set-up-hexo-blog.md)
-
+  - [搭建 Hexo Blog](2017/11/7_D_kwDOLJ1j984AX4N1.md)
+  - [面试啊面试~](2017/11/6_D_kwDOLJ1j984AX4Ny.md)
 - [2017/09](2017/09)
-  - [double 转 NSString 出现精度异常](2017/09/double-to-nsstring.md)
-  - [Widget 开发 - 开发篇](2017/09/widget-development.md)
-
+  - [Widget 开发 - 开发篇](2017/09/5_D_kwDOLJ1j984AX4Ni.md)
+  - [double 转 NSString 出现精度异常](2017/09/4_D_kwDOLJ1j984AX4Nf.md)
 - [2017/08](2017/08)
-  - [Widget 开发 - 配置篇](2017/08/widget-configuration.md)
-  - [读取一个带有加密印章的 PDF](2017/08/read-pdf-with-cryptographic-seal.md)
+  - [Widget 开发 - 配置篇](2017/08/3_D_kwDOLJ1j984AX1OK.md)
+  - [读取一个带有加密印章的 PDF](2017/08/2_D_kwDOLJ1j984AXecM.md)

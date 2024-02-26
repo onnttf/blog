@@ -1,0 +1,29 @@
+{
+    "id": "D_kwDOLJ1j984AX4Tc",
+    "labels": {
+        "nodes": []
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 56,
+    "title": "Shebang 是什么",
+    "body": "`Shebang` 是一种在 `Unix` 和 `Linux` 系统中使用的特殊注释，通常用于指定脚本文件的解释器。在本文中，我们将详细介绍 `Shebang` 的作用、语法和示例，以帮助您更好地了解它。\r\n\r\n## Shebang 的作用\r\n\r\n当您在 `Unix` 或 `Linux` 系统中执行一个可执行文件时，系统会尝试使用默认解释器来执行该文件。例如，如果您运行一个以 `.sh` 结尾的脚本文件，系统会默认使用 `/bin/bash` 解释器来执行该脚本。但是，有时您可能想要使用其他解释器来执行脚本文件，例如 `Python`，这时 `Shebang` 就派上用场了。\r\n\r\n使用 `Shebang`，您可以在脚本文件的第一行添加一条注释，告诉系统要使用哪个解释器来执行该脚本。例如，如果您想使用 `bash` 来执行脚本文件，您可以在该文件的第一行添加如下注释：\r\n\r\n```bash\r\n#!/bin/bash\r\n```\r\n\r\n这条注释告诉 `shell` 查找 `bash` 解释器，然后使用找到的解释器执行该脚本。\r\n\r\n## Shebang 的语法\r\n\r\n`Shebang` 的语法非常简单。它只需要在文件的第一行添加一个井号 (#) 和一个惊叹号 (!)，紧接着是解释器的完整路径或可执行文件名。例如：\r\n\r\n```python\r\n#!/usr/bin/python\r\n\r\nprint(\"公众号：干货输出机\")\r\n```\r\n\r\n或者：\r\n\r\n```python\r\n#!/usr/bin/env python\r\n\r\nprint(\"公众号：干货输出机\")\r\n```\r\n\r\n在第二个例子中，我们使用 `env`。那么，使用 `env` 和不使用 `env` 的区别在哪里呢？\r\n\r\n### 使用 env\r\n  \r\n使用 `env` 可以使**脚本更加可移植。** 因为它会使用环境变量中的 `PATH` 变量来查找解释器，而不是硬编码解释器的路径。这样，即使解释器在不同的系统上安装在不同的路径上，也可以确保脚本在任何地方都能够正常运行。\r\n\r\n但是由于从环境变量中寻找解释器，会**造成一定的安全隐患。** 因为我们可以伪造一个假的命令，写入到环境变量中靠前的位置，这样，脚本就会使用我们伪造的解释器执行。\r\n\r\n### 不使用 env\r\n  \r\n如果你确定脚本将在特定的系统上运行，并且已经知道了解释器的确切路径，那么可以直接在 `Shebang` 中使用解释器的路径，这样可以避免在环境变量中寻找解释器。\r\n\r\n因此，使用 `env` 还是直接使用解释器路径取决于你的需求和具体情况。\r\n\r\n## Shebang 的示例\r\n\r\n在日常工作中，我们经常需要远程登录到服务器上进行管理操作。为了方便起见，我们可以编写脚本来实现自动化操作，这样可以提高工作效率并减少错误。\r\n\r\n```bash\r\n#!/usr/bin/expect -f\r\n\r\n# setting the timeout period\r\nset timeout 30\r\n\r\n# use ssh login your jump server\r\nspawn ssh [lindex $argv 1]@[lindex $argv 0]\r\n# start expect\r\nexpect {\r\n      \"*yes/no*?\"\r\n      {send \"yes\\r\";exp_continue;}\r\n      \"*assword:*\"\r\n      { send \"[lindex $argv 2]\\r\" }\r\n}\r\ninteract\r\n```\r\n\r\n上面的脚本就是一个使用 `expect` 编写的自动化远程登录脚本。在这个脚本中，我们使用了 `expect` 的自动交互功能，实现了自动化远程登录的功能。下面解释一下这个脚本内容：\r\n\r\n首先，我们使用 `Shebang` 指定了解释器为 `expect`，然后将执行脚本的超时时间设置为 `30` 秒。然后，我们使用 `spawn` 命令根据用户输入的内容启动 `ssh` 进程。接下来，我们使用 `expect` 命令来等待 `ssh` 进程输出的信息，并根据输出的信息来发送相应的命令。在这个脚本中，我们使用了两个 `expect` 匹配规则：\r\n\r\n1. 用于检测 `ssh` 连接时出现的询问信息，如果出现了类似 `Are you sure you want to continue connecting (yes/no)?` 的信息，就会自动发送 `yes` 命令确认连接。如果没有出现这样的信息，则继续等待。\r\n2. 用于检测 `ssh` 登录时出现的密码输入提示信息。如果出现了 `password:` 的提示信息，则会自动发送密码给远程服务器进行登录。如果没有出现这样的信息，则继续等待。\r\n\r\n最后，我们使用 `interact` 命令将控制权交还给用户，以便用户手动操作远程服务器。\r\n\r\n使用方法：\r\n\r\n1. 将上面的代码保存到 `ssh_login.sh` 文件中\r\n2. 使用 `chmod` 命令给这个文件添加执行权限\r\n\r\n   ```shell\r\n   chmod +x ssh_login.sh\r\n   ```\r\n\r\n3. 然后执行这个文件时，在后面补上机器ip，需要登录的用户及密码\r\n\r\n   ```shell\r\n   ➜  Desktop ./ssh_login.sh 1.2.3.4 ubuntu Abc12345\r\n   spawn ssh ubuntu@1.2.3.4\r\n   The authenticity of host '1.2.3.4 (1.2.3.4)' can't be established.\r\n   ED25519 key fingerprint is SHA256:G2QvR/KLSRunuijt2J+K5nra5to9CWL6OSHnRndwCI0.\r\n   This key is not known by any other names\r\n   Are you sure you want to continue connecting (yes/no/[fingerprint])? yes\r\n   Warning: Permanently added '1.2.3.4' (ED25519) to the list of known hosts.\r\n   ubuntu@1.2.3.4's password:\r\n   Welcome to Ubuntu 22.04 LTS (GNU/Linux 5.15.0-56-generic x86_64)\r\n\r\n   * Documentation:  https://help.ubuntu.com\r\n   * Management:    https://landscape.canonical.com\r\n   * Support:      https://ubuntu.com/advantage\r\n\r\n   System information as of Mon Feb 27 07:47:16 PM CST 2023\r\n\r\n   System load:  0.17822265625    Processes:          105\r\n   Usage of /:   7.1% of 49.10GB   Users logged in:      0\r\n   Memory usage: 27%            IPv4 address for eth0: 1.2.3.4\r\n   Swap usage:   0%\r\n\r\n   * Strictly confined Kubernetes makes edge and IoT secure. Learn how MicroK8s\r\n   just raised the bar for easy, resilient and secure K8s cluster deployment.\r\n\r\n   https://ubuntu.com/engage/secure-kubernetes-at-the-edge\r\n\r\n   To run a command as administrator (user \"root\"), use \"sudo <command>\".\r\n   See \"man sudo_root\" for details.\r\n\r\n   ubuntu@VM-0-15-ubuntu:~$\r\n   ```\r\n\r\n## 总结\r\n\r\n`Shebang` 是一种非常有用的工具，可让您指定脚本文件的解释器。使用 `Shebang`，您可以轻松地在 `Unix` 和 `Linux` 系统中执行各种类型的脚本，例如 `Python`、`Bash` 等。希望这篇文章能够帮助您更好地理解 `Shebang` 的作用和语法，并且能够在实际使用中提供帮助。\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T17:22:51Z",
+    "updatedAt": "2024-02-23T17:22:52Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/56",
+    "resourcePath": "/onnttf/blog/discussions/56"
+}

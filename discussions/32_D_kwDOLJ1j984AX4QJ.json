@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4QJ",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "resourcePath": "/onnttf/blog/labels/iOS",
+                "url": "https://github.com/onnttf/blog/labels/iOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 32,
+    "title": "上传应用时，卡在 Authenticating with the App Store",
+    "body": "![image](https://file.onnttf.site/2020/05/26/1.jpg)\r\n\r\n本文主要解决的是在上传应用时，卡在 `Authenticating with the App Store...` 的问题。\r\n\r\n## 问题分析\r\n\r\n综合网上各种解决此问题的方案，我这边猜测卡住的原因如下：\r\n\r\n在上传 ipa 时，需要使用很多内置的资源，而这些资源是需要下载的。因为某种原因（例如 GFW，或者个人网络原因）下载缓慢或失败，都会造成卡死在这一步。\r\n\r\n## 解决方案\r\n\r\n### 下载所需的文件\r\n\r\n链接：[com.apple.amp.itmstransporter.zip](https://pan.baidu.com/s/19AEdaWU8gOiIvFOhe_hyJA) 提取码：vx8z\r\n\r\n### 修改文件中的内容\r\n\r\n找到 `obr/2.0.0/repository.xml` 这个文件。用文本编辑器打开，**切记一定要用文本编辑器之类的打开，不要直接双击用 Xcode 打开**，因为文件太大，Xcode 会崩溃。\r\n\r\n在文件中搜索 zhangpeng，全部替换为你电脑登录的用户名。\r\n\r\n### 替换文件\r\n\r\n将 `~/Library/Caches` 文件中的 `com.apple.amp.itmstransporter` 完全删除。然后将上面的解压后的文件夹放入 `~/Library/Caches`，退出 Xcode 或 Transport，重新上传即可。\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:49:19Z",
+    "updatedAt": "2024-02-23T16:49:19Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/32",
+    "resourcePath": "/onnttf/blog/discussions/32"
+}

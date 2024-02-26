@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4PY",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "resourcePath": "/onnttf/blog/labels/iOS",
+                "url": "https://github.com/onnttf/blog/labels/iOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 24,
+    "title": "Block 的声明方式",
+    "body": "原文链接：[How Do I Declare A Block in Objective-C?](http://fuckingblocksyntax.com)\r\n\r\n* 局部变量\r\n\r\n  ```objc\r\n  returnType (^blockName)(parameterTypes) = ^returnType(parameters) {...};\r\n  ```\r\n\r\n* 属性\r\n\r\n  ```objc\r\n  @property (nonatomic, copy, nullability) returnType (^blockName)(parameterTypes);\r\n  ```\r\n\r\n* 方法参数\r\n\r\n  ```objc\r\n  - (void)someMethodThatTakesABlock:(returnType (^nullability)(parameterTypes))blockName;\r\n  ```\r\n\r\n* 方法调用的参数\r\n\r\n  ```objc\r\n  [someObject someMethodThatTakesABlock:^returnType (parameters) {...}];\r\n  ```\r\n\r\n* C 函数的参数\r\n\r\n  ```objc\r\n  void SomeFunctionThatTakesABlock(returnType (^blockName)(parameterTypes));\r\n  ```\r\n\r\n* 类型定义\r\n\r\n  ```objc\r\n  typedef returnType (^TypeName)(parameterTypes);\r\n  TypeName blockName = ^returnType(parameters) {...};\r\n  ```\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:41:08Z",
+    "updatedAt": "2024-02-23T16:41:09Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/24",
+    "resourcePath": "/onnttf/blog/discussions/24"
+}

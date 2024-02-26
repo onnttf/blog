@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4Ou",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABgw2Rtw",
+                "name": "MacOS",
+                "resourcePath": "/onnttf/blog/labels/MacOS",
+                "url": "https://github.com/onnttf/blog/labels/MacOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 18,
+    "title": "MacOS 系统重装",
+    "body": "## 为什么要重装系统\r\n\r\n### 无用的东西太多，忍不了了\r\n\r\n在日常工作中，我们难免要安装各式各样的软件，插件，环境等，随着时间的推移，我们电脑中的东西越来越多，虽然不会引起卡顿，但是想想就觉得心里膈应，像我这种强迫症就会选择开始删。但是删的时候就很麻烦了，`App` 从 `Application` 文件夹中删除后，还会有些配置文件保留在电脑中，很难完全移除。而插件，环境等，删除的操作就更为麻烦。\r\n\r\n最后的最后就会有一部分人选择重装系统，因为他也不确定是不是删了什么不应该删的东西。\r\n\r\n### 步入了 Beta 版的坑，忍不了了\r\n\r\n世上永远少不了想要第一个吃螃蟹的人，新版系统一发布，便毫不犹豫的进行了升级，在使用一段时间后，发现坑太多，就不想被这些坑折磨了。\r\n\r\n但是苹果爸爸会这么容易让一个小白鼠跑掉吗？不存在的！\r\n\r\n只有两条路可以选择：\r\n\r\n1. 等到更高版本的系统出现，进行升级\r\n\r\n   需要在坑中再待一段时间，时间不确定。\r\n\r\n2. 重装回低版本的系统\r\n\r\n   **切记备份好所有的数据**，因为这种方案要抹掉磁盘，即一切从零开始。\r\n\r\n## 重装系统的几种方式\r\n\r\n系统重装有以下几种方式，文中以苹果最新的系统 `macOS High Sierra` 为例。\r\n\r\n### 从 `App Store` 安装\r\n\r\n两种获取系统镜像的方式：\r\n\r\n1. 打开 `App Store`，搜索 `macOS High Sierra` 点击下载按钮\r\n2. 直接打开 [macOS High Sierra](https://search.itunes.apple.com/WebObjects/MZContentLink.woa/wa/link?mt=11&path=mac%2fmacoshighsierra) 页面，点击下载按钮\r\n\r\n下载完成后，安装器会自动打开，按照提示即可完成新系统的安装。\r\n\r\n### 在线恢复\r\n\r\n1. 进入 `macOS` 恢复模式。\r\n    根据不同的目标，我们可以按不同的组合键。\r\n\r\n    | 组合键                                                             | 目标                                                        |\r\n    | :----------------------------------------------------------------- | :---------------------------------------------------------- |\r\n    | Command + R                                                        | 安装您在 Mac 上安装过的最新 macOS，但不会升级到更高的版本。 |\r\n    | Option + Command + R                                               | 升级到与您的 Mac 兼容的最新 macOS                           |\r\n    | Shift-Option-Command-R（需要安装 macOS Sierra 10.12.4 或更高版本） | 安装 Mac 附带的 macOS 或最接近的仍可用版本。                |\r\n\r\n2. 进入恢复模式后，我们可以看到下面四个功能：\r\n\r\n    ![image](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d0d87aacfd674425a6a892f90e42f795~tplv-k3u1fbpfcp-zoom-1.image)\r\n\r\n    选择重新安装 `macOS`，根据提示我们就可以完成新系统的安装了。\r\n\r\n    1. 从 macOS 恢复功能的实用工具窗口中选择“磁盘工具”，然后点按“继续”。\r\n    2. 在“磁盘工具”边栏中选择您的设备或宗卷。\r\n    3. 点按“抹掉”按钮或标签页。\r\n    4. 弹框中的东西一般不需要我们修改，直接点击弹框中“抹掉”以开始抹掉磁盘。\r\n    5. 完成后，退出“磁盘工具”以回到实用工具窗口。\r\n\r\n    **注：** 在系统安装之前，根据具体的情况，决定是否要通过磁盘工具抹掉磁盘。\r\n\r\n### U 盘安装\r\n\r\n1. 下载系统镜像 通过上面的方式，将我们需要的系统下载到电脑中，下载完成后，我们直接关闭安装界面，不要继续安装。这时我们可以在应用程序文件夹下看到我们刚刚下载的安装程序。\r\n2. 通过终端创建 U 盘启动器\r\n    1. 首先我们要确认我们刚刚下载的安装程序的位置以及优盘的名字。\r\n    2. 假设安装程序仍位于“应用程序”文件夹中，并且 U 盘名称是 `MyVolume`。我们要在终端中使用 `createinstallmedia` 命令，输入命令后点击回车。\r\n\r\n       ```shell\r\n        sudo /Applications/Install\\ macOS\\ High\\ Sierra.app/Contents/Resources/createinstallmedia --volume /Volumes/MyVolume --applicationpath /Applications/Install\\ macOS\\ High\\ Sierra.app\r\n       ```\r\n\r\n    3. 然后输入密码，密码是不会显示出来的，输入后点击回车。\r\n    4. 接下来按着终端中的提示即可完成启动盘的制作。\r\n3. 使用 U 盘启动器安装新系统\r\n    1. 将 U 盘查到电脑上\r\n    2. 进入恢复模式，将启动磁盘改为我们制作的启动盘，启动盘的修改可以看考附件\r\n    3. 从“实用工具”窗口中选择“安装 macOS”（或“安装 OS X”），然后点按“继续”，按照屏幕上的说明进行操作\r\n\r\n## 参考资料\r\n\r\n1. 苹果官方提供的 `macOS` 安装文档：[如何安装 macOS](https://support.apple.com/zh-cn/HT204904)\r\n2. 目前 `macOS` 的版本列表：[macOS 版本列表](https://support.apple.com/zh-cn/HT201686)\r\n3. 通过 `App Store` 安装 `macOS High Sierra`：[如何下载安装 macOS High Sierra](https://support.apple.com/zh-cn/HT201475#appstore)\r\n4. `macOS` U 盘启动盘制作教程：[如何创建可引导的 macOS 安装器](https://support.apple.com/zh-cn/HT201372)\r\n5. 通过恢复模式安装新系统：[macOS 恢复模式](https://support.apple.com/zh-cn/HT201314)\r\n6. 两台 `Mac` 电脑间的数据迁移方法：[如何将内容移至新 Mac](https://support.apple.com/zh-cn/HT204350)\r\n7. 如何修改启动盘：[如何选择其他启动磁盘](https://support.apple.com/zh-cn/HT202796)\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:31:26Z",
+    "updatedAt": "2024-02-23T16:31:27Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/18",
+    "resourcePath": "/onnttf/blog/discussions/18"
+}

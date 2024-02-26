@@ -1,0 +1,42 @@
+{
+    "id": "D_kwDOLJ1j984AX4PV",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABgw2Rtw",
+                "name": "MacOS",
+                "resourcePath": "/onnttf/blog/labels/MacOS",
+                "url": "https://github.com/onnttf/blog/labels/MacOS"
+            },
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "resourcePath": "/onnttf/blog/labels/iOS",
+                "url": "https://github.com/onnttf/blog/labels/iOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 23,
+    "title": "Charles 安装证书",
+    "body": "## Charles 是什么\r\n\r\n`Charles` 是一个 `HTTP` 代理服务器，`HTTP` 监视器，反转代理服务器，当浏览器连接 `Charles` 的代理访问互联网时，`Charles` 可以监控浏览器发送和接收的所有数据。它允许一个开发者查看所有连接互联网的 `HTTP` 通信，这些包括 `request`, `response` 和 `HTTP headers`（包含 cookies 与 caching 信息）。\r\n\r\n## Charles 能做什么\r\n\r\n1. 抓取 http 和 https 的请求和响应，这是最常用的。\r\n2. 重发网络请求，方便后端调试。\r\n3. 修改网络请求参数（客户端向服务器发送的时候，可以修改后再转发出去）。\r\n4. 网络请求的截获和动态修改。\r\n5. 支持模拟慢速网络，主要是模仿手机上的 2G/3G/4G 的访问流程。\r\n6. 支持本地映射和远程映射，比如你可以把线上资源映射到本地某个文件夹下，这样可以方便的处理一些特殊情况下的 bug 和线上调试（网络的 css，js 等资源用的是本地代码，这些你可以本地随便修改，数据之类的都是线上的环境，方面在线调试）。\r\n7. 可以抓手机端访问的资源（如果是配置 HOST 的环境，手机可以借用 host 配置进入测试环境）。\r\n\r\n## 安装证书\r\n\r\n通过菜单拦中的选项，我们可以安装整数：\r\n\r\n![image](https://file.onnttf.site/2019/01/02/1.jpg)\r\n\r\n### 给 `PC` 安装证书\r\n\r\n1. **安装证书**\r\n\r\n   > Help -> SSL Proxying -> Install Charles Root Certificate\r\n\r\n   在弹框中，根据自己的情况选择对应的钥匙串\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/2.jpg)\r\n\r\n2. **信任证书**\r\n\r\n   进入菜单，选择钥匙串访问，在搜索框中搜索 `Charles` ，找到 `Charles Proxy CA`。双击打开证书的信息界面，将红框中的选项改为始终信任。\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/3.jpg)\r\n\r\n### 给 `iOS` 模拟器安装证书\r\n\r\n1. **安装证书**\r\n\r\n   > Help -> SSL Proxying -> Install Charles Root Certificate in iOS Simulators\r\n\r\n2. **信任证书**\r\n\r\n   > Settings -> General -> About -> Certificate Trust Settings\r\n\r\n   打开 `iOS Simulators` 的证书信任选项\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/4.jpg)\r\n\r\n### 给手机安装证书\r\n\r\n1. **安装证书**\r\n\r\n   > Help -> SSL Proxying -> Install Charles Root Certificate on a Mobile Device or Remote Broswer\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/5.jpg)\r\n\r\n   1. 将手机和电脑都连接到同一无线局域网，进入无线局域网设置，手动设置代理\r\n   2. 按照提示框中的提示，在无线网设置中，将代理改为手动设置，按图中所示填写 `xxx.xx.xxx.xxx:xxxx`\r\n   3. 使用手机浏览器访问 [chls.pro/ssl](https://github.com/onnttf/blog/tree/322c1a6adda8dd6be880c9622823871046e6654b/mac/chls.pro/ssl/README.md)，按照提示安装证书\r\n\r\n      ![image](https://file.onnttf.site/2019/01/02/6.jpg)\r\n\r\n2. **信任证书**\r\n\r\n   > 设置 -> 通用 -> 关于本机 -> 证书信任设置\r\n\r\n   打开刚刚安装的证书的信任选项 ![image](https://file.onnttf.site/2019/01/02/7.jpg)\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:40:12Z",
+    "updatedAt": "2024-02-23T16:40:13Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/23",
+    "resourcePath": "/onnttf/blog/discussions/23"
+}

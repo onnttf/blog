@@ -1,0 +1,42 @@
+{
+    "id": "D_kwDOLJ1j984AX4R9",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABgw2Rtw",
+                "name": "MacOS",
+                "resourcePath": "/onnttf/blog/labels/MacOS",
+                "url": "https://github.com/onnttf/blog/labels/MacOS"
+            },
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZtGNw",
+                "name": "Git",
+                "resourcePath": "/onnttf/blog/labels/Git",
+                "url": "https://github.com/onnttf/blog/labels/Git"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 47,
+    "title": "MacOS 升级 Git 版本",
+    "body": "**不吹牛的说，这篇文章绝对是目前网上最简单的 MacOS 系统的 `Git` 升级教程了**\r\n\r\n## 安装 Homebrew\r\n\r\n[Homebrew](https://brew.sh/) 是一个软件包管理器。它的作用就是将软件包安装到自己的目录中，然后将其文件符号链接到 `/usr/local`。更多信息，请自行进入官网查看。\r\n\r\n在将下面代码复制进终端，点击回车，然后打开零食，边吃边等就好。\r\n\r\n```shell\r\n/usr/bin/ruby -e \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)\"\r\n```\r\n\r\n## 升级 git\r\n\r\n1. 安装最新版的 `git`\r\n\r\n   ```shell\r\n   brew install git\r\n   ```\r\n\r\n   当看到下面输出时，说明 `git` 已经安装完成：\r\n\r\n   ```shell\r\n   ==> Summary\r\n   🍺  /usr/local/Cellar/git/2.20.1: 1,528 files, 41.3MB\r\n   ```\r\n\r\n2. 改变 `git` 的默认指向\r\n\r\n   在终端中查看我们的 `git` 指向和版本信息。\r\n\r\n   ```shell\r\n   $ which git\r\n   /usr/bin/git\r\n   $ git --version\r\n   git version 2.17.2 (Apple Git-113)\r\n   ```\r\n\r\n   接下来我们通过 `brew link` 将 `git` 指向我们通过 `Homebrew` 安装的 `git`\r\n\r\n   ```shell\r\n   $ brew link git --overwrite\r\n   Warning: Already linked: /usr/local/Cellar/git/2.20.1\r\n   To relink: brew unlink git && brew link git\r\n   ```\r\n\r\n   link 成功后，退出终端后，再次打开。然后查看 `git` 指向和版本信息。\r\n\r\n   ```shell\r\n   $ which git\r\n   /usr/local/bin/git\r\n   $ git --version\r\n   git version 2.20.1\r\n   ```\r\n\r\n可以看到，我们的 `git` 版本已经升级到最新版了。\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T17:06:09Z",
+    "updatedAt": "2024-02-23T17:06:11Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/47",
+    "resourcePath": "/onnttf/blog/discussions/47"
+}

@@ -1,0 +1,29 @@
+{
+    "id": "D_kwDOLJ1j984AX4N1",
+    "labels": {
+        "nodes": []
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 7,
+    "title": "搭建 Hexo Blog",
+    "body": "`Hexo` 需要 `Git` 和 `Node` 的支持，所以烦请各位想用 `Hexo` 搭建博客的同学自行安装 `Git` 和 `Node`，然后再来阅读本文档。\r\n\r\n## 安装 `hexo` 脚手架\r\n\r\n```shell\r\n➜  ~ npm install -g hexo-cli\r\n/usr/local/bin/hexo -> /usr/local/lib/node_modules/hexo-cli/bin/hexo\r\n+ hexo-cli@3.1.0\r\nadded 67 packages from 317 contributors in 6.685s\r\n```\r\n\r\n如果因为权限问题安装失败的，那么在命令前添加 `sudo`，输入密码后就可以安装了\r\n\r\n![image](https://file.onnttf.site/2017/11/26/1.png)\r\n\r\n通过 `hexo -v` 可以检查 `hexo-cli` 是否安装成功\r\n\r\n```shell\r\n➜  ~ hexo -v\r\nhexo-cli: 3.1.0\r\nos: Darwin 19.0.0 darwin x64\r\nnode: 12.12.0\r\nv8: 7.7.299.13-node.12\r\nuv: 1.32.0\r\nzlib: 1.2.11\r\nbrotli: 1.0.7\r\nares: 1.15.0\r\nmodules: 72\r\nnghttp2: 1.39.2\r\nnapi: 5\r\nllhttp: 1.1.4\r\nhttp_parser: 2.8.0\r\nopenssl: 1.1.1d\r\ncldr: 35.1\r\nicu: 64.2\r\ntz: 2019a\r\nunicode: 12.1\r\n```\r\n\r\n## 创建 `hexo` 博客\r\n\r\n通过终端进入您想要创建博客的文件夹中，执行初始化命令：\r\n\r\n```shell\r\nhexo init\r\n```\r\n\r\n![image](https://file.onnttf.site/2017/11/26/2.png)\r\n\r\n创建完毕后，我们可以看到生成了很多的文件及文件夹，如下：\r\n\r\n![image](https://file.onnttf.site/2017/11/26/3.png)\r\n\r\n其中比较主要的有：\r\n\r\n```shell\r\n.\r\n├── source          //用于存放博客的 markdown 文件，以及静态文件\r\n│   └── _posts      //博客的 markdown 文件\r\n├── themes          //存放博客主题\r\n└── _config.yml     //我们博客的配置文件，可以配置 title、主题、发布地址等\r\n```\r\n\r\n到这里，博客基本算是创建完毕了。\r\n\r\n## 预览博客\r\n\r\n在终端中，执行 `hexo s` 启动服务器，我们就可以在浏览器中看到我们博客了。默认情况下，访问网址为 `http：//localhost：4000/`。\r\n\r\n![image](https://file.onnttf.site/2017/11/26/4.png)\r\n\r\n## 发布博客\r\n\r\n本章讲述的是将博客发布到 `GitHub` 上，如果想发布到自己的服务器上，请酌情修改，基本上大同小异。\r\n\r\n### 建立一个博客仓库\r\n\r\n1. 我们需要准备一个 `GitHub` 账号\r\n\r\n   首先我们需要一个 `GitHub` 账号，我想大家应该都有这个吧，如果没有请自行申请，这里我就不做赘述了。\r\n\r\n2. 创建一个用于存放博客的仓库\r\n\r\n   ![image](https://file.onnttf.site/2017/11/26/5.png)\r\n\r\n   网上大多数的人都建议创建一个如图所示的项目，即`xxx.github.io`，红框中的内容与账户名保持一致。PS.忽略图中红色的报错，我这边报错是因为我已经创建了相同名字的项目✧(≖ ◡ ≖✿)\r\n\r\n   **小声哔哔：**\r\n   通过我的测试，其实项目起什么名字并不重要，都可以访问到，我觉得大多数人以`xxx.github.io`当项目名字，只是为了后期访问好看罢了🙄\r\n\r\n### 安装博客发布工具\r\n\r\n为了方便快捷的将我们本地的博客发布到 `GitHub` 上，建议大家安装 `hexo-deployer-git` 自动部署发布工具。\r\n\r\n1. 安装插件\r\n\r\n   在博客的根目录执行 `npm install hexo-deployer-git --save`\r\n\r\n   ![image](https://file.onnttf.site/2017/11/26/6.png)\r\n\r\n2. 修改配置文件\r\n\r\n   发布工具安装完毕后，我们还需要在`_config.yml`文件中配置一下我们的 `GitHub` 的地址，否则我们上传到哪去呢，是不是？<(￣︶￣)>\r\n\r\n   打开`_config.yml`文件，搜索`deploy`，这个就是我们要配置的地方了，如果没有就在文件的最后添加下面的代码。\r\n\r\n   ```text\r\n   deploy：\r\n    type： git\r\n    repo：github 上的项目地址\r\n   ```\r\n\r\n   **注：**\r\n   1.上面的配置中，冒号和你填写的内容间一定要有个空格，这是标准的格式，没得谈！！！\r\n   2.有的同学可能会问可不可以发布到某个分支上，答案是不能。原因请看下图，箭头所指处，明确说明`User pages must be built from the master branch.`\r\n\r\n   ![image](https://file.onnttf.site/2017/11/26/7.png)\r\n\r\n### 编译&部署博客\r\n\r\n接下来就剩下发布这一步了，在终端中进入博客的根目录，执行：\r\n\r\n```shell\r\nhexo clean && hexo g && hexo d\r\n```\r\n\r\n当您看到 `INFO Deploy done： git` 时，就说明您的博客成功发布到 `GitHub` 上了，通过访问 `http：//xxx.github.io/`，就可以访问到您的博客了，记得把 `xxx` 换成您的项目名。 ![图 8](https://file.onnttf.site/2017/11/26/8.png)\r\n\r\n### 日常更新博客\r\n\r\n当新写了博客文章，或者是修改了主题，仅需通过终端，进入本地博客的根目录，执行`hexo clean && hexo g && hexo d`。然后就可以在博客中看到最新的文章或是主题了。\r\n\r\n## 参考资料\r\n\r\n1. [Hexo Docs](https://hexo.io/docs/)\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:21:33Z",
+    "updatedAt": "2024-02-23T16:21:33Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/7",
+    "resourcePath": "/onnttf/blog/discussions/7"
+}

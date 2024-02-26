@@ -1,0 +1,36 @@
+{
+    "id": "D_kwDOLJ1j984AX4OV",
+    "labels": {
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "resourcePath": "/onnttf/blog/labels/iOS",
+                "url": "https://github.com/onnttf/blog/labels/iOS"
+            }
+        ]
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 13,
+    "title": "NSMethodSignature 和 NSInvocation",
+    "body": "## 常见的调用方法的两种方式\r\n\r\n* performSelector: withObject:\r\n\r\n  **优点：** 可以调用运行时添加方法\r\n\r\n  **缺点：** 在编译阶段不会做校验。只有在程序运行的时候，才会知道是否存在即将调用的方法，如果方法不存在，程序会崩溃。因此为了保证程序的健壮，在调用方法前应该使用 `- (BOOL)respondsToSelector:(SEL)aSelector`，检查方法是否实现。\r\n\r\n* 直接调用方法\r\n\r\n  **优点：** 在编译阶段就会教研方法是否存在，Xcode 会有相应提示\r\n\r\n  **缺点：** 局限性大，如果想调用某个方法，必须先实现这个方法，不如 `performSelector: withObject:` 灵活。\r\n\r\n## 使用 NSMethodSignature 和 NSInvocation 调用方法\r\n\r\n使用 `NSMethodSignature` 和 `NSInvocation` 组合实现方法的调用。\r\n\r\n### NSMethodSignature\r\n\r\n通过 `NSMethodSignature` 可以获取方法的参数类型和返回值类型。常用方法有：\r\n\r\n```objc\r\n//从实例中获取实例方法签名，或者从类中获取类方法签名\r\n+ (NSMethodSignature *)instanceMethodSignatureForSelector:(SEL)aSelector\r\n\r\n//从一个类中获取实例方法签名\r\n- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector\r\n```\r\n\r\n可以通过下面的代码，更好的理解该怎么获取方法签名：\r\n\r\n```objc\r\nSEL initSEL = @selector(init);\r\nSEL allocSEL = @selector(alloc);\r\n\r\n// 从 NSString 类中获取实例方法 (init) 的方法签名\r\nNSMethodSignature *initSig = [NSString instanceMethodSignatureForSelector:initSEL];\r\n// 从 test 实例中获取实例方法 (init) 的方法签名\r\ninitSig = [@\"test\" methodSignatureForSelector:initSEL];\r\n// 从 NSString 类中获取类方法签名\r\nNSMethodSignature *allocSig = [NSString methodSignatureForSelector:allocSEL];\r\n```\r\n\r\n### NSInvocation\r\n\r\n`NSInvocation` 可以说是 `performSelector: withObject:` 的升级版，可以调用较为复杂的方法，进行参数、返回值的处理等;\r\n\r\n### NSMethodSignature 和 NSInvocation 搭配的使用方法\r\n\r\n```objc\r\nNSString *str = @\"Test\";\r\nstr = [str stringByAppendingString:@\" AppendingString\"];\r\nNSLog(@\"str: %@\", str);\r\n\r\n//需要调用的方法\r\nSEL selector = @selector(stringByAppendingString:);\r\n//获取方法签名\r\nNSMethodSignature *signature = [str methodSignatureForSelector:selector];\r\n//创建 NSInvocation 对象\r\nNSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];\r\n//设置消息接受对象\r\ninvocation.target = str;\r\n//设置发送的消息\r\ninvocation.selector = selector;\r\n\r\n//建议通过 signature.numberOfArgument 获取参数个数\r\n//可以保证不多参，不少参\r\n//这边减 2 的原因是：\r\n//0 位置的参数是 目标（self）\r\n//1 位置的参数是 selector（_cmd）\r\n//所以 2 位置才是所需要的第一个参数\r\nNSInteger paramCount = signature.numberOfArguments - 2;\r\nNSLog(@\"paramCount: %@\", @(paramCount));\r\n\r\nfor (int i = 0; i < paramCount; i++) {\r\n    //设置参数\r\n    [invocation setArgument:&str atIndex:i + 2];\r\n}\r\n//执行 invocation\r\n[invocation invoke];\r\n\r\n//获取返回值\r\nid returnValue = nil;\r\nif (signature.methodReturnLength) {\r\n    [invocation getReturnValue:&returnValue];\r\n}\r\nNSLog(@\"returnValue: %@\", returnValue);\r\n```\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-02-23T16:26:58Z",
+    "updatedAt": "2024-02-23T16:26:59Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/13",
+    "resourcePath": "/onnttf/blog/discussions/13"
+}
