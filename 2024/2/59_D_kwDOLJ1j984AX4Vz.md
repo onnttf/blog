@@ -10,8 +10,6 @@ updatedAt: 2024-02-24T01:48:31+08:00
 
 ![image](https://file.onnttf.site/2024/1/30/1.png)
 
-
-
 Following the release of **MacOS Mojave 10.14**, Apple updated its password requirements to require users to set a password of at least four characters for their accounts. However, many people have become accustomed to using short passwords, such as `space`.
 
 This article provides a solution for those who wish to keep using short passwords.
