@@ -1,5 +1,5 @@
 ---
-author: Zhang Peng
+author: ZHANG PENG
 category: 🙌 Show and tell
 labels: Redis
 discussion: https://github.com/onnttf/blog/discussions/50
