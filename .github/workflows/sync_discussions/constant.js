@@ -8,9 +8,9 @@ const DiscussionAuthorAssociation = {
 }
 
 module.exports = {
-    GITHUB_SERVER_URL: 'https://github.com/',
-    GITHUB_REPOSITORY: 'onnttf/blog',
-    GITHUB_TOKEN: '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',
+    GITHUB_SERVER_URL: process.env.GITHUB_SERVER_URL,
+    GITHUB_REPOSITORY: process.env.GITHUB_REPOSITORY,
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
 
     Discussion: {
         Category: DiscussionCategory,
