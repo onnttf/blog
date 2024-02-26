@@ -1,33 +1,33 @@
-name: Sync Discussion To Repo
+name: Format Markdown
 
 on:
+    push:
+        branches: ['main']
+    pull_request:
+        branches: ['main']
     workflow_dispatch:
 
 jobs:
-    sync_discussion:
+    format:
         runs-on: ubuntu-latest
-
         steps:
-            - name: Setup Node.js Environment
-              uses: actions/setup-node@v4
-
             - name: Checkout Repository
               uses: actions/checkout@v4
               with:
                   fetch-depth: 0
-
-            - name: Run Sync Discussions Script
-              run: |
-                  # Install dependencies and run the script
-                  npm install --prefix .github/workflows/sync_discussions && node .github/workflows/sync_discussions/sync_discussions.js
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            - name: Format Files
-              run: |
-                  # Format JS & JSON files with Prettier
-                  npm install --save-dev --save-exact prettier && npx prettier "**/*.js" "**/*.json" --write
-
+            - name: Check for Changed Markdown Files
+              uses: tj-actions/changed-files@v42
+              id: changed-files
+              with:
+                  files: '**/*.md'
+                  separator: ','
+            - name: Run MarkdownLint
+              uses: DavidAnson/markdownlint-cli2-action@v15
+              if: steps.changed-files.outputs.any_changed == 'true'
+              with:
+                  globs: ${{ steps.changed-files.outputs.all_changed_files }}
+                  separator: ','
+                  fix: true
             - name: Commit and Push Changes
               run: |
                   # Configure git
