@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "@octokit/graphql": "7.0.2",
+        "dayjs": "1.11.10",
+        "markdownlint-cli2": "0.12.1"
+    }
+}

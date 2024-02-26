@@ -1,0 +1,65 @@
+name: Sync Discussion To Repo
+
+on:
+    workflow_dispatch:
+
+jobs:
+    sync_discussion:
+        runs-on: ubuntu-latest
+
+        steps:
+            # Step 1: Set up Node.js environment
+            - name: Setup Node.js Environment
+              uses: actions/setup-node@v4
+
+            # Step 2: Checkout the repository
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            # Step 3: Install dependencies
+            - name: Install Dependencies
+              run: |
+                  npm install --prefix .github/workflows/sync_discussions
+
+            # Step 4: Run Sync Discussions Script
+            - name: Run Sync Discussions Script
+              run: node .github/workflows/sync_discussions/sync_discussions.js
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # Step 5: Clean unnecessary files
+            - name: Clean Files
+              run: |
+                  # Enable extended globbing for advanced pattern matching
+                  shopt -s extglob
+
+                  # Remove all content in the current directory except for specified files and directories
+                  rm -r !(discussions|README.md|SUMMARY.md|blog_data.json|[0-9]*)
+
+                  # Remove all node_modules folders
+                  find . -type d -name "node_modules" -exec rm -r {} \;
+
+                  # List the contents of the current directory
+                  ls
+
+            # Step 6: Format Files
+            - name: Format Files
+              run: |
+                  # Format JS files
+                  prettier "**/*.js" --write
+                  # Format JSON files
+                  prettier "**/*.json" --write
+
+                  # Format Markdown files
+                  markdownlint-cli2 --fix "**/*.md" "#node_modules"
+
+            # Step 7: Commit and Push Changes
+            - name: Commit and Push Changes
+              run: |
+                  git config user.name github-actions
+                  git config user.email github-actions@github.com
+                  git add .
+                  git commit -m "Sync discussions to repo"
+                  git push origin HEAD:${{ github.ref }}
