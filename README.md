@@ -7,6 +7,7 @@ Just a repository for blogs. :)
 | Category | Article | Labels | Last Updated |
 | --- | --- | --- | --- |
 | [📣 Announcements](https://github.com/onnttf/blog/discussions/categories/announcements?discussions_q=) | [Welcome to blog Discussions!](Announcements/1_D_kwDOLJ1j984AXZos.md) | - | 2024-01-26T14:14:46+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [探秘罗马数字：古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md) | [Roman numerals](<https://github.com/onnttf/blog/discussions?discussions_q=label%3ARoman> numerals) | 2024-03-08T15:30:02+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md) | - | 2024-02-26T10:46:53+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [Keep using short password on MacOS(2024)](2024/2/59_D_kwDOLJ1j984AX4Vz.md) | - | 2024-02-24T01:48:31+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [Excel 教程：如何使用公式取两列的交集](2023/09/58_D_kwDOLJ1j984AX4Th.md) | - | 2024-02-24T01:23:43+08:00 |
