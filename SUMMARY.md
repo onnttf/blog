@@ -3,7 +3,7 @@
 - [Announcements](Announcements)
   - [Welcome to blog Discussions!](Announcements/1_D_kwDOLJ1j984AXZos.md)
 - [2024/3](2024/3)
-  - [探秘罗马数字：古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md)
+  - [古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md)
 - [2024/2](2024/2)
   - [Keep using short password on MacOS(2024)](2024/2/59_D_kwDOLJ1j984AX4Vz.md)
 - [2023/09](2023/09)

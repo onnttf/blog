@@ -22,7 +22,7 @@
     },
     {
         "key": "60_D_kwDOLJ1j984AYJuP",
-        "title": "探秘罗马数字：古老的记数艺术",
+        "title": "古老的记数艺术",
         "category": {
             "emoji": ":raised_hands:",
             "emojiHTML": "<div>🙌</div>",
@@ -35,15 +35,15 @@
         "labels": [
             {
                 "id": "LA_kwDOLJ1j988AAAABjTHgFw",
-                "name": "Roman numerals",
-                "url": "https://github.com/onnttf/blog/discussions?discussions_q=label%3ARoman numerals"
+                "name": "RomanNumerals",
+                "url": "https://github.com/onnttf/blog/discussions?discussions_q=label%3ARomanNumerals"
             }
         ],
         "group": "2024/3",
         "author": "ZHANG PENG",
         "discussion_url": "https://github.com/onnttf/blog/discussions/60",
         "created_at": "2024-03-06T20:59:37+08:00",
-        "updated_at": "2024-03-08T15:30:02+08:00",
+        "updated_at": "2024-03-11T11:52:50+08:00",
         "discussion_file_path": "discussions/60_D_kwDOLJ1j984AYJuP.json",
         "markdown_file_path": "2024/3/60_D_kwDOLJ1j984AYJuP.md"
     },
