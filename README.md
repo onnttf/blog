@@ -7,7 +7,8 @@ Just a repository for blogs. :)
 | Category | Article | Labels | Last Updated |
 | --- | --- | --- | --- |
 | [📣 Announcements](https://github.com/onnttf/blog/discussions/categories/announcements?discussions_q=) | [Welcome to blog Discussions!](Announcements/1_D_kwDOLJ1j984AXZos.md) | - | 2024-01-26T14:14:46+08:00 |
-| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md) | [RomanNumerals](https://github.com/onnttf/blog/discussions?discussions_q=label%3ARomanNumerals) | 2024-03-11T11:52:50+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [聚焦问题本质：避免陷入 XY 问题](2024/3/61_D_kwDOLJ1j984AYYKo.md) | - | 2024-03-18T20:18:46+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md) | [RomanNumerals](https://github.com/onnttf/blog/discussions?discussions_q=label%3ARomanNumerals) | 2024-03-11T14:18:49+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md) | - | 2024-02-26T10:46:53+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [Keep using short password on MacOS(2024)](2024/2/59_D_kwDOLJ1j984AX4Vz.md) | - | 2024-02-24T01:48:31+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [Excel 教程：如何使用公式取两列的交集](2023/09/58_D_kwDOLJ1j984AX4Th.md) | - | 2024-02-24T01:23:43+08:00 |
