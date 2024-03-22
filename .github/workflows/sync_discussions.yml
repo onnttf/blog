@@ -19,7 +19,7 @@ jobs:
             - name: Run Sync Discussions Script
               run: |
                   # Install dependencies and run the script
-                  npm install --prefix .github/workflows/sync_discussions && node .github/workflows/sync_discussions/sync_discussions.js
+                  npm install && node scripts/sync_discussions/sync_discussions.js
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

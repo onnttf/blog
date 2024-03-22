@@ -19,7 +19,7 @@ async function main() {
     const allDiscussions = await fetchDiscussions(constant.GITHUB_TOKEN, username, repoName)
     console.log('Fetched', allDiscussions.length, ' discussions.')
 
-    const oldData = JSON.parse(await readFile('../../../blog_data.json'))
+    const oldData = JSON.parse(await readFile('../../blog_data.json'))
     const key2OldBlog = {}
 
     for (let i = 0; i < oldData.length; i++) {
