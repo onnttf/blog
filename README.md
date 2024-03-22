@@ -7,7 +7,8 @@ Just a repository for blogs. :)
 | Category | Article | Labels | Last Updated |
 | --- | --- | --- | --- |
 | [📣 Announcements](https://github.com/onnttf/blog/discussions/categories/announcements?discussions_q=) | [Welcome to blog Discussions!](Announcements/1_D_kwDOLJ1j984AXZos.md) | - | 2024-01-26T14:14:46+08:00 |
-| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [聚焦问题本质：避免陷入 XY 问题](2024/3/61_D_kwDOLJ1j984AYYKo.md) | - | 2024-03-18T20:18:46+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [CocoaPods 安装及错误处理](2018/05/15_D_kwDOLJ1j984AX4Oh.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS) | 2024-03-22T14:06:32+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [聚焦问题本质：避免陷入 XY 问题](2024/3/61_D_kwDOLJ1j984AYYKo.md) | - | 2024-03-18T22:54:23+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md) | [RomanNumerals](https://github.com/onnttf/blog/discussions?discussions_q=label%3ARomanNumerals) | 2024-03-11T14:18:49+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md) | - | 2024-02-26T10:46:53+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [Keep using short password on MacOS(2024)](2024/2/59_D_kwDOLJ1j984AX4Vz.md) | - | 2024-02-24T01:48:31+08:00 |
@@ -53,7 +54,6 @@ Just a repository for blogs. :)
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [MacOS 系统重装](2018/06/18_D_kwDOLJ1j984AX4Ou.md) | [MacOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AMacOS) | 2024-02-24T00:31:27+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [AppleScript 入门与实践](2018/05/17_D_kwDOLJ1j984AX4Oo.md) | - | 2024-02-24T00:30:37+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [GCD 同步异步与串行并行](2018/05/16_D_kwDOLJ1j984AX4Ok.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS) | 2024-02-24T00:29:57+08:00 |
-| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [CocoaPods 安装及错误处理](2018/05/15_D_kwDOLJ1j984AX4Oh.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS) | 2024-02-24T00:29:10+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [iOS 消息转发机制](2018/04/14_D_kwDOLJ1j984AX4Od.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS) | 2024-02-24T00:28:33+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [NSMethodSignature 和 NSInvocation](2018/03/13_D_kwDOLJ1j984AX4OV.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS) | 2024-02-24T00:26:59+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [URI、URL、URN 的差异与联系](2018/02/12_D_kwDOLJ1j984AX4OS.md) | - | 2024-02-24T00:26:24+08:00 |

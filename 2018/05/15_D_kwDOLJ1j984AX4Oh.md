@@ -3,7 +3,7 @@ author: ZHANG PENG
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/15
-updatedAt: 2024-02-24T00:29:10+08:00
+updatedAt: 2024-03-22T14:06:32+08:00
 ---
 
 # CocoaPods 安装及错误处理
@@ -70,7 +70,7 @@ $ sudo gem update --system
 
 ### 没有权限安装 cocoapods
 
-苹果系统升级`OS X EL Capitan`后，使用`sudo gem install cocoapods`安装时，会发生下面错误
+苹果系统升级 `OS X EL Capitan` 后，使用 `sudo gem install cocoapods` 安装时，会发生下面错误
 
 ```shell
 ERROR:While executing gem ... (Errno::EPERM)
@@ -86,7 +86,7 @@ sudo gem install -n /usr/local/bin cocoapods
 
 ### pod setup 耗时太久，不知道进度
 
-界面长时间卡在`Creating search index for spec repo 'master'..`过程，可以通过下面代码查看进度：
+界面长时间卡在 `Creating search index for spec repo 'master'..` 过程，可以通过下面代码查看进度：
 
 ```shell
 du-sh ~/.cocoaPods

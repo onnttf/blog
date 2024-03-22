@@ -21,6 +21,33 @@
         "markdown_file_path": "Announcements/1_D_kwDOLJ1j984AXZos.md"
     },
     {
+        "key": "15_D_kwDOLJ1j984AX4Oh",
+        "title": "CocoaPods 安装及错误处理",
+        "category": {
+            "emoji": ":raised_hands:",
+            "emojiHTML": "<div>🙌</div>",
+            "id": "DIC_kwDOLJ1j984CctHm",
+            "name": "Show and tell",
+            "slug": "show-and-tell",
+            "url": "https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=",
+            "display": "🙌 Show and tell"
+        },
+        "labels": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
+                "name": "iOS",
+                "url": "https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS"
+            }
+        ],
+        "group": "2018/05",
+        "author": "ZHANG PENG",
+        "discussion_url": "https://github.com/onnttf/blog/discussions/15",
+        "created_at": "2018-05-24T08:00:00+08:00",
+        "updated_at": "2024-03-22T14:06:32+08:00",
+        "discussion_file_path": "discussions/15_D_kwDOLJ1j984AX4Oh.json",
+        "markdown_file_path": "2018/05/15_D_kwDOLJ1j984AX4Oh.md"
+    },
+    {
         "key": "61_D_kwDOLJ1j984AYYKo",
         "title": "聚焦问题本质：避免陷入 XY 问题",
         "category": {
@@ -37,7 +64,7 @@
         "author": "ZHANG PENG",
         "discussion_url": "https://github.com/onnttf/blog/discussions/61",
         "created_at": "2024-03-18T18:30:16+08:00",
-        "updated_at": "2024-03-18T20:18:46+08:00",
+        "updated_at": "2024-03-18T22:54:23+08:00",
         "discussion_file_path": "discussions/61_D_kwDOLJ1j984AYYKo.json",
         "markdown_file_path": "2024/3/61_D_kwDOLJ1j984AYYKo.md"
     },
@@ -1162,33 +1189,6 @@
         "updated_at": "2024-02-24T00:29:57+08:00",
         "discussion_file_path": "discussions/16_D_kwDOLJ1j984AX4Ok.json",
         "markdown_file_path": "2018/05/16_D_kwDOLJ1j984AX4Ok.md"
-    },
-    {
-        "key": "15_D_kwDOLJ1j984AX4Oh",
-        "title": "CocoaPods 安装及错误处理",
-        "category": {
-            "emoji": ":raised_hands:",
-            "emojiHTML": "<div>🙌</div>",
-            "id": "DIC_kwDOLJ1j984CctHm",
-            "name": "Show and tell",
-            "slug": "show-and-tell",
-            "url": "https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=",
-            "display": "🙌 Show and tell"
-        },
-        "labels": [
-            {
-                "id": "LA_kwDOLJ1j988AAAABiZk-rQ",
-                "name": "iOS",
-                "url": "https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS"
-            }
-        ],
-        "group": "2018/05",
-        "author": "ZHANG PENG",
-        "discussion_url": "https://github.com/onnttf/blog/discussions/15",
-        "created_at": "2018-05-24T08:00:00+08:00",
-        "updated_at": "2024-02-24T00:29:10+08:00",
-        "discussion_file_path": "discussions/15_D_kwDOLJ1j984AX4Oh.json",
-        "markdown_file_path": "2018/05/15_D_kwDOLJ1j984AX4Oh.md"
     },
     {
         "key": "14_D_kwDOLJ1j984AX4Od",
