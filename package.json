@@ -1,7 +1,17 @@
 {
+    "scripts": {
+        "docs:dev": "vitepress dev",
+        "docs:build": "vitepress build",
+        "docs:preview": "vitepress preview"
+    },
     "dependencies": {
         "@octokit/graphql": "7.0.2",
         "dayjs": "1.11.10",
-        "markdownlint-cli2": "0.12.1"
+        "markdown-it-footnote": "^4.0.0",
+        "markdownlint-cli2": "0.12.1",
+        "vitepress": "^1.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.30"
     }
 }

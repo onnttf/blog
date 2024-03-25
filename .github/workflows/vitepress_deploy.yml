@@ -33,7 +33,7 @@ jobs:
             - name: Install dependencies
               run: npm install
             - name: Merge README into index
-              run: node scripts/vitepress_deploy/main.js
+              run: node scripts/vitepress_deploy/deploy.js
             - name: Build with VitePress
               run: npm run docs:build
             - name: Upload artifact
