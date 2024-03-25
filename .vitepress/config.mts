@@ -36,9 +36,11 @@ function generateSidebar(postList: Post[]): Sidebar[] {
         }
     })
 
-    for (const [group, items] of Object.entries(sidebarItems)) {
-        sidebar.push({ text: group, items })
-    }
+    const sortedGroups = Object.keys(sidebarItems).sort().reverse()
+
+    sortedGroups.forEach((group) => {
+        sidebar.push({ text: group, items: sidebarItems[group] })
+    })
 
     return sidebar
 }
