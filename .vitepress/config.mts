@@ -49,7 +49,6 @@ const postList = loadPostsFromJSON('blog_data.json')
 const sidebar = generateSidebar(postList)
 
 export default defineConfig({
-    base: '/blog/',
     title: "ZHANG PENG's Blog",
     description: 'Just a site for blogs. :) ',
     appearance: false,
