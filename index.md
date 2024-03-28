@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "ZHANG PENG's Blog"
+  name: "Zhang Peng's Blog"
   text: "Just a site for blogs. :) "
 ---
 

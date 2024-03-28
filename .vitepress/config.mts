@@ -49,7 +49,7 @@ const postList = loadPostsFromJSON('blog_data.json')
 const sidebar = generateSidebar(postList)
 
 export default defineConfig({
-    title: "ZHANG PENG's Blog",
+    title: "Zhang Peng's Blog",
     description: 'Just a site for blogs. :) ',
     appearance: false,
     lastUpdated: true,
@@ -76,7 +76,7 @@ export default defineConfig({
             }
         },
         footer: {
-            copyright: 'Copyright © 2017-present <a href="https://github.com/onnttf">ZHANG PENG</a>'
+            copyright: 'Copyright © 2017-present <a href="https://github.com/onnttf">Zhang Peng</a>'
         }
     },
     markdown: {
