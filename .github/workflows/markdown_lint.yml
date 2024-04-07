@@ -1,4 +1,4 @@
-name: Markdown Lint
+name: Markdown lint
 
 on:
     workflow_dispatch:
@@ -29,5 +29,6 @@ jobs:
                 git config user.name github-actions
                 git config user.email github-actions@github.com
                 git add discussions blog_data.json README.md SUMMARY.md Announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
-                git diff-index --quiet HEAD || git commit -m "style: lint markdown files"
-                git push origin HEAD:${{ github.ref }}
+                # git diff-index --quiet HEAD || git commit -m "style: lint markdown files"
+                # git push origin HEAD:${{ github.ref }}
+                git diff-index --quiet HEAD || (git commit -m "style: lint markdown files" && git push origin HEAD:refs/heads/main)

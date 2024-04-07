@@ -1,4 +1,4 @@
-name: Deploy VitePress site to Pages
+name: Deploy vitepress site to pages
 
 on:
   workflow_dispatch:
