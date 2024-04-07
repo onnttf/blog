@@ -1,4 +1,4 @@
-name: Automated Markdown Lint
+name: Markdown Lint
 
 on:
     workflow_dispatch:

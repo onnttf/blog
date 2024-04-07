@@ -1,10 +1,6 @@
-const dayjs = require('dayjs')
-const utc = require('dayjs/plugin/utc')
 const { publishDiscussion } = require('./data')
 const { readFile } = require('./util')
 const constant = require('./constant')
-
-dayjs.extend(utc)
 
 async function main() {
     const blogData = JSON.parse(await readFile('../../blog_data.json'))
@@ -20,13 +16,12 @@ async function main() {
             continue
         }
         const title = match[1].trim()
-        const body = match[2].trim() + '\n';
+        const body = match[2].trim() + '\n'
 
         console.log('Title:', title)
         console.log('Body:', body)
-        
+
         publishDiscussion(constant.GITHUB_TOKEN, element.id, title, body)
-        break
     }
 }
 
