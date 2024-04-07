@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/46
-updatedAt: 2024-02-24T01:05:01+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 快速生成表结构的结构体

@@ -12,13 +12,13 @@
     },
     "number": 17,
     "title": "AppleScript 入门与实践",
-    "body": "`AppleScript` 是 `Mac OS X` 内置的一种功能强大的脚本语言。\r\n\r\n## 官方介绍\r\n\r\n[AppleScript Overview](https://developer.apple.com/library/content/documentation/AppleScript/Conceptual/AppleScriptX/AppleScriptX.html#//apple_ref/doc/uid/10000156i)\r\n\r\n[AppleScript Language Guide](https://developer.apple.com/library/content/documentation/AppleScript/Conceptual/AppleScriptLangGuide/introduction/ASLR_intro.html)\r\n\r\n## AppleScript 例子\r\n\r\n1. 发送邮件：sendMail.scpt\r\n2. 发送 iMessage：sendMessage.scpt\r\n\r\n本文的所有代码均以上传至 `GitHub`，如需[自取](https://github.com/onnttf/AppleScript)~\r\n",
+    "body": "`AppleScript` 是 `Mac OS X` 内置的一种功能强大的脚本语言。\r\n\r\n## 官方介绍\r\n\r\n[AppleScript Overview](https://developer.apple.com/library/content/documentation/AppleScript/Conceptual/AppleScriptX/AppleScriptX.html#//apple_ref/doc/uid/10000156i)\r\n\r\n[AppleScript Language Guide](https://developer.apple.com/library/content/documentation/AppleScript/Conceptual/AppleScriptLangGuide/introduction/ASLR_intro.html)\r\n\r\n## AppleScript 例子\r\n\r\n1. 发送邮件：sendMail.scpt\r\n2. 发送 iMessage：sendMessage.scpt\r\n\r\n本文的所有代码均以上传至 `GitHub`，如需[自取](https://github.com/onnttf/AppleScript)~\n",
     "author": {
         "login": "onnttf"
     },
     "authorAssociation": "OWNER",
     "createdAt": "2024-02-23T16:30:37Z",
-    "updatedAt": "2024-02-23T16:30:37Z",
+    "updatedAt": "2024-04-07T17:04:59Z",
     "repository": {
         "id": "R_kgDOLJ1j9w",
         "url": "https://github.com/onnttf/blog",

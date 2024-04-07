@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Docker
 discussion: https://github.com/onnttf/blog/discussions/54
-updatedAt: 2024-02-24T01:16:58+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 如何构建 docker 镜像

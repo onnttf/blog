@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/35
-updatedAt: 2024-02-24T00:51:11+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 如何评判算法好坏

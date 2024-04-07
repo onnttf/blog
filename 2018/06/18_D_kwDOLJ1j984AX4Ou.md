@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: MacOS
 discussion: https://github.com/onnttf/blog/discussions/18
-updatedAt: 2024-02-24T00:31:27+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # MacOS 系统重装

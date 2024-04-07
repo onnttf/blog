@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/37
-updatedAt: 2024-02-24T00:52:20+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # Mac 的开机设置

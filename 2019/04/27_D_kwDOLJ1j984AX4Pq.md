@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Ubuntu
 discussion: https://github.com/onnttf/blog/discussions/27
-updatedAt: 2024-02-24T00:45:38+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # Ubuntu 安装 MySQL

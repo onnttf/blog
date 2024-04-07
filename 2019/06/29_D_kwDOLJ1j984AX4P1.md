@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS, COCOAPODS
 discussion: https://github.com/onnttf/blog/discussions/29
-updatedAt: 2024-02-24T00:47:09+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # 如何创建一个公有 Pod 库

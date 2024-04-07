@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/15
-updatedAt: 2024-03-22T14:06:32+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # CocoaPods 安装及错误处理

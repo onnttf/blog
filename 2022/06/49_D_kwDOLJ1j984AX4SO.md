@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: MacOS
 discussion: https://github.com/onnttf/blog/discussions/49
-updatedAt: 2024-02-24T01:08:39+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # MacOS 设置文件的默认打开程序

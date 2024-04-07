@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Redis
 discussion: https://github.com/onnttf/blog/discussions/50
-updatedAt: 2024-02-24T01:09:25+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 简单动态字符串

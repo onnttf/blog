@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/31
-updatedAt: 2024-02-24T00:48:46+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 类的初始化方法

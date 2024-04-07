@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Git
 discussion: https://github.com/onnttf/blog/discussions/41
-updatedAt: 2024-02-24T00:57:40+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 如何修改 git 配置

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/16
-updatedAt: 2024-02-24T00:29:57+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # GCD 同步异步与串行并行

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/56
-updatedAt: 2024-02-24T01:22:52+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # Shebang 是什么

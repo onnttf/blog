@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/61
-updatedAt: 2024-03-18T22:54:23+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 聚焦问题本质：避免陷入 XY 问题

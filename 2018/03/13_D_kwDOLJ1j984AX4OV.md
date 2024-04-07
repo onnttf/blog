@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/13
-updatedAt: 2024-02-24T00:26:59+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # NSMethodSignature 和 NSInvocation

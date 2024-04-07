@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/33
-updatedAt: 2024-02-24T00:49:51+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # Go 1.13 中 Go command 修改

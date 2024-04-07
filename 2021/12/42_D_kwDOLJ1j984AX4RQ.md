@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: MacOS
 discussion: https://github.com/onnttf/blog/discussions/42
-updatedAt: 2024-02-24T00:58:55+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # 解除 MacOS 系统的密码限制

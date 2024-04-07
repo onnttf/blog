@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/59
-updatedAt: 2024-02-24T01:48:31+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # Keep using short password on MacOS(2024)

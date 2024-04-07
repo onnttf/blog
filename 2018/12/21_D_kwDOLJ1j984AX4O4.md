@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: MacOS
 discussion: https://github.com/onnttf/blog/discussions/21
-updatedAt: 2024-02-24T00:35:13+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # iTerm2 一个更好用的终端

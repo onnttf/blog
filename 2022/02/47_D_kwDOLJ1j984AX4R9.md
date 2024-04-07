@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: MacOS, Git
 discussion: https://github.com/onnttf/blog/discussions/47
-updatedAt: 2024-02-24T01:06:11+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # MacOS 升级 Git 版本

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/57
-updatedAt: 2024-02-26T10:46:53+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # 掌握书签文件：高效管理收藏

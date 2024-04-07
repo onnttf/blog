@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/12
-updatedAt: 2024-02-24T00:26:24+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # URI、URL、URN 的差异与联系

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: MacOS
 discussion: https://github.com/onnttf/blog/discussions/43
-updatedAt: 2024-02-24T01:03:02+08:00
+updatedAt: 2024-04-08T01:04:58+08:00
 ---
 
 # MacOS 系统显示隐藏文件

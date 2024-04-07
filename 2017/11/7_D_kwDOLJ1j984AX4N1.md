@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/7
-updatedAt: 2024-02-24T00:21:33+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # 搭建 Hexo Blog

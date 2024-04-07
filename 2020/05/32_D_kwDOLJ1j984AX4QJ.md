@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/32
-updatedAt: 2024-02-24T00:49:19+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # 上传应用时，卡在 Authenticating with the App Store

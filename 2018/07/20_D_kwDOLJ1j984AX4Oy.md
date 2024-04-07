@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/20
-updatedAt: 2024-02-24T00:32:40+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # SiriKit 人机界面指南

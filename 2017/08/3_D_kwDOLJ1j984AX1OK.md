@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: iOS
 discussion: https://github.com/onnttf/blog/discussions/3
-updatedAt: 2024-02-24T00:17:03+08:00
+updatedAt: 2024-04-08T01:04:59+08:00
 ---
 
 # Widget 开发 - 配置篇
