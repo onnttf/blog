@@ -15,6 +15,8 @@ function discussionToBlog(discussion) {
     const category = discussion.category
 
     const blog = {
+        number: discussion.number,
+        id: discussion.id,
         key,
         title: discussion.title.trim(),
         category: {
