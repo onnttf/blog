@@ -1,0 +1,24 @@
+name: Publish discussion from repository
+
+on:
+    workflow_dispatch:
+
+jobs:
+    publish_discussion:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Setup Node.js environment
+              uses: actions/setup-node@v4
+
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Publish discussion from repository
+              run: |
+                  # Install dependencies and run the script
+                  npm install && node scripts/discussion/publish_discussion.js
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

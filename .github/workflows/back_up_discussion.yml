@@ -1,0 +1,43 @@
+name: Back up discussion to repository
+
+on:
+    workflow_dispatch:
+
+jobs:
+    back_up_discussion:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Node.js environment
+              uses: actions/setup-node@v4
+
+            - name: Back up discussion to repository
+              run: |
+                  # Install dependencies and run the script
+                  npm install && node scripts/discussion/back_up_discussion.js
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # - name: Format markdown files
+            #   uses: DavidAnson/markdownlint-cli2-action@v15
+            #   with:
+            #       config: '.markdownlint.json'
+            #       globs: |
+            #           **/*.md
+            #           !**/node_modules
+            #       fix: true
+            #   continue-on-error: true
+
+            - name: Commit and push changes
+              run: |
+                git config user.name github-actions
+                git config user.email github-actions@github.com
+                git add discussions blog_data.json README.md SUMMARY.md Announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
+                git diff-index --quiet HEAD || git commit -m "chore: lint markdown files"
+                git push origin HEAD:${{ github.ref }}
+              continue-on-error: true
