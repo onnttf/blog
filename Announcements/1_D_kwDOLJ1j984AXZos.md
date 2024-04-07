@@ -6,7 +6,7 @@ discussion: https://github.com/onnttf/blog/discussions/1
 updatedAt: 2024-01-26T14:14:46+08:00
 ---
 
-# Welcome to blog Discussions!
+# Welcome to blog Discussions
 
 <!--
     ✏️ Optional: Customize the content below to let your community know what you intend to use Discussions for.
