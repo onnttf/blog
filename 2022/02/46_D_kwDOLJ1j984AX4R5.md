@@ -1,5 +1,5 @@
 ---
-author: ZHANG PENG
+author: Zhang Peng
 category: 🙌 Show and tell
 labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/46

@@ -1,5 +1,5 @@
 ---
-author: ZHANG PENG
+author: Zhang Peng
 category: 📣 Announcements
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/1
