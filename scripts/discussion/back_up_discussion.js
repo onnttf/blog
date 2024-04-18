@@ -34,6 +34,9 @@ async function main() {
         if (v.authorAssociation !== constant.Discussion.AuthorAssociation.OWNER) {
             continue
         }
+        if (v.category.slug == constant.Discussion.Category.DRAFT) {
+            continue
+        }
         finalDiscussions.push(v)
         const blog = discussionToBlog(v)
         const oldBlog = key2OldBlog[blog.key]

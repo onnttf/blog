@@ -1,6 +1,7 @@
 const DiscussionCategory = {
     ANNOUNCEMENTS: 'announcements',
-    SHOWANDTELL: 'show-and-tell'
+    SHOWANDTELL: 'show-and-tell',
+    DRAFT: 'draft',
 }
 
 const DiscussionAuthorAssociation = {
