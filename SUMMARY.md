@@ -2,6 +2,8 @@
 
 - [Announcements](Announcements)
   - [Welcome to blog Discussions](Announcements/1_D_kwDOLJ1j984AXZos.md)
+- [2024/4](2024/4)
+  - [日历订阅源指北：创建、发布、使用](2024/4/62_D_kwDOLJ1j984AYxXw.md)
 - [2024/3](2024/3)
   - [聚焦问题本质：避免陷入 XY 问题](2024/3/61_D_kwDOLJ1j984AYYKo.md)
   - [古老的记数艺术](2024/3/60_D_kwDOLJ1j984AYJuP.md)
