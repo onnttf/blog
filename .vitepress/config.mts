@@ -59,7 +59,10 @@ export default defineConfig({
     themeConfig: {
         nav: [],
         sidebar,
-        socialLinks: [{ icon: 'github', link: 'https://github.com/onnttf' }],
+        socialLinks: [
+            { icon: 'twitter', link: 'https://twitter.com/onnttf' },
+            { icon: 'github', link: 'https://github.com/onnttf' }
+        ],
         search: {
             provider: 'local'
         },
