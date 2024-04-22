@@ -3,18 +3,18 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/62
-updatedAt: 2024-04-19T10:32:09+08:00
+updatedAt: 2024-04-22T13:03:18+08:00
 ---
 
 # 日历订阅源指北：创建、发布、使用
 
 ![image](https://file.onnttf.site/2024/4/18/1.jpg)
 
-在数字化时代，日历已经成为我们生活中不可或缺的一部分，助力我们合理安排时间、安排任务，并在重要事件来临时及时提醒我们。随着智能手机和电脑的普及，日历应用程序成为了不可或缺的工具。然而，随着信息量的增加和日程的复杂性，传统的手动输入日程的方式已经无法满足我们的需求。日历订阅源的出现填补了这一空缺，为我们提供了更为便捷的时间管理方式。本文将深入探讨日历订阅源的概念，并详细介绍如何创建、发布和使用它，以便更好地利用这一利器。
+在信息化时代，日历已经成为我们生活中不可或缺的一部分，帮助我们合理规划时间，安排任务，及时提醒我们即将临近的重要事件。随着智能手机和电脑的普及，日历应用程序也已经发展成为我们生活中的必备工具。但是，随着信息的增多和日程变得越来越复杂，传统的手动录入日程的方式已经无法满足现代生活的需求。因此，日历订阅源的出现就显得至关重要，它方便我们进行时间管理，帮助我们高效应对复杂日程。本文将详细介绍日历订阅源的概念，并阐释如何创建、发布以及使用日历订阅源，以帮助您全面提升时间管理的效率。
 
 ## 什么是日历订阅源
 
-日历订阅源是一种通过网络发布的日历数据，通过订阅将各种类型的日程事件自动同步到个人日历中。用户可以订阅特定的日历，例如个人日程、假期、体育赛事、会议等，无需手动添加每一个事件，只需通过链接将日历添加到自己的日历应用中即可。这样一来，用户可以轻松地将外部日程和事件与自己的日历同步，无需手动添加，极大地方便了时间管理和日程安排。
+日历订阅源是一种通过网络发布的日历数据，用户可以通过订阅将各类日程事件自动同步到个人日历应用程序中。用户可以按需订阅各种特定的日历，如个人日程、假期、体育赛事、会议等，无需手动逐一添加每个事件，只需通过链接就能将日历添加至个人日历应用中，实现日程数据的自动更新和同步。这种方式让用户能轻松地将外部日程和事件与个人日历整合在一起，显著提高了时间管理和日程安排的效率。
 
 ## 常见的日历订阅源
 
@@ -30,7 +30,7 @@ updatedAt: 2024-04-19T10:32:09+08:00
 
 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 是一种通用的日历数据交换格式，被广泛应用于日历应用程序之间的数据共享。 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 文件的扩展名通常为 `.ical`、`.ics`、`.ifb` 或 `.iCalendar`。它优势在于简单易用，可以轻松地与各种日历应用程序和设备兼容。[iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 文件可以包含事件、任务、提醒以及其他日程安排，使其成为个人和团队日程管理的理想选择。
 
-无论是 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/)、[CalDAV](https://en.wikipedia.org/wiki/CalDAV) 还是 [Exchange Calendar](https://support.microsoft.com/en-us/office/introduction-to-the-outlook-calendar-d94c5203-77c7-48ec-90a5-2e2bc10bd6f8)，它们都是为了解决日程管理和共享而设计的不同技术方案。
+无论是 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/)、[CalDAV](https://en.wikipedia.org/wiki/CalDAV) 还是 [Exchange Calendar](https://support.microsoft.com/en-us/office/introduction-to-the-outlook-calendar-d94c5203-77c7-48ec-90a5-2e2bc10bd6f8)，这些都是针对日程管理和信息共享问题设计的不同的技术方案。
 
 - [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 作为通用的日历数据交换格式，适用于简单的日程共享和导入导出操作
 - [CalDAV](https://en.wikipedia.org/wiki/CalDAV) 通过Web协议实现了跨平台和远程访问的日历同步
@@ -38,13 +38,13 @@ updatedAt: 2024-04-19T10:32:09+08:00
 
 ## 日历订阅源的制作及使用
 
-接下来的内容中，我们将以油价调整时间为例，详细介绍如何制作一个 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 格式的日历订阅源。
+接下来的内容中，我们将以油价调整时间为例，详细介绍如何创建一个 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 格式的日历订阅源。
 
 ### iCalendar 的基本规范
 
-`iCalendar` 文件是由一块块以 `BEGIN:` 开头、`END:` 结尾的部分组成。主体是 `VCALENDAR`，里面包罗了其他部分，比如说，有用来表示事件的 `VEVENT`，有用来标记待办事项的 `VTODO`，还有个 `VJOURNAL` 用来写日记，还有 `VTIMEZONE` 用来表示时区信息。同一种类型的部分允许荣富。比如，一个 `iCalendar` 文件里可以有多个描述不同事件的 `VEVENT`。
+`iCalendar` 文件由多个部分组成，其中的每个部分都以 `BEGIN:` 标识开启，并以 `END:` 标识结束。文件的主体部分是 `VCALENDAR`，它作为容器，容纳了文件中的其他所有部分。这些部分包括 `VEVENT`（用于描述事件），`VTODO`（标记待办事项），`VJOURNAL`（用于记录日记），以及 `VTIMEZONE`（表示时区信息）。值得一提的是，同一类型的部分可以在 iCalendar 文件中多次出现。举例来说，一个文件可能包含多个 VEVENT 部分，每个部分描述了一个独立的事件。
 
-详细的规范可以通过查阅 [iCalendar - Design](https://en.wikipedia.org/wiki/iCalendar#Design) 或者 [iCalendar (RFC 5545)](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 自行学习。
+如果您希望更深入地理解 `iCalendar` 标准规范，我建议您查阅 [iCalendar - Design](https://en.wikipedia.org/wiki/iCalendar#Design) 和 [iCalendar (RFC 5545)](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/)，这两个链接内包含了丰富的内容。
 
 ### 编写日历订阅源
 
@@ -84,17 +84,17 @@ END:VCALENDAR
 
 上面是一个简单的 `iCalendar` 文件，用来表示一次油价调整的情况。它包含了日历的基本信息、时区信息以及一个事件，让我们解读一下其中的信息：
 
-- PRODID：该属性指定了生成此日历文件的产品标识符，通常以 `-//` 开头，其后是组织名或网站域名，最后是产品或服务的名称和语言代码。在我们的例子中，`PRODID` 为 `-//onnttf.site//油价调整时间表//CN`，表示此日历文件是由 `onnttf.site` 网站生成的油价调整时间表。
+- PRODID：这个属性用于指定生成该日历文件的产品标识符。这个标识符通常以 -// 作为前缀，后边跟随着的是组织名或网站域名，最后是产品或服务的名称以及语言代码。在我们的示例中，PRODID 的值为 -//onnttf.site//油价调整时间表//CN，说明该日历文件是由 onnttf.site 网站生成的，用于展示油价调整时间表。
 
-- VERSION： 指定了 `iCalendar` 规范的版本，这里是 `2.0`。
+- VERSION：这个属性代表 `iCalendar` 规范的版本，例如我们的示例中，它的版本为 `2.0`。
 
-- CALSCALE：指定了日历的历法，`GREGORIAN` 表示使用公历。
+- CALSCALE：这部分定义了日历所采用的历法。在我们的示例中，`GREGORIAN` 表明我们正在使用公历作为基础。
 
-- METHOD：指定了创建或更新日历数据的方法，这里是 `PUBLISH`，表示发布日历信息，即将日历数据发送给订阅者。
+- METHOD：这个字段定义了创建或更新日历数据的方法。在我们的例子中，它是 `PUBLISH`，意即是发布日历信息，将日历数据发送给订阅者。
 
-- VTIMEZONE：这部分定义了时区信息。在我们的例子中，时区被设置为 `Asia/Shanghai`。
+- VTIMEZONE：这部分定义了时区信息。在我们的示例中，时区被设置为 `Asia/Shanghai`。
 
-- VEVENT：这部分定义了一个事件。在我们的例子中，事件是关于油价调整的信息。
+- VEVENT：这部分定义了事件的各种信息。在我们的示例中，这个事件是关于油价的调整。
 
   - UID：事件的唯一标识符。
   - SUMMARY：事件的摘要，简要描述了事件的内容。
@@ -107,20 +107,26 @@ END:VCALENDAR
   - LAST-MODIFIED：事件的最后修改时间。
   - SEQUENCE：事件序列号
 
-接下来，我们需要查询到油价调整时间，然后按照上面 `VEVENT` 的格式编写新的事件，然后保存至 `oil_price_adjustment.ics` 文件。
-
-编写完成后，可以在 [iCalendar Validator](https://iCalendar.org/validator.html) 进行格式校验，以保证我们的文件没有错误。
+现在让我们进入下一步。首先，我们需要找出油价调整的准确时间。拿到这些信息后，我们就可以按照上文中 `VEVENT` 的格式来编写新的事件，最后将这些内容保存到 `oil_price_adjustment.ics` 文件中。完成后，可以在 [iCalendar Validator](https://iCalendar.org/validator.html) 进行格式校验，以保证我们的文件没有错误。
 
 ### 发布日历订阅源
 
-为了让别人能够方便地订阅油价调整时间表，我选择使用 [GitHub](https://github.com) 进行托管。只需要创建一个 `Public` 的仓库，然后将上面的 `oil_price_adjustment.ics` 上传进去即可。
+为了更方便的让他人订阅油价调整时间表，我选择使用 [GitHub](https://github.com/) 进行托管。步骤其实非常简单，只需要创建一个 `Public` 的仓库，然后将我们刚刚创建的 `oil_price_adjustment.ics` 文件上传进去。这样，任何人都可以轻松访问并订阅这份时间表了。
 
-将日历订阅源发布到云端而不是直接使用日历源文件主要出于便利性和实时更新的考虑。这样做可以让用户随时随地访问并订阅日历，同时实现即时更新，只需更新一次源文件，所有订阅者的日历就会自动同步更新，省去了手动更新的麻烦。云端发布还提供了更广泛的访问途径，用户可以通过各种设备和平台访问这些日历订阅源，使得信息的共享和传播更加便捷和高效。
+通过将日历订阅源发布至云端，我们能够带来更多的便利性和实时性。这种方式让用户随时随地浏览并订阅日历，一旦源文件发生更新，所有订阅者的日历就会自动进行同步，无需手动操作。无论用户所使用的设备和平台是什么，他们都可以轻松获取到这些日历订阅源，使得信息的共享和传播过程变得更加便捷和高效。
 
 ### 使用日历订阅源
 
-选择一个支持添加订阅源的日历软件，然后订阅上面日历订阅源的地址即可。
+在使用时，你可以选择一个支持订阅功能的日历软件，来订阅我们提供的日历[订阅链接](https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics)。如苹果自带的日历，具体步骤如下：
+
+1. 打开日历应用：在您的苹果电脑上，找到并打开日历应用程序。
+2. 点击菜单栏中的“文件”选项。
+3. 在文件菜单中选择“新建日历订阅”。
+4. 在弹出的窗口中，输入我们提供的日历订阅链接。
+5. 输入完毕后，点击“订阅”即可。
+6. 可以根据您的个人需要调整一些设置，例如更新频率、提醒设置等。
+7. 在完成以上步骤后，点击“好”或“完成”按钮，即可完成订阅。
 
 ## 总结
 
-我已经制作了一份 2024 年的油价调整时间表，并将其上传至[此仓库](https://github.com/onnttf/calendar/blob/main/oil_price_adjustment.ics)。我将持续更新该时间表，因此您可以直接订阅[此链接](https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics)。
+`2024` 年油价调整时间表已创建完成并上传至[此仓库](https://github.com/onnttf/calendar/blob/main/oil_price_adjustment.ics)。该订阅将持续进行更新，您可通过订阅[此链接](https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics)获取最新的调整信息。
