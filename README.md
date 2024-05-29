@@ -7,7 +7,8 @@ Just a repository for blogs. :)
 | Category | Article | Labels | Last Updated |
 | --- | --- | --- | --- |
 | [📣 Announcements](https://github.com/onnttf/blog/discussions/categories/announcements?discussions_q=) | [Welcome to blog Discussions](Announcements/1_D_kwDOLJ1j984AXZos.md) | - | 2024-04-08T00:55:15+08:00 |
-| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [日历订阅源指北：创建、发布、使用](2024/4/62_D_kwDOLJ1j984AYxXw.md) | - | 2024-04-22T13:03:18+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [SMART 原则：高效完成目标的秘诀](2024/5/64_D_kwDOLJ1j984AZuG8.md) | - | 2024-05-29T10:25:26+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [日历订阅源指北：创建、发布、使用](2024/4/62_D_kwDOLJ1j984AYxXw.md) | - | 2024-04-23T15:14:57+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md) | - | 2024-04-08T01:04:59+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [上传应用时，卡在 Authenticating with the App Store](2020/05/32_D_kwDOLJ1j984AX4QJ.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS) | 2024-04-08T01:04:59+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [如何创建一个公有 Pod 库](2019/06/29_D_kwDOLJ1j984AX4P1.md) | [iOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AiOS), [COCOAPODS](https://github.com/onnttf/blog/discussions?discussions_q=label%3ACOCOAPODS) | 2024-04-08T01:04:59+08:00 |

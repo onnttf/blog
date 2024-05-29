@@ -23,6 +23,29 @@
         "markdown_file_path": "Announcements/1_D_kwDOLJ1j984AXZos.md"
     },
     {
+        "number": 64,
+        "id": "D_kwDOLJ1j984AZuG8",
+        "key": "64_D_kwDOLJ1j984AZuG8",
+        "title": "SMART 原则：高效完成目标的秘诀",
+        "category": {
+            "emoji": ":raised_hands:",
+            "emojiHTML": "<div>🙌</div>",
+            "id": "DIC_kwDOLJ1j984CctHm",
+            "name": "Show and tell",
+            "slug": "show-and-tell",
+            "url": "https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=",
+            "display": "🙌 Show and tell"
+        },
+        "labels": [],
+        "group": "2024/5",
+        "author": "Zhang Peng",
+        "discussion_url": "https://github.com/onnttf/blog/discussions/64",
+        "created_at": "2024-05-28T20:19:17+08:00",
+        "updated_at": "2024-05-29T10:25:26+08:00",
+        "discussion_file_path": "discussions/64_D_kwDOLJ1j984AZuG8.json",
+        "markdown_file_path": "2024/5/64_D_kwDOLJ1j984AZuG8.md"
+    },
+    {
         "number": 62,
         "id": "D_kwDOLJ1j984AYxXw",
         "key": "62_D_kwDOLJ1j984AYxXw",
@@ -41,7 +64,7 @@
         "author": "Zhang Peng",
         "discussion_url": "https://github.com/onnttf/blog/discussions/62",
         "created_at": "2024-04-12T10:29:57+08:00",
-        "updated_at": "2024-04-22T13:03:18+08:00",
+        "updated_at": "2024-04-23T15:14:57+08:00",
         "discussion_file_path": "discussions/62_D_kwDOLJ1j984AYxXw.json",
         "markdown_file_path": "2024/4/62_D_kwDOLJ1j984AYxXw.md"
     },

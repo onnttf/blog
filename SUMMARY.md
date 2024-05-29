@@ -2,6 +2,8 @@
 
 - [Announcements](Announcements)
   - [Welcome to blog Discussions](Announcements/1_D_kwDOLJ1j984AXZos.md)
+- [2024/5](2024/5)
+  - [SMART 原则：高效完成目标的秘诀](2024/5/64_D_kwDOLJ1j984AZuG8.md)
 - [2024/4](2024/4)
   - [日历订阅源指北：创建、发布、使用](2024/4/62_D_kwDOLJ1j984AYxXw.md)
 - [2024/3](2024/3)
