@@ -1,9 +1,9 @@
-name: Cleanup old workflow runs
+name: Clean up old workflow runs
 
 on:
   workflow_dispatch: 
   # schedule:
-  #   - cron: '0 0 * * *' # 每天午夜运行一次
+  #   - cron: '0 0 * * *' # Run once every midnight
 
 permissions:
   contents: read
@@ -28,22 +28,22 @@ jobs:
         run: |
           #!/bin/bash
 
-          # 设置需要保留的天数
-          DAYS_TO_KEEP=30
+          # Set the number of days to keep
+          DAYS_TO_KEEP=7
           REPO=${{ github.repository }}
 
-          # 获取30天前的日期
+          # Get the date before the specified number of days
           cutoff_date=$(date -d "-$DAYS_TO_KEEP days" --utc +%Y-%m-%dT%H:%M:%SZ)
 
           echo "Fetching workflow runs for repository $REPO older than $cutoff_date..."
 
-          # 获取所有工作流
+          # Get all workflows
           workflows=$(gh api -H "Accept: application/vnd.github+json" /repos/$REPO/actions/workflows | jq -r '.workflows[].id')
 
           for workflow_id in $workflows; do
             echo "Processing workflow ID: $workflow_id"
 
-            # 获取工作流运行记录
+            # Get workflow run records
             runs=$(gh api -H "Accept: application/vnd.github+json" "/repos/$REPO/actions/workflows/$workflow_id/runs?per_page=100&status=completed" | jq -r --arg cutoff_date "$cutoff_date" '.workflow_runs[] | select(.created_at < $cutoff_date) | .id')
 
             for run_id in $runs; do
