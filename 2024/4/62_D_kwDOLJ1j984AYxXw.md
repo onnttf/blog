@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/62
-updatedAt: 2024-04-23T15:14:57+08:00
+updatedAt: 2024-06-05T14:37:45+08:00
 ---
 
 # 日历订阅源指北：创建、发布、使用
@@ -117,16 +117,20 @@ END:VCALENDAR
 
 ### 使用日历订阅源
 
-在使用时，你可以选择一个支持订阅功能的日历软件，来订阅我们提供的日历[订阅链接](https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics)。如苹果自带的日历，具体步骤如下：
+下面以苹果日历应用为例：
 
-1. 打开日历应用：在您的苹果电脑上，找到并打开日历应用程序。
-2. 点击菜单栏中的“文件”选项。
-3. 在文件菜单中选择“新建日历订阅”。
-4. 在弹出的窗口中，输入我们提供的日历订阅链接。
-5. 输入完毕后，点击“订阅”即可。
-6. 可以根据您的个人需要调整一些设置，例如更新频率、提醒设置等。
-7. 在完成以上步骤后，点击“好”或“完成”按钮，即可完成订阅。
+1. 在您的苹果电脑上，找到并打开日历应用程序
+2. 点击菜单栏中的“文件”选项
+3. 在文件菜单中选择“新建日历订阅”
+4. 在弹出的窗口中，输入想要订阅的链接，如：<https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics>
+5. 输入完毕后，点击“订阅”即可
+6. 可以根据您的个人需要调整一些设置，例如更新频率、提醒设置等
+7. 在完成以上步骤后，点击“好”或“完成”按钮，即可完成订阅
+
+现在，您可以在日历应用中查看油价调整信息了。
+
+> 除了苹果日历应用，您也可以选择其他支持订阅功能的日历应用，例如 `Google Calendar`、`Outlook` 等。
 
 ## 总结
 
-`2024` 年油价调整时间表已创建完成并上传至[此仓库](https://github.com/onnttf/calendar/blob/main/oil_price_adjustment.ics)。该订阅将持续进行更新，您可通过订阅[此链接](https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics)获取最新的调整信息。
+`2024` 年油价调整时间表已创建完成并上传至[此仓库](https://github.com/onnttf/calendar)。该时间表将持续更新，您可通过订阅 <https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics> 获取最新的调整信息。
