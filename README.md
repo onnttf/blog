@@ -7,6 +7,7 @@ Just a repository for blogs. :)
 | Category | Article | Labels | Last Updated |
 | --- | --- | --- | --- |
 | [📣 Announcements](https://github.com/onnttf/blog/discussions/categories/announcements?discussions_q=) | [Welcome to blog Discussions](Announcements/1_D_kwDOLJ1j984AXZos.md) | - | 2024-04-08T00:55:15+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [初识 Go Modules](2022/02/45_D_kwDOLJ1j984AX4R1.md) | [Golang](https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang) | 2024-08-30T14:19:52+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [日历订阅源指北：创建、发布、使用](2024/4/62_D_kwDOLJ1j984AYxXw.md) | - | 2024-06-05T14:37:45+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [SMART 原则：高效完成目标的秘诀](2024/5/64_D_kwDOLJ1j984AZuG8.md) | - | 2024-05-29T10:25:26+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md) | - | 2024-04-08T01:04:59+08:00 |
@@ -52,7 +53,6 @@ Just a repository for blogs. :)
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [神奇的位运算](2022/03/48_D_kwDOLJ1j984AX4SD.md) | - | 2024-04-08T01:04:58+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [MacOS 升级 Git 版本](2022/02/47_D_kwDOLJ1j984AX4R9.md) | [MacOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AMacOS), [Git](https://github.com/onnttf/blog/discussions?discussions_q=label%3AGit) | 2024-04-08T01:04:58+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [快速生成表结构的结构体](2022/02/46_D_kwDOLJ1j984AX4R5.md) | [Golang](https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang) | 2024-04-08T01:04:58+08:00 |
-| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [如何创建自己 module](2022/02/45_D_kwDOLJ1j984AX4R1.md) | [Golang](https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang) | 2024-04-08T01:04:58+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [搞懂 Linux 的文件权限](2022/01/44_D_kwDOLJ1j984AX4Rw.md) | - | 2024-04-08T01:04:58+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [MacOS 系统显示隐藏文件](2021/12/43_D_kwDOLJ1j984AX4Rk.md) | [MacOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AMacOS) | 2024-04-08T01:04:58+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [解除 MacOS 系统的密码限制](2021/12/42_D_kwDOLJ1j984AX4RQ.md) | [MacOS](https://github.com/onnttf/blog/discussions?discussions_q=label%3AMacOS) | 2024-04-08T01:04:58+08:00 |

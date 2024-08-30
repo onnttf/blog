@@ -23,6 +23,35 @@
         "markdown_file_path": "Announcements/1_D_kwDOLJ1j984AXZos.md"
     },
     {
+        "number": 45,
+        "id": "D_kwDOLJ1j984AX4R1",
+        "key": "45_D_kwDOLJ1j984AX4R1",
+        "title": "初识 Go Modules",
+        "category": {
+            "emoji": ":raised_hands:",
+            "emojiHTML": "<div>🙌</div>",
+            "id": "DIC_kwDOLJ1j984CctHm",
+            "name": "Show and tell",
+            "slug": "show-and-tell",
+            "url": "https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=",
+            "display": "🙌 Show and tell"
+        },
+        "labels": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZsiWg",
+                "name": "Golang",
+                "url": "https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang"
+            }
+        ],
+        "group": "2022/02",
+        "author": "Zhang Peng",
+        "discussion_url": "https://github.com/onnttf/blog/discussions/45",
+        "created_at": "2022-02-01T08:00:00+08:00",
+        "updated_at": "2024-08-30T14:19:52+08:00",
+        "discussion_file_path": "discussions/45_D_kwDOLJ1j984AX4R1.json",
+        "markdown_file_path": "2022/02/45_D_kwDOLJ1j984AX4R1.md"
+    },
+    {
         "number": 62,
         "id": "D_kwDOLJ1j984AYxXw",
         "key": "62_D_kwDOLJ1j984AYxXw",
@@ -1233,35 +1262,6 @@
         "updated_at": "2024-04-08T01:04:58+08:00",
         "discussion_file_path": "discussions/46_D_kwDOLJ1j984AX4R5.json",
         "markdown_file_path": "2022/02/46_D_kwDOLJ1j984AX4R5.md"
-    },
-    {
-        "number": 45,
-        "id": "D_kwDOLJ1j984AX4R1",
-        "key": "45_D_kwDOLJ1j984AX4R1",
-        "title": "如何创建自己 module",
-        "category": {
-            "emoji": ":raised_hands:",
-            "emojiHTML": "<div>🙌</div>",
-            "id": "DIC_kwDOLJ1j984CctHm",
-            "name": "Show and tell",
-            "slug": "show-and-tell",
-            "url": "https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=",
-            "display": "🙌 Show and tell"
-        },
-        "labels": [
-            {
-                "id": "LA_kwDOLJ1j988AAAABiZsiWg",
-                "name": "Golang",
-                "url": "https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang"
-            }
-        ],
-        "group": "2022/02",
-        "author": "Zhang Peng",
-        "discussion_url": "https://github.com/onnttf/blog/discussions/45",
-        "created_at": "2022-02-01T08:00:00+08:00",
-        "updated_at": "2024-04-08T01:04:58+08:00",
-        "discussion_file_path": "discussions/45_D_kwDOLJ1j984AX4R1.json",
-        "markdown_file_path": "2022/02/45_D_kwDOLJ1j984AX4R1.md"
     },
     {
         "number": 44,
