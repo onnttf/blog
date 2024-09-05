@@ -7,7 +7,8 @@ Just a repository for blogs. :)
 | Category | Article | Labels | Last Updated |
 | --- | --- | --- | --- |
 | [📣 Announcements](https://github.com/onnttf/blog/discussions/categories/announcements?discussions_q=) | [Welcome to blog Discussions](Announcements/1_D_kwDOLJ1j984AXZos.md) | - | 2024-04-08T00:55:15+08:00 |
-| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [初识 Go Modules](2022/02/45_D_kwDOLJ1j984AX4R1.md) | [Golang](https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang) | 2024-08-30T14:19:52+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [Go 编程入门：从实践中学习核心概念](2024/8/65_D_kwDOLJ1j984AbBGG.md) | - | 2024-09-05T20:38:31+08:00 |
+| [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [初识 Go Modules](2022/02/45_D_kwDOLJ1j984AX4R1.md) | [Golang](https://github.com/onnttf/blog/discussions?discussions_q=label%3AGolang) | 2024-08-30T15:50:07+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [日历订阅源指北：创建、发布、使用](2024/4/62_D_kwDOLJ1j984AYxXw.md) | - | 2024-06-05T14:37:45+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [SMART 原则：高效完成目标的秘诀](2024/5/64_D_kwDOLJ1j984AZuG8.md) | - | 2024-05-29T10:25:26+08:00 |
 | [🙌 Show and tell](https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=) | [掌握书签文件：高效管理收藏](2023/07/57_D_kwDOLJ1j984AX4Tf.md) | - | 2024-04-08T01:04:59+08:00 |

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/45
-updatedAt: 2024-08-30T14:19:52+08:00
+updatedAt: 2024-08-30T15:50:07+08:00
 ---
 
 # 初识 Go Modules
@@ -266,5 +266,5 @@ go env -w GOPRIVATE="*.abc.com"
 
 ## 作业
 
-1. 创建自己 `lib` 库
+1. 创建 `lib` 库
 2. 了解一个服务端项目由哪些部分组成

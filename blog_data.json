@@ -23,6 +23,29 @@
         "markdown_file_path": "Announcements/1_D_kwDOLJ1j984AXZos.md"
     },
     {
+        "number": 65,
+        "id": "D_kwDOLJ1j984AbBGG",
+        "key": "65_D_kwDOLJ1j984AbBGG",
+        "title": "Go 编程入门：从实践中学习核心概念",
+        "category": {
+            "emoji": ":raised_hands:",
+            "emojiHTML": "<div>🙌</div>",
+            "id": "DIC_kwDOLJ1j984CctHm",
+            "name": "Show and tell",
+            "slug": "show-and-tell",
+            "url": "https://github.com/onnttf/blog/discussions/categories/show-and-tell?discussions_q=",
+            "display": "🙌 Show and tell"
+        },
+        "labels": [],
+        "group": "2024/8",
+        "author": "Zhang Peng",
+        "discussion_url": "https://github.com/onnttf/blog/discussions/65",
+        "created_at": "2024-08-22T17:58:21+08:00",
+        "updated_at": "2024-09-05T20:38:31+08:00",
+        "discussion_file_path": "discussions/65_D_kwDOLJ1j984AbBGG.json",
+        "markdown_file_path": "2024/8/65_D_kwDOLJ1j984AbBGG.md"
+    },
+    {
         "number": 45,
         "id": "D_kwDOLJ1j984AX4R1",
         "key": "45_D_kwDOLJ1j984AX4R1",
@@ -47,7 +70,7 @@
         "author": "Zhang Peng",
         "discussion_url": "https://github.com/onnttf/blog/discussions/45",
         "created_at": "2022-02-01T08:00:00+08:00",
-        "updated_at": "2024-08-30T14:19:52+08:00",
+        "updated_at": "2024-08-30T15:50:07+08:00",
         "discussion_file_path": "discussions/45_D_kwDOLJ1j984AX4R1.json",
         "markdown_file_path": "2022/02/45_D_kwDOLJ1j984AX4R1.md"
     },

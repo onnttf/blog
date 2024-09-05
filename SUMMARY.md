@@ -2,6 +2,8 @@
 
 - [Announcements](Announcements)
   - [Welcome to blog Discussions](Announcements/1_D_kwDOLJ1j984AXZos.md)
+- [2024/8](2024/8)
+  - [Go 编程入门：从实践中学习核心概念](2024/8/65_D_kwDOLJ1j984AbBGG.md)
 - [2024/5](2024/5)
   - [SMART 原则：高效完成目标的秘诀](2024/5/64_D_kwDOLJ1j984AZuG8.md)
 - [2024/4](2024/4)
