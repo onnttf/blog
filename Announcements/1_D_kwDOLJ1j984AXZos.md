@@ -6,7 +6,7 @@ discussion: https://github.com/onnttf/blog/discussions/1
 updatedAt: 2024-09-26T17:17:49+08:00
 ---
 
-# Welcome to my blog!
+# Welcome to my blog
 
 ## 👋 Welcome
 
