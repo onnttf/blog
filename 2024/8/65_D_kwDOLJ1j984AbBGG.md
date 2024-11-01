@@ -1,7 +1,7 @@
 ---
 author: Zhang Peng
 category: 🙌 Show and tell
-labels: 
+labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/65
 updatedAt: 2024-09-05T20:38:31+08:00
 ---

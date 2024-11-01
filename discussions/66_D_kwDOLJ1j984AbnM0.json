@@ -1,0 +1,29 @@
+{
+    "id": "D_kwDOLJ1j984AbnM0",
+    "labels": {
+        "nodes": []
+    },
+    "category": {
+        "id": "DIC_kwDOLJ1j984CctHm",
+        "name": "Show and tell",
+        "emoji": ":raised_hands:",
+        "emojiHTML": "<div>🙌</div>",
+        "slug": "show-and-tell"
+    },
+    "number": 66,
+    "title": "System Development Template",
+    "body": "## Project Overview\r\n\r\n- **Purpose**: Describe the goal of the system, such as \"What problem does this system solve?\" or \"What are the expected outcomes?\"\r\n- **Stakeholders**: List key stakeholders involved in the project, specifying their roles (e.g., Product Owner, End Users).\r\n\r\n## Requirements Gathering\r\n\r\n- **Use Cases**: Document specific scenarios relevant to the system. Consider including user stories or requirements for a user-centered perspective.\r\n\r\n## Technical Design\r\n\r\n- **Architecture**\r\n  - **Style**: Choose an architecture style (e.g., microservices, monolithic) and provide a brief description of each style (e.g., pros and cons).\r\n  - **Tech Stack**: Specify programming languages, frameworks, and databases, along with a justification for technology choices.\r\n- **Technical Documentation**: Create comprehensive technical documentation that provides detailed information on the system architecture, design ideas, and operational procedures.\r\n  - **Data Model**: Define the schema for key entities and consider including an example data model diagram.\r\n  - **API Design**: Outline key API endpoints and operations, possibly including an example API specification (e.g., using OpenAPI).\r\n  - **Security Measures**: Define authentication and data protection methods, expanding on common practices such as encryption standards.\r\n\r\n## Development and Testing\r\n\r\n- **Environment Setup**\r\n  - Configure development environments, including recommended tools and configurations (e.g., IDEs, libraries) for version control (e.g., Git) and development frameworks.\r\n- **Feature Implementation**\r\n  - Identify and prioritize key features and functionalities to be developed, ensuring alignment with project goals. Consider using a prioritization framework (like MoSCoW).\r\n- **System Integration**\r\n  - Identify and document integration points with existing systems, detailing any dependencies and required interfaces.\r\n- **Testing**\r\n  - **Unit Testing**: Ensure component functionality.\r\n  - **Integration Testing**: Verify component interactions.\r\n  - **User Acceptance Testing (UAT)**: Validate against user requirements.\r\n  - **Security Testing**: Conduct vulnerability assessments.\r\n  - **Performance Testing**: Ensure the system meets performance criteria.\r\n\r\n## Deployment and Release\r\n\r\n- **Preparation for Release**\r\n  - Register domain name.\r\n  - Configure machines and servers.\r\n  - Create necessary databases and tables.\r\n- **CI/CD Pipeline**: Automate testing and deployment processes. Define tools and best practices for the CI/CD process.\r\n- **Release**: Deploy the system in production.\r\n- **Performance Monitoring**: Implement monitoring tools.\r\n\r\n## Post-Release and Maintenance\r\n\r\n- **User Documentation**: Create guides for end-users to navigate and utilize the system.\r\n- **User Training**: Provide user training sessions to ensure effective usage of the system.\r\n- **Feedback Collection**: Gather user feedback for improvements.\r\n- **Iterate**: Update the system based on feedback and fix bugs.\r\n- **Regular Updates**: Keep the system secure and up-to-date.\r\n\r\n## Notes for Implementation\r\n\r\n- Adapt the template based on your specific context and organizational needs.\r\n- Collaborate closely with stakeholders throughout the process to ensure alignment with requirements.\r\n- Consider scalability and future enhancements during the design phase to facilitate growth.\r\n- Encourage teams to include lessons learned or retrospective notes as part of the iterative process.\r\n- Emphasize the importance of using collaborative tools for project transparency.\r\n",
+    "author": {
+        "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-09-26T09:06:46Z",
+    "updatedAt": "2024-09-26T09:07:03Z",
+    "repository": {
+        "id": "R_kgDOLJ1j9w",
+        "url": "https://github.com/onnttf/blog",
+        "resourcePath": "/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/66",
+    "resourcePath": "/onnttf/blog/discussions/66"
+}

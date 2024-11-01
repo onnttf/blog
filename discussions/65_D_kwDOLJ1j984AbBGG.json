@@ -1,7 +1,14 @@
 {
     "id": "D_kwDOLJ1j984AbBGG",
     "labels": {
-        "nodes": []
+        "nodes": [
+            {
+                "id": "LA_kwDOLJ1j988AAAABiZsiWg",
+                "name": "Golang",
+                "resourcePath": "/onnttf/blog/labels/Golang",
+                "url": "https://github.com/onnttf/blog/labels/Golang"
+            }
+        ]
     },
     "category": {
         "id": "DIC_kwDOLJ1j984CctHm",
