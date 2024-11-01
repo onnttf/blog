@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/45
-updatedAt: 2024-08-30T15:50:07+08:00
+updatedAt: 2024-11-01T18:10:00+08:00
 ---
 
 # 初识 Go Modules

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/64
-updatedAt: 2024-05-29T10:25:26+08:00
+updatedAt: 2024-11-01T18:10:00+08:00
 ---
 
 # SMART 原则：高效完成目标的秘诀

@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/44
-updatedAt: 2024-04-08T01:04:58+08:00
+updatedAt: 2024-11-01T18:10:01+08:00
 ---
 
 # 搞懂 Linux 的文件权限

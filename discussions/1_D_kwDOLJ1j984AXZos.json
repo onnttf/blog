@@ -11,14 +11,14 @@
         "slug": "announcements"
     },
     "number": 1,
-    "title": "Welcome to my blog!",
-    "body": "## 👋 Welcome\r\n\r\nWelcome to my blog! I'll share my thoughts and experiences here, and I look forward to your comments.\r\n\r\nTell me your questions, ideas or suggestions in the comments. I want to talk about anything!\r\n\r\nI look forward to your comments and discussions. Let's create an interesting space for communication together!",
+    "title": "Welcome to my blog",
+    "body": "## 👋 Welcome\n\nWelcome to my blog! I'll share my thoughts and experiences here, and I look forward to your comments.\n\nTell me your questions, ideas or suggestions in the comments. I want to talk about anything!\n\nI look forward to your comments and discussions. Let's create an interesting space for communication together!\n",
     "author": {
         "login": "onnttf"
     },
     "authorAssociation": "OWNER",
     "createdAt": "2024-01-26T06:14:45Z",
-    "updatedAt": "2024-09-26T09:17:49Z",
+    "updatedAt": "2024-11-01T10:10:00Z",
     "repository": {
         "id": "R_kgDOLJ1j9w",
         "url": "https://github.com/onnttf/blog",

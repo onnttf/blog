@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: Golang
 discussion: https://github.com/onnttf/blog/discussions/65
-updatedAt: 2024-09-05T20:38:31+08:00
+updatedAt: 2024-11-01T18:10:00+08:00
 ---
 
 # Go 编程入门：从实践中学习核心概念

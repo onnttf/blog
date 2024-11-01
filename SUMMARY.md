@@ -1,7 +1,7 @@
 # SUMMARY
 
 - [Announcements](Announcements)
-  - [Welcome to my blog!](Announcements/1_D_kwDOLJ1j984AXZos.md)
+  - [Welcome to my blog](Announcements/1_D_kwDOLJ1j984AXZos.md)
 - [2024/9](2024/9)
   - [System Development Template](2024/9/66_D_kwDOLJ1j984AbnM0.md)
 - [2024/8](2024/8)

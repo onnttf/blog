@@ -3,7 +3,7 @@ author: Zhang Peng
 category: 🙌 Show and tell
 labels: 
 discussion: https://github.com/onnttf/blog/discussions/62
-updatedAt: 2024-06-05T14:37:45+08:00
+updatedAt: 2024-11-01T18:10:00+08:00
 ---
 
 # 日历订阅源指北：创建、发布、使用
