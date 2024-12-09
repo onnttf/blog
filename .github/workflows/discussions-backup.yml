@@ -1,0 +1,143 @@
+name: Backup Discussions
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DISCUSSION_FILE: discussion.json
+      DISCUSSION_FILE_TMP: discussion_tmp.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Repository Info
+        run: |
+          OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+          REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          echo "OWNER=$OWNER" >> $GITHUB_ENV
+          echo "REPO=$REPO" >> $GITHUB_ENV
+
+      - name: Fetch discussions from GitHub API
+        id: fetch
+        run: |
+          discussions=$(gh api graphql --paginate --slurp -f query='
+            query($owner: String!, $repo: String!, $endCursor: String) {
+              repository(owner: $owner, name: $repo) {
+                discussions(first: 100, after: $endCursor) {
+                  nodes {
+                    id
+                    title
+                    body
+                    number
+                    labels(first: 10) { nodes { id name url } }
+                    category { id name slug emoji emojiHTML }
+                    author { login }
+                    authorAssociation
+                    createdAt
+                    updatedAt
+                    repository { id url }
+                    url
+                  }
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }
+                }
+              }
+            }' -F owner=$OWNER -F repo=$REPO | jq '
+            [.[].data.repository.discussions.nodes[]]
+            | map(select(.authorAssociation == "OWNER"))
+            | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
+            | group_by(.id)
+            | map(max_by(.updatedAt))
+            | sort_by(.updatedAt) | reverse
+            // []'
+          )
+
+          if [ "$(echo "$discussions" | jq 'length')" -eq 0 ]; then
+            echo "No discussions data found"
+            exit 1
+          fi
+
+          echo "$discussions" > $DISCUSSION_FILE_TMP
+
+      - name: Merge discussions with local data
+        run: |
+          if [ -f "$DISCUSSION_FILE" ]; then
+            local_discussions=$(jq '.' "$DISCUSSION_FILE")
+            createdAtMap=$(jq 'reduce .[] as $item ({};
+              if $item.id and $item.createdAt then
+                .[$item.id] = $item.createdAt
+              else
+                .
+              end
+            )' <<< "$local_discussions")
+
+            discussions=$(jq --argjson createdAtMap "$createdAtMap" '
+              map(if $createdAtMap[.id] then .createdAt = $createdAtMap[.id] end)
+            ' < $DISCUSSION_FILE_TMP)
+
+            echo "$discussions" > $DISCUSSION_FILE_TMP
+          fi
+
+      - name: Generate file paths for discussions
+        run: |
+          discussions=$(jq '
+            map(
+              . + {
+                jsonFilePath: ("discussions/" + (.number | tostring) + "-" + (.id | tostring) + ".json"),
+                markdownFilePath: (
+                  if .category.slug == "announcements" then
+                    "announcements/" + (.number | tostring) + "-" + (.id | tostring) + ".md"
+                  else
+                    (.createdAt | fromdate | strftime("%Y")) + "/" +
+                    ((.createdAt | fromdate | strftime("%m") | tonumber) | tostring) + "/" +
+                    (.number | tostring) + "-" + (.id | tostring) + ".md"
+                  end
+                )
+              }
+            )
+          ' < $DISCUSSION_FILE_TMP)
+
+          echo "$discussions" > $DISCUSSION_FILE
+
+      # Export discussions to JSON and Markdown files
+      - name: Export discussions to files
+        run: |
+          jq -c '.[]' "$DISCUSSION_FILE" | while IFS= read -r discussion; do
+            jsonFilePath=$(jq -r '.jsonFilePath' <<< "$discussion")
+            markdownFilePath=$(jq -r '.markdownFilePath' <<< "$discussion")
+            title=$(jq -r '.title' <<< "$discussion")
+            body=$(jq -r '.body' <<< "$discussion")
+
+            mkdir -p "$(dirname "$jsonFilePath")" "$(dirname "$markdownFilePath")"
+
+            echo "$discussion" | jq '.' > "$jsonFilePath"
+
+            printf "# %s\n\n%s" "$title" "$body" > "$markdownFilePath"
+          done
+
+          # List the files recursively
+          ls -R
+
+      # Commit and push changes
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ -n "$(git status --porcelain discussion.json)" ]]; then
+            git add discussion.json
+            git commit -m "chore: back up discussions"
+            git push
+          else
+            echo "No changes to discussion.json"
+          fi
