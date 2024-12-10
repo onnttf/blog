@@ -19,6 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Set repository owner and name as environment variables
       - name: Set Repository Info
         run: |
           OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
@@ -26,6 +27,7 @@ jobs:
           echo "OWNER=$OWNER" >> $GITHUB_ENV
           echo "REPO=$REPO" >> $GITHUB_ENV
 
+      # Fetch discussions from GitHub API and filter by category and author
       - name: Fetch discussions from GitHub API
         id: fetch
         run: |
@@ -70,6 +72,7 @@ jobs:
 
           echo "$discussions" > $DISCUSSION_FILE_TMP
 
+      # Merge fetched discussions with local data (if exists)
       - name: Merge discussions with local data
         run: |
           if [ -f "$DISCUSSION_FILE" ]; then
@@ -89,6 +92,7 @@ jobs:
             echo "$discussions" > $DISCUSSION_FILE_TMP
           fi
 
+      # Generate file paths for each discussion (JSON & Markdown)
       - name: Generate file paths for discussions
         run: |
           discussions=$(jq '
@@ -110,7 +114,14 @@ jobs:
 
           echo "$discussions" > $DISCUSSION_FILE
 
-      # Export discussions to JSON and Markdown files
+      # Clean up unnecessary files and directories
+      - name: Clean up files
+        run: |
+          find . -type f ! -name "discussion.json" ! -path "*/.*" -exec rm -f {} \;
+          find . -type d ! -path "*/.*" -exec rm -rf {} \;
+          echo "Cleaned up files and directories."
+
+      # Export each discussion to JSON and Markdown files
       - name: Export discussions to files
         run: |
           jq -c '.[]' "$DISCUSSION_FILE" | while IFS= read -r discussion; do
@@ -135,7 +146,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ -n "$(git status --porcelain discussion.json)" ]]; then
-            git add discussion.json
+            git add discussion.json discussions announcements $(find . -type d -regex '/[0-9]\+')
             git commit -m "chore: back up discussions"
             git push
           else
