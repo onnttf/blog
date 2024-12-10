@@ -146,7 +146,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ -n "$(git status --porcelain discussion.json)" ]]; then
-            git add discussion.json discussions announcements $(find . -type d -regex '/[0-9]\+')
+            git add discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -print)
             git commit -m "chore: back up discussions"
             git push
           else
