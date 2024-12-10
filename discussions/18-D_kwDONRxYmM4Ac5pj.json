@@ -1,0 +1,29 @@
+{
+  "id": "D_kwDONRxYmM4Ac5pj",
+  "title": "Ubuntu 安装 MySQL 指南",
+  "body": "## 安装步骤\r\n\r\n### 安装 MySQL APT 配置包\r\n\r\n1. 访问 [MySQL APT Repository](https://dev.mysql.com/downloads/repo/apt/)，找到最新的配置包\r\n2. 点击 `Download` 按钮并复制 `No thanks, just start my download` 的下载链接\r\n3. 使用以下命令下载并安装配置包：\r\n\r\n   ```bash\r\n   # 下载配置包\r\n   wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb\r\n   # 安装配置包\r\n   sudo dpkg -i mysql-apt-config_0.8.12-1_all.deb\r\n   ```\r\n\r\n4. 在配置界面中选择 `MySQL 5.7` 版本，按 `OK` 确认\r\n\r\n   ![image](https://file.onnttf.site/2019/04/03/1.jpg)\r\n\r\n### 安装 MySQL\r\n\r\n```bash\r\n# 更新软件包列表\r\nsudo apt-get update\r\n# 安装 MySQL\r\nsudo apt-get install mysql-server mysql-common mysql-client\r\n```\r\n\r\n> 注意：安装过程中系统会弹出 `root` 密码设置界面，请设置一个安全的密码并牢记。如果没有出现密码设置界面，不用担心，您可以在完成安装后按照后续步骤中的说明进行密码设置。确保选择的密码具有足够的复杂度，建议包含大小写字母、数字和特殊字符。\r\n\r\n### 验证安装\r\n\r\n`MySQL` 安装完成后会自动启动。使用以下命令检查状态：\r\n\r\n```bash\r\nsudo systemctl status mysql\r\n```\r\n\r\n常用服务命令：\r\n\r\n```bash\r\nsudo systemctl start mysql   # 启动\r\nsudo systemctl stop mysql    # 停止\r\nsudo systemctl restart mysql # 重启\r\n```\r\n\r\n### 安全配置\r\n\r\n#### 修改 root 密码\r\n\r\n```bash\r\n# 以 root 身份登录 MySQL\r\nsudo mysql\r\n\r\n# 修改验证方式和密码\r\nmysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '您的新密码';\r\nmysql> FLUSH PRIVILEGES;\r\nmysql> EXIT;\r\n```\r\n\r\n#### 创建新用户\r\n\r\n```bash\r\nmysql> CREATE USER '用户名'@'%' IDENTIFIED BY '密码';\r\n```\r\n\r\n> `%` 表示允许远程访问，`localhost` 表示仅允许本地访问\r\n\r\n### 优化配置\r\n\r\n#### 设置 `UTF-8` 字符集\r\n\r\n编辑 `/etc/mysql/mysql.conf.d/mysqld.cnf`：\r\n\r\n```ini\r\n[client]\r\ndefault-character-set=utf8mb4\r\n\r\n[mysql]\r\ndefault-character-set=utf8mb4\r\n\r\n[mysqld]\r\ncharacter-set-server=utf8mb4\r\ncollation-server=utf8mb4_unicode_ci\r\n```\r\n\r\n#### 配置远程访问\r\n\r\n1. 编辑配置文件\r\n\r\n    ```bash\r\n    sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf\r\n    # 注释掉 bind-address = 127.0.0.1\r\n    ```\r\n\r\n2. 授权远程访问\r\n\r\n    ```bash\r\n    mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '密码' WITH GRANT OPTION;\r\n    mysql> FLUSH PRIVILEGES;\r\n    ```\r\n\r\n3. 重启 `MySQL`：\r\n\r\n    ```bash\r\n    sudo systemctl restart mysql\r\n    ```\r\n\r\n## 常见问题排查\r\n\r\n1. 无法远程连接\r\n\r\n   - 检查防火墙配置\r\n   - 验证 `bind-address` 设置\r\n   - 确认用户权限\r\n\r\n2. 字符集问题\r\n\r\n   - 使用 `SHOW VARIABLES LIKE 'character%';` 检查配置\r\n   - 确保应用端使用正确的字符集\r\n\r\n## 参考资料\r\n\r\n1. [MySQL 官方文档](https://dev.mysql.com/doc/)\r\n2. [Ubuntu MySQL 安装指南](https://ubuntu.com/server/docs/databases-mysql)\r\n",
+  "number": 18,
+  "labels": {
+    "nodes": []
+  },
+  "category": {
+    "id": "DIC_kwDONRxYmM4Ckajb",
+    "name": "Show and tell",
+    "slug": "show-and-tell",
+    "emoji": ":raised_hands:",
+    "emojiHTML": "<div>🙌</div>"
+  },
+  "author": {
+    "login": "onnttf"
+  },
+  "authorAssociation": "OWNER",
+  "createdAt": "2019-04-03T08:00:00Z",
+  "updatedAt": "2024-11-29T08:40:37Z",
+  "repository": {
+    "id": "R_kgDONRxYmA",
+    "url": "https://github.com/onnttf/blog"
+  },
+  "url": "https://github.com/onnttf/blog/discussions/18",
+  "jsonFilePath": "discussions/18-D_kwDONRxYmM4Ac5pj.json",
+  "markdownFilePath": "2019/4/18-D_kwDONRxYmM4Ac5pj.md"
+}
