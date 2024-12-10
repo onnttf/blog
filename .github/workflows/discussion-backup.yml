@@ -117,8 +117,8 @@ jobs:
       # Clean up unnecessary files and directories
       - name: Clean up files
         run: |
-          find . -type f ! -name "discussion.json" ! -path "*/.*" -exec rm -f {} \;
-          find . -type d ! -path "*/.*" -exec rm -rf {} \;
+          find . -type f ! -name "discussion.json" ! -path "*/.*" -mindepth 1 -print -exec rm -f {} \;
+          find . -type d ! -path "*/.*" -mindepth 1 -print -exec rm -rf {} \;
           echo "Cleaned up files and directories."
 
       # Export each discussion to JSON and Markdown files
