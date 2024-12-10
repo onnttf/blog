@@ -1,0 +1,42 @@
+name: Cleanup workflow runs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *" # Run once every midnight
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set repository owner and name as environment variables
+      - name: Set Repository Info
+        run: |
+          OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
+          REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          echo "OWNER=$OWNER" >> $GITHUB_ENV
+          echo "REPO=$REPO" >> $GITHUB_ENV
+
+      - name: Cleanup workflow runs
+        run: |
+          # Get all workflows
+          workflowIDList=$(gh api -H "Accept: application/vnd.github+json" /repos/$OWNER/$REPO/actions/workflows | jq -r '.workflows[].id')
+          echo $workflowIDList
+          # Delete old runs and keep the latest 7 for each workflow
+          for workflowID in ${workflowIDList}; do
+            # Get the list of completed workflow runs, sorted by updatedAt in descending order
+            echo "Processing workflow ID: $workflowID"
+            workflow_runs=$(gh run list -s completed --json databaseId,updatedAt --jq 'sort_by(.updatedAt) | reverse | .[7:]' -w "$workflowID")
+
+            # Delete runs older than the 7 most recent ones
+            for databaseId in $(echo "$workflow_runs" | jq -r '.[].databaseId'); do
+              echo "Deleting run with ID: $databaseId"
+              gh run delete "$databaseId"
+            done
+          done
