@@ -1,0 +1,1152 @@
+[
+  {
+    "id": "D_kwDONRxYmM4Ac1ya",
+    "title": "WKWebView 的基本使用到高级技巧",
+    "body": "# WKWebView 的基本使用到高级技巧\r\n\r\n`WKWebView` 是苹果提供的现代化网页浏览控件，用于在 `iOS` 应用中展示网页内容。它从 `iOS 8` 开始支持使用。\r\n\r\n## 为什么选择 `WKWebView`\r\n\r\n相比于传统的 `UIWebView`，`WKWebView` 具有以下显著优势：\r\n\r\n1. 卓越的性能表现和稳定性\r\n2. 显著降低内存占用\r\n3. 完整支持现代 `HTML5` 特性\r\n4. 流畅的 `60fps` 渲染和原生手势支持\r\n5. 丰富的代理方法，提供更强大的控制能力\r\n6. 支持进程间通信，更安全可靠\r\n\r\n更多技术细节可以查看 [WebKit 官方文档](https://developer.apple.com/documentation/webkit)\r\n\r\n## 基本使用\r\n\r\n### 引入框架\r\n\r\n首先需要导入 `WebKit` 框架：\r\n\r\n```objc\r\n#import <WebKit/WebKit.h>\r\n```\r\n\r\n### 创建和配置WKWebView\r\n\r\n```objc\r\n// 创建 WKUserContentController 用于 JS 交互\r\nWKUserContentController *userContentController = [[WKUserContentController alloc] init];\r\n\r\n// 注入 cookies\r\nNSString *js = @\"document.cookie='user=zhangpeng'\";\r\nWKUserScript *cookieScript = [[WKUserScript alloc] initWithSource:js\r\n                                                    injectionTime:WKUserScriptInjectionTimeAtDocumentStart\r\n                                                 forMainFrameOnly:NO];\r\n[userContentController addUserScript:cookieScript];\r\n\r\n// 配置 WKWebView\r\nWKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];\r\nconfig.userContentController = userContentController;\r\n_config = config;\r\n\r\n// 注册 JS 调用处理器\r\nfor (NSString *scriptMessage in self.scriptMessages) {\r\n    [config.userContentController addScriptMessageHandler:self name:scriptMessage];\r\n}\r\n\r\n// 创建 WKWebView 实例\r\nWKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kMainAreaHeightNoTab)\r\n                                        configuration:config];\r\nwebView.UIDelegate = self;        // UI 交互代理\r\nwebView.navigationDelegate = self; // 导航代理\r\n[self.view addSubview:webView];\r\n_webView = webView;\r\n```\r\n\r\n## 代理方法\r\n\r\n### WKNavigationDelegate\r\n\r\n`WKNavigationDelegate` 提供页面加载生命周期的回调方法：\r\n\r\n```objc\r\n// 1. 决定是否允许导航\r\n- (void)webView:(WKWebView *)webView\r\ndecidePolicyForNavigationAction:(WKNavigationAction *)navigationAction\r\n  decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {\r\n    NSLog(@\"%s\", __func__);\r\n    decisionHandler(WKNavigationActionPolicyAllow); // 允许导航\r\n}\r\n\r\n// 2. 开始加载\r\n- (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n\r\n// 3. 收到响应后决定是否继续\r\n- (void)webView:(WKWebView *)webView\r\ndecidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse\r\n   decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {\r\n    NSLog(@\"%s\", __func__);\r\n    decisionHandler(WKNavigationResponsePolicyAllow); // 允许继续加载\r\n}\r\n\r\n// 4. 开始接收内容\r\n- (void)webView:(WKWebView *)webView didCommitNavigation:(WKNavigation *)navigation {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n\r\n// 5. 加载完成\r\n- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n\r\n// 6. 加载失败\r\n- (void)webView:(WKWebView *)webView\r\ndidFailNavigation:(WKNavigation *)navigation\r\n       withError:(NSError *)error {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n\r\n// 7. 加载内容失败\r\n- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n```\r\n\r\n其他重要的代理方法：\r\n\r\n```objc\r\n// 处理重定向\r\n- (void)webView:(WKWebView *)webView\r\ndidReceiveServerRedirectForProvisionalNavigation:(WKNavigation *)navigation {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n\r\n// 处理 SSL 证书认证\r\n- (void)webView:(WKWebView *)webView\r\ndidReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge\r\ncompletionHandler:(void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential * _Nullable))completionHandler {\r\n    NSLog(@\"%s\", __func__);\r\n    // 创建凭证并信任服务器证书\r\n    NSURLCredential *credential = [[NSURLCredential alloc] initWithTrust:challenge.protectionSpace.serverTrust];\r\n    completionHandler(NSURLSessionAuthChallengeUseCredential, credential); // 使用凭证继续认证\r\n}\r\n\r\n// 进程终止处理\r\n- (void)webViewWebContentProcessDidTerminate:(WKWebView *)webView {\r\n    NSLog(@\"%s\", __func__);\r\n}\r\n```\r\n\r\n### WKUIDelegate\r\n\r\n`WKUIDelegate` 主要用于处理 `JavaScript` 的 `UI` 交互，最常用的是 `alert` 弹窗：\r\n\r\n```objc\r\n// 处理 JavaScript 弹窗警告\r\n- (void)webView:(WKWebView *)webView\r\nrunJavaScriptAlertPanelWithMessage:(NSString *)message\r\ninitiatedByFrame:(WKFrameInfo *)frame\r\ncompletionHandler:(void (^)(void))completionHandler {\r\n    // 创建警告弹窗\r\n    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@\"提示\"\r\n                                                                   message:message\r\n                                                            preferredStyle:UIAlertControllerStyleAlert];\r\n\r\n    // 添加确定按钮\r\n    UIAlertAction *action = [UIAlertAction actionWithTitle:@\"确定\"\r\n                                                     style:UIAlertActionStyleDefault\r\n                                                   handler:nil];\r\n    [alert addAction:action];\r\n\r\n    // 显示弹窗\r\n    [self presentViewController:alert animated:YES completion:nil];\r\n\r\n    // 调用完成处理\r\n    completionHandler();\r\n}\r\n```\r\n\r\n还有两个用于处理确认框和输入框的方法：\r\n\r\n```objc\r\n// 处理 JavaScript 确认框\r\n- (void)webView:(WKWebView *)webView\r\nrunJavaScriptConfirmPanelWithMessage:(NSString *)message\r\ninitiatedByFrame:(WKFrameInfo *)frame\r\ncompletionHandler:(void (^)(BOOL result))completionHandler {\r\n    // 显示确认框\r\n    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@\"确认\"\r\n                                                                   message:message\r\n                                                            preferredStyle:UIAlertControllerStyleAlert];\r\n\r\n    // 确定按钮\r\n    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@\"确定\"\r\n                                                           style:UIAlertActionStyleDefault\r\n                                                         handler:^(UIAlertAction * _Nonnull action) {\r\n                                                             completionHandler(YES); // 确定时返回 YES\r\n                                                         }];\r\n\r\n    // 取消按钮\r\n    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@\"取消\"\r\n                                                          style:UIAlertActionStyleCancel\r\n                                                        handler:^(UIAlertAction * _Nonnull action) {\r\n                                                            completionHandler(NO); // 取消时返回 NO\r\n                                                        }];\r\n\r\n    [alert addAction:confirmAction];\r\n    [alert addAction:cancelAction];\r\n\r\n    // 显示弹窗\r\n    [self presentViewController:alert animated:YES completion:nil];\r\n}\r\n\r\n// 处理 JavaScript 输入框\r\n- (void)webView:(WKWebView *)webView\r\nrunJavaScriptTextInputPanelWithPrompt:(NSString *)prompt\r\ndefaultText:(nullable NSString *)defaultText\r\ninitiatedByFrame:(WKFrameInfo *)frame\r\ncompletionHandler:(void (^)(NSString * _Nullable result))completionHandler {\r\n    // 创建输入框弹窗\r\n    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil\r\n                                                                   message:prompt\r\n                                                            preferredStyle:UIAlertControllerStyleAlert];\r\n\r\n    // 添加文本输入框\r\n    [alert addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {\r\n        textField.text = defaultText; // 设置默认文本\r\n    }];\r\n\r\n    // 确定按钮\r\n    UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@\"确定\"\r\n                                                           style:UIAlertActionStyleDefault\r\n                                                         handler:^(UIAlertAction * _Nonnull action) {\r\n                                                             // 返回输入的文本\r\n                                                             completionHandler(alert.textFields.firstObject.text);\r\n                                                         }];\r\n\r\n    // 取消按钮\r\n    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@\"取消\"\r\n                                                          style:UIAlertActionStyleCancel\r\n                                                        handler:^(UIAlertAction * _Nonnull action) {\r\n                                                            // 取消时返回 nil\r\n                                                            completionHandler(nil);\r\n                                                        }];\r\n\r\n    [alert addAction:confirmAction];\r\n    [alert addAction:cancelAction];\r\n\r\n    // 显示弹窗\r\n    [self presentViewController:alert animated:YES completion:nil];\r\n}\r\n```\r\n\r\n## JavaScript 交互\r\n\r\n`WKWebView` 提供两种与 `JavaScript` 交互的方式。\r\n\r\n### MessageHandler 方式\r\n\r\n通过 `WKScriptMessageHandler` 接收 `JavaScript` 消息：\r\n\r\n```objc\r\n- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {\r\n    // 处理JS传来的消息\r\n    // 通过查看 `WKScriptMessage`，可以看到 `name` 和 `body` 两个属性，`name` 就是注入的 `js` 对象名称，`body` 就是前端传给我们的参数\r\n    if ([message.name isEqualToString:@\"test1\"]) {\r\n        NSLog(@\"收到test1消息：%@\", message.body);\r\n    } else if ([message.name isEqualToString:@\"test2\"]) {\r\n        NSLog(@\"收到test2消息：%@\", message.body);\r\n    }\r\n}\r\n```\r\n\r\n`JavaScript` 调用示例：\r\n\r\n```javascript\r\nwindow.webkit.messageHandlers.test1.postMessage({data: \"Hello\"});\r\n```\r\n\r\n### URL Schema 方式\r\n\r\n通过拦截导航请求来处理自定义 `URL`：\r\n\r\n```objc\r\n- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {\r\n    NSURL *url = navigationAction.request.URL;\r\n    if ([url.scheme isEqualToString:@\"myapp\"]) {\r\n        // 处理自定义URL\r\n        decisionHandler(WKNavigationActionPolicyCancel);\r\n        return;\r\n    }\r\n    decisionHandler(WKNavigationActionPolicyAllow);\r\n}\r\n```\r\n\r\n## 注意事项\r\n\r\n### Cookie 处理\r\n\r\n`WKWebView` 的 `Cookie` 需要同时处理两个方面：\r\n\r\n1. `JavaScript` 侧：通过注入脚本设置\r\n\r\n    ```objc\r\n    NSString *js = @\"document.cookie='key=value'\";\r\n    WKUserScript *script = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];\r\n    [userContentController addUserScript:script];\r\n    ```\r\n\r\n2. `Native` 请求：添加 `Cookie` 头\r\n\r\n    ```objc\r\n    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];\r\n    [request setValue:@\"key=value\" forHTTPHeaderField:@\"Cookie\"];\r\n    [webView loadRequest:request];\r\n    ```\r\n\r\n需要注意 `Cookie` 注入的两种方式有不同的作用范围：\r\n\r\n1. `JavaScript` 注入的 `Cookie`:\r\n\r\n- 可以通过 `document.cookie` 在 `JavaScript` 中读取\r\n- 在浏览器开发者工具中可以看到\r\n- 服务端代码(如 `PHP`)无法直接读取\r\n\r\n2. `NSMutableURLRequest` 注入的 `Cookie`:\r\n\r\n- 可以被服务端代码(如 `PHP` 的 `$_COOKIE`)直接读取\r\n- `JavaScript` 无法通过 `document.cookie` 访问\r\n- 在浏览器开发者工具中不可见\r\n\r\n因此在实际开发中，需要根据具体使用场景选择合适的注入方式。如果需要同时支持前端和后端访问，则需要同时使用这两种方式注入 `Cookie`。\r\n\r\n### 内存泄漏问题\r\n\r\n`WKWebView` 可能造成循环引用导致内存泄漏，解决方案：\r\n\r\n1. 创建弱引用代理类：\r\n\r\n    ```objc\r\n    @interface WeakScriptMessageDelegate : NSObject\r\n    @property (nonatomic, weak) id<WKScriptMessageHandler> scriptDelegate;\r\n    @end\r\n    ```\r\n\r\n2. 使用弱引用代理注册消息处理：\r\n\r\n    ```objc\r\n    [config.userContentController addScriptMessageHandler:[[WeakScriptMessageDelegate alloc] initWithDelegate:self] name:scriptMessage];\r\n    ```\r\n\r\n3. 在 dealloc 中移除消息处理：\r\n\r\n    ```objc\r\n    [self.config.userContentController removeScriptMessageHandlerForName:scriptMessage];\r\n    ```\r\n\r\n## 最后\r\n\r\n通过本文，我们详细介绍了 `WKWebView` 的以下几个重要方面：\r\n\r\n1. 基本使用方法和配置选项\r\n2. 代理回调的完整生命周期\r\n3. `JavaScript` 交互的两种实现方式\r\n4. `Cookie` 处理的注意事项\r\n5. 内存管理的最佳实践\r\n\r\n`WKWebView` 作为 `iOS` 现代化的 `Web` 容器，具有性能优越、功能丰富的特点。合理使用其提供的各项功能，可以帮助我们构建高质量的 `Web` 混合应用。\r\n",
+    "number": 7,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-12-03T08:00:00Z",
+    "updatedAt": "2024-12-09T11:45:25Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/7",
+    "jsonFilePath": "discussions/7-D_kwDONRxYmM4Ac1ya.json",
+    "markdownFilePath": "2024/11/7-D_kwDONRxYmM4Ac1ya.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdBxq",
+    "title": "Go Modules：轻松搞定 Go 项目依赖管理",
+    "body": "在软件开发中，依赖管理是一个棘手且关键的任务，涉及版本兼容、包冲突和复杂依赖关系的协调等工作。为了解决这些痛点，Go 语言团队在 `Go 1.11` 版本中引入了包管理工具 Go Modules，它为 Go 生态系统带来了一个强大而优雅的依赖管理解决方案。\r\n\r\n## Go Modules 是什么\r\n\r\nGo Modules 是 Go 语言官方推出的依赖管理解决方案，它彻底摆脱了对 `GOPATH` 的依赖，为 Go 项目带来了全新的包管理体验。这个强大的工具于 `Go 1.11` 版本首次引入，并在 `Go 1.13` 版本成为默认的依赖管理方式。\r\n\r\nGo Modules 的核心优势：\r\n\r\n1. **智能化依赖管理**：\r\n\r\n   - 自动下载和更新依赖\r\n   - 自动解决依赖冲突\r\n   - 支持多版本依赖共存\r\n\r\n2. **项目结构灵活**：\r\n\r\n   - 不再受限于 `$GOPATH/src` 目录\r\n   - 可以在任意位置创建和管理项目\r\n   - 更符合现代开发工作流\r\n\r\n3. **依赖追踪透明**：\r\n\r\n   - 使用 `go.mod` 文件清晰记录所有依赖\r\n   - 支持语义化版本控制\r\n   - 依赖关系一目了然\r\n\r\n4. **版本管理可靠**：\r\n\r\n   - 精确锁定依赖版本\r\n   - 确保构建的可重现性\r\n   - 方便回滚到特定版本\r\n\r\n5. **生态系统友好**：\r\n\r\n   - 完整的模块代理机制\r\n   - 私有模块支持\r\n   - 与主流代码托管平台无缝集成\r\n\r\n## Go Modules 实践\r\n\r\n让我们通过一个简单的示例项目来学习 Go Modules 的使用。本实践将包含创建基础库、使用依赖以及发布模块的完整流程。\r\n\r\n### 创建基础库\r\n\r\n首先，我们将创建一个名为 `greetings` 的基础库模块。\r\n\r\n1. 创建并初始化模块\r\n\r\n    ```bash\r\n    # 创建并进入项目目录\r\n    $ mkdir greetings && cd greetings\r\n\r\n    # 初始化 Go 模块\r\n    $ go mod init github.com/onnttf/greetings\r\n    go: creating new go.mod: module github.com/onnttf/greetings\r\n\r\n    # 查看生成的 go.mod 文件\r\n    $ cat go.mod\r\n    module github.com/onnttf/greetings\r\n\r\n    go 1.22.6\r\n    ```\r\n\r\n    **说明**: `go mod init` 命令会生成 `go.mod` 文件，其中包含模块名称和 Go 版本信息，用于管理依赖关系。\r\n\r\n2. 编写功能代码\r\n\r\n    创建 `greetings.go` 文件并添加以下代码：\r\n\r\n    ```go\r\n    package greetings\r\n\r\n    import \"fmt\"\r\n\r\n    // Hello returns a greeting for the named person.\r\n    func Hello(name string) string {\r\n        message := fmt.Sprintf(\"Hi, %v. Welcome!\", name)\r\n        return message\r\n    }\r\n    ```\r\n\r\n### 创建主项目\r\n\r\n接下来创建一个新项目来使用我们的 `greetings` 模块。\r\n\r\n1. 初始化项目结构\r\n\r\n    ```bash\r\n    $ cd ..\r\n    # 创建并进入项目目录\r\n    $ mkdir hello && cd hello\r\n    # 初始化新模块\r\n    $ go mod init github.com/onnttf/hello\r\n    go: creating new go.mod: module github.com/onnttf/hello\r\n    ```\r\n\r\n2. 创建主程序\r\n\r\n    编写 `hello.go` 文件：\r\n\r\n    ```go\r\n    package main\r\n\r\n    import (\r\n        \"fmt\"\r\n        \"github.com/onnttf/greetings\"  // 导入我们的 greetings 模块\r\n    )\r\n\r\n    func main() {\r\n        message := greetings.Hello(\"Mike\")\r\n        fmt.Println(message)\r\n    }\r\n    ```\r\n\r\n3. 配置本地依赖\r\n\r\n    由于 greetings 模块还未发布，我们需要先配置本地依赖：\r\n\r\n    ```bash\r\n    # 将模块指向本地路径\r\n    $ go mod edit -replace github.com/onnttf/greetings=../greetings\r\n\r\n    # 更新依赖关系\r\n    $ go mod tidy\r\n    ```\r\n\r\n    此时 `go.mod` 文件应该包含：\r\n\r\n    ```go\r\n    module github.com/onnttf/hello\r\n\r\n    go 1.22.6\r\n\r\n    replace github.com/onnttf/greetings => ../greetings\r\n    require github.com/onnttf/greetings v0.0.0-00010101000000-000000000000\r\n    ```\r\n\r\n4. 运行程序\r\n\r\n    ```bash\r\n    $ go run hello.go\r\n    Hi, Mike. Welcome!\r\n    ```\r\n\r\n### 发布模块\r\n\r\n要让其他开发者能够使用我们的模块，需要将其发布到代码托管平台，如 GitHub、GitLab 等。\r\n\r\n1. 初始化 Git 仓库\r\n\r\n    ```bash\r\n    cd ../greetings/\r\n    git init\r\n    git add .\r\n    git commit -m \"feat: 初始化 greetings 模块\"\r\n    ```\r\n\r\n2. 推送到远程仓库\r\n\r\n    ```bash\r\n    git branch -M main\r\n    git remote add origin git@github.com:onnttf/greetings.git\r\n    git push -u origin main\r\n    ```\r\n\r\n3. 创建发布版本\r\n\r\n    ```bash\r\n    # 创建并推送标签\r\n    git tag v0.1.0\r\n    git push origin v0.1.0\r\n\r\n    # 更新模块索引\r\n    $ GOPROXY=proxy.golang.org go list -m github.com/onnttf/greetings@v0.1.0\r\n    ```\r\n\r\n完成发布！现在其他开发者可以通过 `go get github.com/onnttf/greetings` 来使用这个模块了，模块信息也可以在 [pkg.go.dev](https://pkg.go.dev/) 上查看。\r\n\r\n## go mod 是什么\r\n\r\n`go mod` 是 Go 语言中的一组命令行工具，用于管理 Go Modules 的依赖关系，它提供了一系列强大的子命令来简化模块管理工作。\r\n\r\n```bash\r\n❯ go mod\r\nGo mod provides access to operations on modules.\r\n\r\nNote that support for modules is built into all the go commands,\r\nnot just 'go mod'. For example, day-to-day adding, removing, upgrading,\r\nand downgrading of dependencies should be done using 'go get'.\r\nSee 'go help modules' for an overview of module functionality.\r\n\r\nUsage:\r\n\r\n        go mod <command> [arguments]\r\n\r\nThe commands are:\r\n\r\n        download    download modules to local cache\r\n        edit        edit go.mod from tools or scripts\r\n        graph       print module requirement graph\r\n        init        initialize new module in current directory\r\n        tidy        add missing and remove unused modules\r\n        vendor      make vendored copy of dependencies\r\n        verify      verify dependencies have expected content\r\n        why         explain why packages or modules are needed\r\n\r\nUse \"go help mod <command>\" for more information about a command.\r\n```\r\n\r\n## go.mod 文件详解\r\n\r\n`go.mod` 是模块的核心配置文件，它定义了：\r\n\r\n1. **模块路径**：唯一标识该模块的导入路径\r\n2. **Go 版本**：模块使用的 Go 语言版本\r\n3. **依赖关系**：\r\n   - require：指定直接依赖\r\n   - replace：替换依赖的版本或路径\r\n   - exclude：排除特定版本的依赖\r\n\r\n示例：\r\n\r\n```go\r\nmodule example.com/mymodule\r\n\r\ngo 1.16\r\n\r\nrequire (\r\n    github.com/pkg/errors v0.9.1\r\n    golang.org/x/text v0.3.7\r\n)\r\n\r\nreplace example.com/old-module => example.com/new-module v1.0.0\r\n```\r\n\r\n## 配置模块代理\r\n\r\n由于网络原因，直接从 `proxy.golang.org` 下载模块可能会失败。我们可以通过配置国内镜像来加速依赖下载：\r\n\r\n```bash\r\n# 开启 Go modules\r\ngo env -w GO111MODULE=on\r\n\r\n# 使用七牛云的代理服务器\r\ngo env -w GOPROXY=https://goproxy.cn,direct\r\n\r\n# 或使用阿里云的代理服务器\r\ngo env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct\r\n```\r\n\r\n配置后，Go 工具链会优先从指定的代理服务器下载依赖。\r\n\r\n## 私有模块管理\r\n\r\n对于企业内部的私有模块，我们需要：\r\n\r\n1. 配置 GOPRIVATE 环境变量跳过公共代理\r\n\r\n```bash\r\n# 单个域名\r\ngo env -w GOPRIVATE=git.company.com\r\n\r\n# 多个域名\r\ngo env -w GOPRIVATE=*.company.com,*.corp.example.com\r\n```\r\n\r\n2. 配置 git 认证（如果需要）\r\n\r\n```bash\r\ngit config --global url.\"git@git.company.com:\".insteadOf \"https://git.company.com/\"\r\n```\r\n\r\n这样设置后：\r\n\r\n- 匹配 GOPRIVATE 的模块将直接从源仓库拉取\r\n- 私有模块的依赖解析与版本控制更加安全可靠\r\n- 避免了内部代码泄露的风险\r\n\r\n## 最后\r\n\r\nGo Modules 作为 Go 语言官方推出的依赖管理方案。它通过智能化的版本管理、清晰的依赖追踪以及灵活的项目结构，让依赖管理变得轻松自如。\r\n",
+    "number": 26,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2022-02-01T08:00:00Z",
+    "updatedAt": "2024-12-09T11:44:31Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/26",
+    "jsonFilePath": "discussions/26-D_kwDONRxYmM4AdBxq.json",
+    "markdownFilePath": "2024/12/26-D_kwDONRxYmM4AdBxq.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac2mN",
+    "title": "深入理解 URI、URL 和 URN",
+    "body": "![image](https://file.onnttf.site/2018/02/24/1.png)\r\n\r\n在软件开发和网络应用中，`URI`、`URL` 以及 `URN` 这三个重要概念虽然看似相似，但它们之间存在着本质的区别。本文将深入剖析这几个概念的差异与联系，帮助您更好地理解和使用它们。\r\n\r\n## URI - 统一资源标识符\r\n\r\n**URI**（Universal Resource Identifier）是用来**唯一标识互联网上的资源**的字符串。它是一个抽象的概念，就像是互联网上每个资源的\"身份证\"，可以让用户精确地定位和访问任何资源（无论是本地还是网络资源）。\r\n\r\n`URI` 主要由以下几个关键部分构成：\r\n\r\n- 访问资源的命名机制（`scheme`）\r\n- 存放资源的主机名（`authority`）\r\n- 资源的具体路径（`path`）\r\n- 可选的查询参数（`query`）\r\n- 可选的片段标识符（`fragment`）\r\n\r\n## URL - 统一资源定位符\r\n\r\n**URL**（Universal Resource Locator）是我们最常见的 `URI` 形式，它不仅能**唯一标识资源**，还能明确指出**如何定位和获取这个资源**。可以将 `URL` 理解为资源在互联网上的\"门牌地址\"。\r\n\r\n一个完整的 `URL` 通常包含以下组成部分：\r\n\r\n- 协议（如 `https://`）：指定访问资源的方式\r\n- 主机名（如 `www.example.com`）：指定资源所在的服务器\r\n- 端口号（如 `:443`）：可选，指定服务器上的具体服务\r\n- 路径（如 `/blog/post.html`）：指向具体资源\r\n- 查询参数（如 `?id=123`）：可选，传递额外信息\r\n- 锚点（如 `#section1`）：可选，指向资源内的特定位置\r\n\r\n## URN - 统一资源名称\r\n\r\n**URN**（Universal Resource Name）是另一种形式的 `URI`，它通过**永久且唯一的名称来标识资源**，但不包含获取资源的具体方法。这就像是给资源起了一个永久的\"名字\"。\r\n\r\n`URN` 具有以下显著特点：\r\n\r\n- 具有统一的前缀 `urn:`\r\n- 命名空间标识符（如 `isbn:`）\r\n- 命名空间特定字符串（如图书的 `ISBN` 编号）\r\n- 位置无关性：即使资源位置改变，`URN` 仍然有效\r\n- 持久性：一旦分配就永久有效\r\n- 需要专门的解析系统将 `URN` 转换为实际可访问的地址\r\n\r\n## 三者的关系\r\n\r\n让我们通过详细的分析来理解 `URI`、`URL` 和 `URN` 之间的关系。\r\n\r\n### 层级关系\r\n\r\n`URI` 是最基础和最广泛的概念，而 `URL` 和 `URN` 是 `URI` 的两种具体实现形式。可以将它们的关系想象成一个家族：\r\n\r\n- `URI` 是父类（超集）\r\n- `URL` 和 `URN` 是子类（子集）\r\n\r\n### 功能定位\r\n\r\n这三者各自承担着不同的角色：\r\n\r\n- `URI`：专注于资源的唯一标识\r\n- `URL`：侧重于资源的定位和访问方法\r\n- `URN`：着重于资源的永久命名\r\n\r\n### 生动类比\r\n\r\n为了更形象地理解它们的区别，我们可以用现实生活中的例子来对比：\r\n\r\n1. `URI` 就像身份证号\r\n   - 能够唯一标识一个人\r\n   - 是最基本的识别方式\r\n\r\n2. `URL` 就像详细住址\r\n   - 不仅能确定是谁\r\n   - 还能准确告诉你如何找到这个人\r\n   - 包含具体的访问方式（比如乘坐什么交通工具）\r\n\r\n3. `URN` 就像人的姓名\r\n   - 可以标识这个人\r\n   - 具有持久性（名字通常不会改变）\r\n   - 但仅凭姓名可能无法直接找到这个人\r\n\r\n### 关键要点总结\r\n\r\n- `URL` 必定是 `URI`，但 `URI` 不一定是 `URL`\r\n- `URN` 也是 `URI` 的一种，但与 `URL` 的关注点不同\r\n- 三者共同构成了互联网资源标识和访问的完整体系\r\n\r\n## 最后\r\n\r\n理解 `URI`、`URL` 和 `URN` 的概念及其关系对于网络开发和资源管理至关重要。`URI` 作为统一资源标识符是一个最基本的概念，而 `URL` 和 `URN` 则是其两种不同的实现方式。`URL` 侧重于提供资源的访问方法和位置信息，而 `URN` 则注重提供资源的永久标识名称。这三个概念共同构成了互联网资源定位和标识的完整体系，在实际应用中各自发挥着重要作用。\r\n",
+    "number": 9,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-02-24T08:00:00Z",
+    "updatedAt": "2024-12-09T11:43:54Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/9",
+    "jsonFilePath": "discussions/9-D_kwDONRxYmM4Ac2mN.json",
+    "markdownFilePath": "2024/11/9-D_kwDONRxYmM4Ac2mN.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac2oc",
+    "title": "iOS 消息转发机制",
+    "body": "在 `iOS` 开发中，当对象收到无法理解的消息时（即出现 `unrecognized selector sent to instance 0x87` 错误），系统会自动启动消息转发机制。这套精心设计的机制为开发者提供了多个处理机会，让我们能够优雅且灵活地处理这类异常情况。本文将深入剖析这个转发流程的完整实现机制及其实践应用。\r\n\r\n## 消息转发的完整流程\r\n\r\n消息转发是 `Runtime` 中优雅处理方法未找到异常的重要机制，主要分为以下两个阶段：\r\n\r\n1. 动态方法解析（`Dynamic Method Resolution`）\r\n\r\n   当对象收到未知消息时，系统首先会询问该对象是否能够动态添加方法实现来处理。这为我们提供了运行时动态扩展类功能的机会。\r\n\r\n2. 消息转发（`Message Forwarding`）\r\n\r\n   如果动态方法解析未能解决问题，则会进入正式的转发处理：\r\n\r\n   * 快速转发路径（`Fast Forwarding Path`）\r\n\r\n     * 通过 `forwardingTargetForSelector:` 寻找能处理该消息的备用接收者\r\n     * 这是最高效的转发方式，直接将消息转交给其他对象\r\n\r\n   * 完整转发机制（`Normal Forwarding Mechanism`）\r\n\r\n     * 在没有合适的备用接收者时启动\r\n     * 将消息完整封装为 `NSInvocation` 对象，支持更灵活的处理方式\r\n     * 虽然开销较大，但提供了最大的处理自由度\r\n\r\n## 动态方法解析\r\n\r\n在消息转发的第一个阶段，系统会通过动态方法解析机制尝试动态添加方法实现。根据待处理的方法类型，系统会调用以下两个方法之一：\r\n\r\n处理类方法时调用：\r\n\r\n```objc\r\n+ (BOOL)resolveClassMethod:(SEL)sel;\r\n```\r\n\r\n处理实例方法时调用：\r\n\r\n```objc\r\n+ (BOOL)resolveInstanceMethod:(SEL)sel;\r\n```\r\n\r\n这个阶段我们可以利用 `Runtime API` 动态添加方法实现。下面是一个实际的示例：\r\n\r\n```objc\r\n/**\r\n * 动态解析未实现的实例方法。\r\n * 当调用一个未实现的实例方法时，系统会调用此方法，允许动态添加方法实现。\r\n *\r\n * @param sel 待处理的方法选择器\r\n * @return 如果成功动态添加了方法，返回 YES；否则返回 NO。\r\n */\r\n+ (BOOL)resolveInstanceMethod:(SEL)sel {\r\n    // 检查是否是目标未实现的方法（这里以 `someMethod:` 为例）\r\n    if (sel == @selector(someMethod:)) {\r\n        // 动态添加方法的实现\r\n        class_addMethod(self,\r\n                        sel,\r\n                        (IMP)dynamicMethodIMP, // 方法实现指针\r\n                        \"v@:\");               // 方法签名（void 返回值，接受 id 和 SEL 参数）\r\n        return YES; // 标记成功处理\r\n    }\r\n\r\n    // 如果无法处理该方法，则返回 NO，转交给下一步方法转发机制\r\n    return NO;\r\n}\r\n\r\n/**\r\n * 动态添加的方法实现。\r\n *\r\n * @param self 当前对象\r\n * @param _cmd 当前调用的方法选择器\r\n */\r\nvoid dynamicMethodIMP(id self, SEL _cmd) {\r\n    // 方法的具体逻辑\r\n    NSLog(@\"动态添加的方法被调用！\");\r\n}\r\n```\r\n\r\n## 消息转发处理\r\n\r\n### 快速消息转发\r\n\r\n当动态方法解析失败后，系统会尝试快速转发路径。通过实现 `forwardingTargetForSelector:` 方法，我们可以将消息优雅地转发给其他对象处理：\r\n\r\n```objc\r\n/**\r\n * 快速消息转发\r\n * 当对象接收到一个无法响应的消息时，系统会调用此方法，允许返回另一个可以处理该消息的对象。\r\n *\r\n * @param aSelector 待转发的方法选择器\r\n * @return 能处理该消息的对象；返回 nil 时，消息会进入完整的消息转发流程。\r\n */\r\n- (id)forwardingTargetForSelector:(SEL)aSelector {\r\n    // 检查是否是需要转发的目标方法\r\n    if (aSelector == @selector(targetMethod:)) {\r\n        // 返回能处理该方法的对象\r\n        return [[HandlerClass alloc] init];\r\n    }\r\n\r\n    // 未匹配到目标方法，返回 nil，进入完整的消息转发流程\r\n    return nil;\r\n}\r\n```\r\n\r\n### 完整消息转发\r\n\r\n当快速转发返回 `nil` 时，系统会启动完整的转发机制。这个阶段会将消息完整地封装到 `NSInvocation` 对象中，提供更灵活的处理方式：\r\n\r\n```objc\r\n/**\r\n * 完整消息转发\r\n * 当对象无法快速转发消息时，系统会调用此方法，允许手动指定消息的处理对象或抛出异常。\r\n *\r\n * @param invocation 包含待转发消息的调用对象，封装了方法调用的所有信息。\r\n */\r\n- (void)forwardInvocation:(NSInvocation *)invocation {\r\n    // 获取当前方法选择器\r\n    SEL selector = invocation.selector;\r\n\r\n    // 创建潜在的消息接收者\r\n    id target = [HandlerClass new];\r\n\r\n    // 检查目标对象是否能够处理该消息\r\n    if ([target respondsToSelector:selector]) {\r\n        // 将消息转发给目标对象处理\r\n        [invocation invokeWithTarget:target];\r\n    } else {\r\n        // 如果没有对象能处理该消息，调用父类的默认实现\r\n        [super forwardInvocation:invocation];\r\n\r\n        // 或者抛出未识别选择器的异常\r\n        // [self doesNotRecognizeSelector:selector];\r\n    }\r\n}\r\n\r\n/**\r\n * 提供方法签名以支持完整消息转发。\r\n * 系统在调用 `forwardInvocation:` 之前会调用此方法以获取消息的签名。\r\n *\r\n * @param aSelector 待获取签名的方法选择器\r\n * @return 方法的签名。如果返回 nil，则不会调用 `forwardInvocation:`。\r\n */\r\n- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector {\r\n    // 尝试获取当前类的签名\r\n    NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];\r\n    if (!signature) {\r\n        // 如果当前类没有提供签名，从目标处理类尝试获取签名\r\n        signature = [HandlerClass instanceMethodSignatureForSelector:aSelector];\r\n    }\r\n    return signature;\r\n}\r\n```\r\n\r\n## 最后\r\n\r\n通过这套完整的消息转发机制，我们不仅可以优雅地处理\"方法未找到\"的异常情况，还可以：\r\n\r\n* 实现更灵活的消息派发机制\r\n* 在运行时动态扩展类的功能\r\n* 优化代码架构，提高代码复用性\r\n* 增强应用的容错能力和健壮性\r\n\r\n这些特性使消息转发成为 `iOS` 开发中一个强大而实用的机制。在实际开发中，建议根据具体场景选择合适的转发方式，既保证代码质量，又确保运行效率。\r\n",
+    "number": 10,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-04-02T08:00:00Z",
+    "updatedAt": "2024-12-09T07:43:38Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/10",
+    "jsonFilePath": "discussions/10-D_kwDONRxYmM4Ac2oc.json",
+    "markdownFilePath": "2024/11/10-D_kwDONRxYmM4Ac2oc.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdExn",
+    "title": "Go 编程入门：从实践中学习核心概念",
+    "body": "在这篇文章中，我们将通过代码实战，深入学习 `Go` 语言的核心概念与最佳实践。不仅带你夯实基础，还将让你切身感受到 `Go` 在高效并发处理和模块化设计上的独特优势，帮助你轻松掌握这一强大的编程语言。\r\n\r\n## 完整代码\r\n\r\n```go\r\npackage main\r\n\r\nimport (\r\n    \"context\"\r\n    \"errors\"\r\n    \"fmt\"\r\n    \"math/rand\"\r\n    \"sync\"\r\n    \"time\"\r\n)\r\n\r\n// Bug 表示一个软件缺陷\r\ntype Bug struct {\r\n    ID          int\r\n    Priority    Priority\r\n    Type        BugType\r\n    Description string\r\n}\r\n\r\n// Priority 表示 bug 的优先级\r\ntype Priority int\r\n\r\nconst (\r\n    Low Priority = iota + 1\r\n    Medium\r\n    High\r\n    Critical\r\n)\r\n\r\nfunc (p Priority) String() string {\r\n    return [...]string{\"\", \"Low\", \"Medium\", \"High\", \"Critical\"}[p]\r\n}\r\n\r\n// BugType 表示 bug 的类型\r\ntype BugType string\r\n\r\nconst (\r\n    UIBug       BugType = \"UI\"\r\n    BackendBug  BugType = \"Backend\"\r\n    DatabaseBug BugType = \"Database\"\r\n    APIBug      BugType = \"API\"\r\n)\r\n\r\n// Result 表示处理 bug 的结果\r\ntype Result struct {\r\n    BugID int\r\n    Error error\r\n}\r\n\r\nvar (\r\n    ErrProcessingFailed = errors.New(\"处理失败\")\r\n    ErrTimeout          = errors.New(\"处理超时\")\r\n)\r\n\r\n// BugProcessor 定义了处理 bug 的接口\r\ntype BugProcessor interface {\r\n    Process(context.Context, Bug) Result\r\n}\r\n\r\n// SimpleBugProcessor 是 BugProcessor 的一个简单实现\r\ntype SimpleBugProcessor struct{}\r\n\r\nfunc (p SimpleBugProcessor) Process(ctx context.Context, b Bug) Result {\r\n    // 模拟处理时间\r\n    processingTime := time.Duration(rand.Intn(10000)) * time.Millisecond\r\n    select {\r\n    case <-time.After(processingTime):\r\n        // 模拟处理成功或失败\r\n        if rand.Float32() < 0.1 {\r\n            return Result{BugID: b.ID, Error: ErrProcessingFailed}\r\n        }\r\n        fmt.Printf(\"处理 %s bug #%d（优先级：%s）：%s\\n\", b.Type, b.ID, b.Priority, b.Description)\r\n    return Result{BugID: b.ID, Error: nil}\r\n    case <-ctx.Done():\r\n        return Result{BugID: b.ID, Error: ErrTimeout}\r\n    }\r\n}\r\n\r\n// Notifier 定义了发送通知的接口\r\ntype Notifier interface {\r\n    Notify(message string) error\r\n}\r\n\r\n// EmailNotifier 通过邮件发送通知\r\ntype EmailNotifier struct {\r\n    To string\r\n}\r\n\r\nfunc (e EmailNotifier) Notify(message string) error {\r\n    fmt.Printf(\"发送邮件到 %s：%s\\n\", e.To, message)\r\n    return nil\r\n}\r\n\r\n// BugManager 管理 bug 处理和通知\r\ntype BugManager struct {\r\n    processor BugProcessor\r\n    notifiers []Notifier\r\n}\r\n\r\nfunc NewBugManager(processor BugProcessor, notifiers ...Notifier) *BugManager {\r\n    return &BugManager{\r\n        processor: processor,\r\n        notifiers: notifiers,\r\n    }\r\n}\r\n\r\nfunc (bm *BugManager) ProcessBugs(ctx context.Context, bugs []Bug) (int, int) {\r\n    results := make(chan Result, len(bugs))\r\n    var wg sync.WaitGroup\r\n\r\n    for _, bug := range bugs {\r\n        wg.Add(1)\r\n        go func(b Bug) {\r\n            defer wg.Done()\r\n            results <- bm.processor.Process(ctx, b)\r\n        }(bug)\r\n    }\r\n\r\n    go func() {\r\n        wg.Wait()\r\n        close(results)\r\n    }()\r\n\r\n    successCount, failCount := 0, 0\r\n    for result := range results {\r\n        if result.Error != nil {\r\n            failCount++\r\n            fmt.Printf(\"Bug #%d 处理失败：%v\\n\", result.BugID, result.Error)\r\n        } else {\r\n            successCount++\r\n        }\r\n    }\r\n\r\n    return successCount, failCount\r\n}\r\n\r\nfunc (bm *BugManager) NotifyAll(message string) {\r\n    for _, notifier := range bm.notifiers {\r\n    if err := notifier.Notify(message); err != nil {\r\n        fmt.Printf(\"通知失败：%v\\n\", err)\r\n    }\r\n    }\r\n}\r\n\r\nfunc generateBugs(n int) []Bug {\r\n    bugs := make([]Bug, n)\r\n    types := []BugType{UIBug, BackendBug, DatabaseBug, APIBug}\r\n    priorities := []Priority{Low, Medium, High, Critical}\r\n\r\n    for i := 0; i < n; i++ {\r\n        bugs[i] = Bug{\r\n            ID:          i + 1,\r\n            Priority:    priorities[rand.Intn(len(priorities))],\r\n            Type:        types[rand.Intn(len(types))],\r\n            Description: fmt.Sprintf(\"Bug %d 描述\", i+1),\r\n    }\r\n    }\r\n    return bugs\r\n}\r\n\r\n// bugTypeStats 统计不同类型 bug 的数量\r\nfunc bugTypeStats(bugs []Bug) map[BugType]int {\r\n    stats := make(map[BugType]int)\r\n    for _, bug := range bugs {\r\n        stats[bug.Type]++\r\n    }\r\n    return stats\r\n}\r\n\r\nfunc main() {\r\n    rand.Seed(time.Now().UnixNano())\r\n\r\n    developer := \"小明\"\r\n    bugCount := 20\r\n\r\n    bugs := generateBugs(bugCount)\r\n\r\n    fmt.Printf(\"%s 有 %d 个 bug 需要处理！\\n\", developer, bugCount)\r\n\r\n    // 显示 bug 类型统计\r\n    stats := bugTypeStats(bugs)\r\n    fmt.Println(\"\\n==== Bug 类型统计 ====\")\r\n    for bugType, count := range stats {\r\n        fmt.Printf(\"  %s：%d\\n\", bugType, count)\r\n    }\r\n\r\n    manager := NewBugManager(\r\n        SimpleBugProcessor{},\r\n        EmailNotifier{To: \"xiaoming@example.com\"},\r\n    )\r\n\r\n    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)\r\n    defer cancel()\r\n\r\n    fmt.Println(\"\\n==== 开始处理 Bugs ====\")\r\n    successCount, failCount := manager.ProcessBugs(ctx, bugs)\r\n\r\n    fmt.Printf(\"\\n处理结果统计：\\n\")\r\n    fmt.Printf(\"成功：%d\\n\", successCount)\r\n    fmt.Printf(\"失败：%d\\n\", failCount)\r\n\r\n    manager.NotifyAll(fmt.Sprintf(\"Bug 处理完成。成功：%d，失败：%d\", successCount, failCount))\r\n}\r\n```\r\n\r\n接下来，我们将逐步解析这些功能的实现代码。\r\n\r\n## 代码结构与核心功能解析\r\n\r\n在上面代码中，实现了 `Bug` 的创建、统计和处理，以及发送通知的功能。涵盖了大部分的 `Go` 语言特性。\r\n\r\n### 数据结构与类型定义\r\n\r\n- 定义了 `Bug`、`Priority` 和 `BugType` 等基本数据结构和类型，提升代码可读性与类型安全：\r\n\r\n  - `Bug` 结构体封装了每个 `Bug` 的 `ID`、优先级、类型以及描述信息\r\n  - `Priority` 使用自定义的整数类型表示，并通过常量进行等级划分（如 `Low`、`Medium`、`High`、`Critical`）。同时实现了 `String` 方法，使得在输出时能够显示更具可读性的优先级名称\r\n  - `BugType` 使用字符串类型，定义了 `Bug` 的四种常见分类：`UIBug`、`BackendBug`、`DatabaseBug` 和 `APIBug`\r\n\r\n- 利用 `slice` 和 `map` 的组合，简化数据的组织与管理\r\n\r\n### 接口与实现\r\n\r\n项目通过 `BugProcessor` 和 `Notifier` 接口解耦了 `Bug` 处理过程和处理结果的通知流程。\r\n\r\n- `BugProcessor` 接口定义了 `Process` 方法，表示如何处理一个 `Bug`\r\n\r\n  `SimpleBugProcessor` 是其实现，模拟了处理时间，并随机模拟处理成功或失败。\r\n\r\n- `Notifier` 接口则用于通知的发送\r\n\r\n  `EmailNotifier` 实现了通过电子邮件发送 `Bug` 处理结果的功能。\r\n\r\n通过这种接口与实现分离的设计，可以轻松扩展处理逻辑和通知方式。\r\n\r\n### 并发与任务管理\r\n\r\n并发是 `Go` 语言的核心特性之一。在这个项目中，我们利用 `goroutines` 来并发处理 bug，`sync.WaitGroup` 则帮助我们管理这些并发任务的执行流程。\r\n\r\n每个 bug 的处理过程都是通过 `goroutine` 来执行，利用 `channel` 来传递处理结果。\r\n`sync.WaitGroup` 保证了主程序能够等待所有并发任务执行完毕后再进行统计和后续操作。\r\n\r\n### 上下文管理\r\n\r\n`context` 包的使用展示了如何在并发程序中管理超时与取消操作。在 `ProcessBugs` 方法中，我们通过 `context.WithTimeout` 来设置超时时间，当任务处理时间过长时会自动触发取消，避免无限制的等待。这种超时控制机制可以有效防止系统由于某个任务阻塞而陷入卡顿。\r\n\r\n### 错误处理\r\n\r\n错误处理在 `Go` 编程中至关重要。在上面代码中，处理过程中会返回自定义的错误类型，如 `ErrProcessingFailed`（处理失败）和 `ErrTimeout`（处理超时）。在 `ProcessBugs` 方法中，根据不同的错误类型，程序输出相应的失败信息，并进行计数，最终通过 `NotifyAll` 方法发送通知，告知处理结果。\r\n\r\n### 模块化设计与扩展性\r\n\r\n项目中各模块之间通过接口相互解耦，具备良好的扩展性。例如，我们可以轻松替换 `SimpleBugProcessor` 为更复杂的处理逻辑，或者通过实现新的 `Notifier`（如短信通知）来增加通知渠道。\r\n\r\n各个模块的职责单一且明确，符合面向接口编程的思想，这不仅提升了代码的可读性，还为日后的维护与扩展提供了便利。\r\n\r\n## 总结\r\n\r\n通过上面代码，我们深入实践了 `Go` 语言的核心概念，包括数据结构设计、接口与实现的解耦、并发处理、上下文管理以及错误处理等内容。\r\n\r\n代码展示了 `Go` 在高效并发处理和模块化设计上的优势：\r\n\r\n- 结构清晰\r\n- 职责明确\r\n- 具备良好的扩展性\r\n\r\n在实际开发中，这种设计不仅提升了代码的可维护性，还为后续的功能扩展奠定了基础，充分体现了 `Go` 语言的简洁与高效。\r\n",
+    "number": 38,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-08-22T17:58:21Z",
+    "updatedAt": "2024-12-06T08:07:48Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/38",
+    "jsonFilePath": "discussions/38-D_kwDONRxYmM4AdExn.json",
+    "markdownFilePath": "2024/12/38-D_kwDONRxYmM4AdExn.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdExX",
+    "title": "SMART 原则：高效完成目标的秘诀",
+    "body": "在当今快节奏的生活和工作环境中，设定明确且可实现的目标至关重要。无论是个人发展、团队协作，还是企业战略，好的目标都能指引方向、提高效率、促进成功。而 SMART 原则，作为一种被广泛认可的目标设定方法，为我们提供了一个系统化的框架，帮助我们制定清晰、可行且富有挑战性的目标。\r\n\r\n## SMART 原则是什么\r\n\r\nSMART 原则是一个用于设定目标的框架，旨在帮助人们创建清晰、可行和可衡量的目标。SMART 代表五个关键标准：\r\n\r\n- **Specific（具体）**\r\n- **Measurable（可衡量）**\r\n- **Achievable（可实现）**\r\n- **Relevant（相关）**\r\n- **Time-bound（有时限）**\r\n\r\n每个元素都为目标设定提供了明确的指导，使其更具可操作性和实际意义。\r\n\r\n### Specific（具体）\r\n\r\n目标应该明确具体，不能含糊其辞。这意味着你要清楚地知道你想要实现什么、为什么要实现它，以及如何去实现它。具体的目标能够更好地引导行动计划，避免迷失方向。\r\n\r\n示例：相比于\"我要锻炼\"，一个具体的目标是\"我要每周去健身房 3 次，每次锻炼 1 个小时\"。\r\n\r\n### Measurable（可衡量）\r\n\r\n目标需要有可衡量的标准，这样才能追踪进展并评估是否达成了目标。使用数量、频率、百分比等具体数据来衡量。\r\n\r\n示例：如果目标是\"增加销售额\"，那么可衡量的目标是\"在下季度内将销售额提高 20%\"。\r\n\r\n### Achievable（可实现）\r\n\r\n目标应该是现实且可实现的。设定一个可以通过努力达成的目标，而不是一个遥不可及的目标。这需要评估现有资源、能力和时间。\r\n\r\n示例：如果你目前没有跑步习惯，设定\"在 3 个月内跑完马拉松\"可能不切实际，一个可实现的目标可能是\"在 3 个月内完成 5 公里跑步\"。\r\n\r\n### Relevant（相关）\r\n\r\n目标应该与更大的计划或长期愿景相关联，确保你的努力方向一致。相关的目标更有意义，能够激发持久的动力。\r\n\r\n示例：如果你的职业目标是成为一名数据科学家，那么学习 `Python` 编程语言就是一个相关的目标。\r\n\r\n### Time-bound（有时限）\r\n\r\n目标需要有明确的截止日期，这样你才能有紧迫感并合理安排时间。设定时限可以防止拖延，确保在特定时间内完成目标。\r\n\r\n示例：设定一个具体的时间表，比如\"我要在明年年底前完成我的小说初稿\"，而不是简单地说\"我想写一本书\"。\r\n\r\n## 如何应用 SMART 原则\r\n\r\n### 目标设定\r\n\r\n首先，根据 SMART 原则设定具体的目标，确保目标符合五个标准。\r\n\r\n### 行动计划\r\n\r\n制定详细的行动计划，包括每天或每周需要完成的具体任务。\r\n\r\n### 进度跟踪\r\n\r\n定期检查目标的进展，根据需要调整策略和方法。\r\n\r\n### 反馈和调整\r\n\r\n根据实际进展和反馈，不断优化目标和行动计划，确保最终达成目标。\r\n\r\n**目标并非一成不变，它们可能随着您的情况和优先级变化而进行调整和修订。因此需要定期审查目标，评估进度，并根据需要进行调整，以确保它们仍然相关且可实现。**\r\n\r\n## 最后\r\n\r\nSMART 原则是一个简单却有效的目标设定工具，可以帮助你更有效地完成目标。如果你正在努力实现自己的目标，不妨尝试一下 SMART 原则，看看它是否能帮助你。\r\n",
+    "number": 37,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-05-28T20:19:17Z",
+    "updatedAt": "2024-12-06T08:03:35Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/37",
+    "jsonFilePath": "discussions/37-D_kwDONRxYmM4AdExX.json",
+    "markdownFilePath": "2024/12/37-D_kwDONRxYmM4AdExX.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdExM",
+    "title": "日历订阅源指北：创建、发布、使用",
+    "body": "![image](https://file.onnttf.site/2024/4/18/1.jpg)\r\n\r\n在数字化时代，日历不仅是规划日常的工具，更是提高生产力的伙伴，帮助我们合理规划时间，安排任务，及时提醒我们即将临近的重要事件。随着智能手机和电脑的普及，日历应用程序也已经发展成为我们生活中的必备工具。但是，随着信息量的激增，传统的手动日程管理方式已逐渐显得力不从心。因此，日历订阅源应运而生，它方便我们进行时间管理，帮助我们高效应对复杂日程，提升时间管理的效率。本文将详细介绍日历订阅源的概念，并阐释如何创建、发布以及使用日历订阅源。\r\n\r\n## 什么是日历订阅源\r\n\r\n日历订阅源是一种通过网络发布的日历数据，用户可以通过订阅链接，将各类日程事件自动同步到个人日历应用程序中，实现日程数据的自动更新和同步。用户可以按需订阅各种特定的日历，如个人日程、假期、体育赛事、会议等。这种方式让用户能轻松地将外部日程和事件与个人日历整合在一起，大大提高了时间管理和日程安排的效率。\r\n\r\n## 常见的日历订阅源\r\n\r\n### Exchange Calendar\r\n\r\n[Exchange Calendar](https://support.microsoft.com/en-us/office/introduction-to-the-outlook-calendar-d94c5203-77c7-48ec-90a5-2e2bc10bd6f8) 是 Microsoft Exchange 提供的日历服务，通常与 Microsoft Outlook 配合使用。它提供了强大的团队协作功能，包括事件管理和日历共享等，使团队成员能够更加高效地协调和安排工作日程。\r\n\r\n### CalDAV\r\n\r\n[CalDAV](https://en.wikipedia.org/wiki/CalDAV) 是 [WebDAV](https://en.wikipedia.org/wiki/WebDAV) 的扩展，它为客户端访问远程服务器上的日历信息提供了标准，用于客户端访问和管理日历数据。[CalDAV](https://en.wikipedia.org/wiki/CalDAV) 可以与各种日历应用和服务集成，包括 Google Calendar、Apple Calendar 和 Microsoft Outlook 等。通过 [CalDAV](https://en.wikipedia.org/wiki/CalDAV)，用户可以实现实时更新、共享日历和访问权限管理等高级功能，为多人协作和组织日程带来了便利。\r\n\r\n### iCalendar\r\n\r\n[iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 是一种通用的日历数据交换格式，被广泛应用于日历应用程序之间的数据共享。[iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 文件的扩展名通常为 `.ical`、`.ics`、`.ifb` 或 `.iCalendar`。它优势在于简单易用，可以轻松地与各种日历应用程序和设备兼容。[iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 文件可以包含事件、任务、提醒以及其他日程安排，使其成为个人和团队日程管理的理想选择。\r\n\r\n无论是 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/)、[CalDAV](https://en.wikipedia.org/wiki/CalDAV) 还是 [Exchange Calendar](https://support.microsoft.com/en-us/office/introduction-to-the-outlook-calendar-d94c5203-77c7-48ec-90a5-2e2bc10bd6f8)，这些都是针对日程管理和信息共享问题设计的不同的技术方案。\r\n\r\n- [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 作为通用的日历数据交换格式，适用于简单的日程共享和导入导出操作\r\n- [CalDAV](https://en.wikipedia.org/wiki/CalDAV) 通过 Web 协议实现了跨平台和远程访问的日历同步\r\n- [Exchange Calendar](https://support.microsoft.com/en-us/office/introduction-to-the-outlook-calendar-d94c5203-77c7-48ec-90a5-2e2bc10bd6f8) 则提供了更加完整和高级的日历服务，适用于企业和组织内部的日程安排和协作\r\n\r\n## 日历订阅源的制作及使用\r\n\r\n接下来的内容中，我们将以油价调整时间为例，详细介绍如何创建一个 [iCalendar](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/) 格式的日历订阅源。\r\n\r\n### iCalendar 的基本规范\r\n\r\n`iCalendar` 文件由多个部分组成，其中的每个部分都以 `BEGIN:` 标识开启，并以 `END:` 标识结束。文件的主体部分是 `VCALENDAR`，它作为容器，容纳了文件中的其他所有部分。这些部分包括 `VEVENT`（用于描述事件）、`VTODO`（标记待办事项）、`VJOURNAL`（用于记录日记）以及 `VTIMEZONE`（表示时区信息）。值得一提的是，同一类型的部分可以在 `iCalendar` 文件中多次出现。举例来说，一个文件可能包含多个 `VEVENT` 部分，每个部分描述了一个独立的事件。\r\n\r\n如果您希望更深入地理解 `iCalendar` 标准规范，我建议您查阅 [iCalendar - Design](https://en.wikipedia.org/wiki/iCalendar#Design) 和 [iCalendar (RFC 5545)](https://iCalendar.org/RFC-Specifications/iCalendar-RFC-5545/)，这两个链接内包含了丰富的内容。\r\n\r\n### 编写日历订阅源\r\n\r\n```text\r\nBEGIN:VCALENDAR\r\nPRODID:-//onnttf.site//油价调整时间表//CN\r\nVERSION:2.0\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:油价调整时间表\r\nX-WR-TIMEZONE:Asia/Shanghai\r\nX-WR-CALDESC:油价调整时间表 更新时间：2024-04-18 16:12:34\r\nBEGIN:VTIMEZONE\r\nTZID:Asia/Shanghai\r\nX-LIC-LOCATION:Asia/Shanghai\r\nBEGIN:STANDARD\r\nTZOFFSETFROM:+0800\r\nTZOFFSETTO:+0800\r\nTZNAME:CST\r\nDTSTART:19700101T000000\r\nEND:STANDARD\r\nEND:VTIMEZONE\r\nBEGIN:VEVENT\r\nUID:20240103T000000_oilprice@onnttf.site\r\nSUMMARY:油价调整\r\nDESCRIPTION:第 1 次调整\r\nDTSTART;VALUE=DATE:20240103\r\nDTEND;VALUE=DATE:20240103\r\nDTSTAMP:20240418T161234Z\r\nSTATUS:CONFIRMED\r\nCREATED;TZID=Asia/Shanghai:20240418T161234\r\nLAST-MODIFIED;TZID=Asia/Shanghai:20240418T161234\r\nSEQUENCE:0\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n```\r\n\r\n上面是一个简单的 `iCalendar` 文件，用来表示一次油价调整的情况。它包含了日历的基本信息、时区信息以及一个事件，让我们解读一下其中的信息：\r\n\r\n- `PRODID`：这个属性用于指定生成该日历文件的产品标识符。这个标识符通常以 `-//` 作为前缀，后边跟随着的是组织名或网站域名，最后是产品或服务的名称以及语言代码。在我们的示例中，`PRODID` 的值为 `-//onnttf.site//油价调整时间表//CN`，说明该日历文件是由 `onnttf.site` 网站生成的，用于展示油价调整时间表。\r\n\r\n- `VERSION`：这个属性代表 `iCalendar` 规范的版本，例如我们的示例中，它的版本为 `2.0`。\r\n\r\n- `CALSCALE`：这部分定义了日历所采用的历法。在我们的示例中，`GREGORIAN` 表明我们正在使用公历作为基础。\r\n\r\n- `METHOD`：这个字段定义了创建或更新日历数据的方法。在我们的例子中，它是 `PUBLISH`，意即是发布日历信息，将日历数据发送给订阅者。\r\n\r\n- `VTIMEZONE`：这部分定义了时区信息。在我们的示例中，时区被设置为 `Asia/Shanghai`。\r\n\r\n- `VEVENT`：这部分定义了事件的各种信息。在我们的示例中，这个事件是关于油价的调整。\r\n\r\n  - `UID`：事件的唯一标识符\r\n  - `SUMMARY`：事件的摘要，简要描述了事件的内容\r\n  - `DESCRIPTION`：事件的详细描述\r\n  - `DTSTART`：事件的开始时间\r\n  - `DTEND`：事件的结束时间\r\n  - `DTSTAMP`：事件的时间戳\r\n  - `STATUS`：事件的状态，这里是 `CONFIRMED`，表示事件已确认\r\n  - `CREATED`：事件的创建时间\r\n  - `LAST-MODIFIED`：事件的最后修改时间\r\n  - `SEQUENCE`：事件序列号\r\n\r\n现在让我们进入下一步。首先，我们需要找出油价调整的准确时间。拿到这些信息后，我们就可以按照上文中 `VEVENT` 的格式来编写新的事件，最后将这些内容保存到 `oil_price_adjustment.ics` 文件中。完成后，可以在 [iCalendar Validator](https://iCalendar.org/validator.html) 进行格式校验，以保证我们的文件没有错误。\r\n\r\n### 发布日历订阅源\r\n\r\n为了更方便地让他人订阅油价调整时间表，我选择使用 GitHub 进行托管。步骤其实非常简单，只需要创建一个 `Public` 的仓库，然后将我们刚刚创建的 `oil_price_adjustment.ics` 文件上传进去。这样，任何人都可以轻松访问并订阅这份时间表了。\r\n\r\n通过将日历订阅源发布至云端，我们能够带来更多的便利性和实时性。这种方式让用户随时随地浏览并订阅日历，一旦源文件发生更新，所有订阅者的日历就会自动进行同步，无需手动操作。无论用户所使用的设备和平台是什么，他们都可以轻松获取到这些日历订阅源，使得信息的共享和传播过程变得更加便捷和高效。\r\n\r\n### 使用日历订阅源\r\n\r\n下面以苹果日历应用为例：\r\n\r\n1. 在您的苹果电脑上，找到并打开日历应用程序\r\n2. 点击菜单栏中的\"文件\"选项\r\n3. 在文件菜单中选择\"新建日历订阅\"\r\n4. 在弹出的窗口中，输入想要订阅的链接，如：<https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics>\r\n5. 输入完毕后，点击\"订阅\"即可\r\n6. 可以根据您的个人需要调整一些设置，例如更新频率、提醒设置等\r\n7. 在完成以上步骤后，点击\"好\"或\"完成\"按钮，即可完成订阅\r\n\r\n现在，您可以在日历应用中查看油价调整信息了。\r\n\r\n> 除了苹果日历应用，您也可以选择其他支持订阅功能的日历应用，例如 Google Calendar、Microsoft Outlook 等。\r\n\r\n## 最后\r\n\r\n2024 年油价调整时间表已创建完成并上传至[此仓库](https://github.com/onnttf/calendar)。该时间表将持续更新，您可通过订阅 <https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics> 获取最新的调整信息。\r\n",
+    "number": 36,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-04-12T10:29:57Z",
+    "updatedAt": "2024-12-06T08:01:17Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/36",
+    "jsonFilePath": "discussions/36-D_kwDONRxYmM4AdExM.json",
+    "markdownFilePath": "2024/12/36-D_kwDONRxYmM4AdExM.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEw4",
+    "title": "聚焦问题本质",
+    "body": "在解决问题时，我们常常陷入一种错觉**：专注于解决看似更为直接或简单的问题，却忽略了问题的真正本质**。这种情况下，我们可能会不知不觉地将注意力转移到一个\"次要\"的问题上，而忽略了问题的核心。\r\n\r\n这种现象也被称为：**[XY Problem](https://en.wikipedia.org/wiki/XY_problem)**\r\n\r\n## 什么是 XY 问题\r\n\r\nXY Problem 指的是一个人提出问题 `Y`，但实际上他真正想要解决的问题是 `X`。而在这个过程中，他错误地认为问题 `Y` 是解决 `X` 的正确路径，导致他所获得的帮助无法解决他实际上想要解决的问题，**最终浪费了时间和精力却没有解决问题**。\r\n\r\n举个例子，假设一个人有一台打印机无法正常工作。他来询问如何修复打印机 `Y`，但实际上他可能真正需要的是打印一些文件 `X`。所以，实际上问题的核心是如何解决无法打印文件的问题，而不是修理打印机。\r\n\r\n再举个例子，一个人问：\"我应该如何用锤子把钉子敲进墙里？\"这个问题 `Y` 看似很简单，但实际上，他可能真正想要解决的是\"我应该如何挂一幅画？\"这个更本质的问题是关于装饰墙面 `X`，而不是简单地使用工具。\r\n\r\n简而言之，**没有去问怎么解决问题 `X`，而是去问解决方案 `Y` 应该怎么去实现和操作**[^1]。\r\n\r\n[^1]: [X-Y Problem](https://coolshell.cn/articles/10804.html)\r\n\r\n## 为什么会产生 XY 问题\r\n\r\nXY Problem 的核心在于提问者与回答者之间的沟通不畅，导致了问题的误解和混淆。虽然提问者通常会提出一个问题 `Y`，但实际上他们真正想要解决的问题可能是另一个 `X`。这种误解可能是因为提问者未能清晰地表达他们的需求，或者回答者未能正确理解提问者的真实意图。\r\n\r\n因此，虽然问题看起来似乎是提问者的问题，但 **XY Problem 的产生实际上是由于双方之间的沟通问题而引起的**。\r\n\r\nXY Problem 的产生往往是多种因素综合作用的结果，如：\r\n\r\n1. 误解需求：提问者可能对问题的本质有误解，因此提出了与其真正需求不符的问题。\r\n2. 假设性思维：提问者可能假设问题的解决方案必须是特定的，而没有对问题进行充分的分析。\r\n3. 沟通不畅：提问者没有清晰地表达问题，导致回答者无法理解问题的真正含义。\r\n4. 预设假设：提问者可能基于他们自己的假设或理解来提出问题，而没有考虑到其他人的理解可能与他们不同。\r\n5. 不确定自己的需求：有时候，提问者本身可能不清楚自己真正想要解决的是什么问题，因此提出了一个表面问题而不是深入思考根本原因。\r\n6. 文化或语言差异：在跨文化或跨语言交流中，提问者和回答者之间的理解存在差异，导致 XY Problem 的产生。\r\n\r\n## 如何避免 XY 问题\r\n\r\n避免 XY Problem 不仅是提问者的责任，作为回答者，我们也应该深入理解问题，然后再予以回应。接下来，我们将探讨如何从提问者和回答者的角度出发，采取一系列措施有效避免 XY Problem 的发生。\r\n\r\n### 站在提问者的角度\r\n\r\n作为提问者，为了更好地理解问题，并得到有针对性的解答，提问者需要清楚地思考自己的需求。以下是几点建议：\r\n\r\n- 明确你的目标\r\n\r\n  在提问之前，花些时间思考自己真正想要解决的问题是什么。这有助于避免混淆，并使回答更加有针对性。\r\n\r\n- 描述你的情境\r\n\r\n  在提问时，提供足够的背景信息是非常重要的。这样有助于回答者更好地理解你的问题，并提供更合适的解决方案。\r\n\r\n- 明确你的需求\r\n\r\n  不要仅仅关注表面问题，而是思考背后的原因和目的。这有助于回答者更好地理解你的需求，并给予更贴切的建议。\r\n\r\n- 接受不同的观点\r\n\r\n  有时候，回答者可能会提出一些你没有考虑过的观点。要保持开放的心态，并认真考虑这些建议是否符合你的需求。\r\n\r\n### 站在回答者的角度\r\n\r\n除了提问者自身，作为回答者，我们也需要学会识别 XY Problem，并给予恰当的回答。以下是一些建议：\r\n\r\n- 明确理解提问者的需求\r\n\r\n  在回答问题之前，努力理解提问者真正想要解决的问题是什么。\r\n\r\n- 提出追问\r\n\r\n  如果怀疑提问者的问题是否真正表达了他的需求，可以适当地提出追问，帮助他更清楚地描述问题。\r\n\r\n- 给予全面的回答\r\n\r\n  不仅仅回答提问者直接提出的问题，还要考虑他背后的需求，给予全面的解答。\r\n\r\n提问者需要更清晰地表达他们的需求和问题，而回答者则需要积极倾听并确保对提问者的需求有正确的理解。只有双方都努力改善沟通，才能有效地避免 XY Problem 的发生。\r\n\r\n## 最后\r\n\r\n在现实生活中，我们经常会遇到 XY Problem。希望这些内容能够对您有所启发，并在您的日常生活和工作中发挥积极的作用。\r\n",
+    "number": 35,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-03-18T18:30:16Z",
+    "updatedAt": "2024-12-06T07:57:51Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/35",
+    "jsonFilePath": "discussions/35-D_kwDONRxYmM4AdEw4.json",
+    "markdownFilePath": "2024/12/35-D_kwDONRxYmM4AdEw4.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEwe",
+    "title": "古老的记数艺术",
+    "body": "在日常的生活中，我们经常会遇到罗马数字，比如 `I`、`II`、`IV` 等。然而，除了这些较常见的罗马数字外，还存在一些相对陌生的，如 `X`、`L`、`C`、`D`、`M` 等。在本文中，我们将深入了解这些罗马数字的细节，揭示它们背后蕴含的文化和历史内涵。\r\n\r\n## 起源与发展\r\n\r\n罗马数字是一种起源于古罗马的数字系统，随着时间的推移，罗马数字的使用范围逐渐扩大，涵盖了经济、建筑、文学等多个领域。在古罗马的公共建筑上，我们可以看到许多刻有罗马数字的石碑和雕塑，这些数字记录了建筑的兴建年代和重要事件。\r\n\r\n直到中世纪晚期，它仍然是整个欧洲通常的书写数字的方式。从 14 世纪开始，罗马数字开始被阿拉伯数字取代，但它们仍然在许多地方留下了痕迹，成为历史与艺术的重要组成部分。\r\n\r\n## 基本规则\r\n\r\n罗马数字是用拉丁字母的字母组合写成的，每个字母都有一个固定的整数值，通过组合这些符号，可以表示出所有正整数（**罗马数字中没有 `0`**）：\r\n\r\n| 罗马数字 | 数值 |\r\n| -------- | ---- |\r\n| I        | 1    |\r\n| V        | 5    |\r\n| X        | 10   |\r\n| L        | 50   |\r\n| C        | 100  |\r\n| D        | 500  |\r\n| M        | 1000 |\r\n\r\n在组合字符时，我们必须要遵循下面几个规则：\r\n\r\n1. 罗马数字的书写是**从大到小，从左往右**\r\n2. 符号 `I`、`X`、`C`、`M` **最多只能连续重复 3 次**，符号 `V`、`L`、`D` **不能重复**\r\n\r\n   如：`I` 表示 `1`、`II` 表示 `2`、`III` 表示 `3`\r\n\r\n3. 在较大的罗马数字的**左侧记上较小的罗马数字**，表示**大数字减小数字**\r\n\r\n   - 大数字左侧的数字必须为一位\r\n\r\n     如：`8` 用 `VIII`，不能用 `IIX` 表示\r\n\r\n   - 大数字左侧的数字有限制，仅限于 `I`、`X`、`C`，**即只能减 1、减 10、减 100**\r\n\r\n     如：`99` 不能表示成 `100-1`，即 `IC`。因为 `C` 表示的 `100` 和 `I` 表示的 `1` 之间超过了一个位数。`99` 应该表示成 `(100-10)+(10-1)`，即 `XCIX`\r\n\r\n4. 在较大的罗马数字的**右侧记上较小的罗马数字**，表示**大数字加小数字**\r\n\r\n   如：`VI` = `V` + `I` = `5` + `1`，即 `VI` 表示 `6`\r\n\r\n5. 如果想将数字数扩大 1000 倍，可以在罗马数字的上方加上一条横线，表示将这个数乘以 `1000`，同理，两条横线则是乘以 `1000000`\r\n\r\n   如：`V̅` = `5` × `1000` = `5000`\r\n\r\n### 示例\r\n\r\n| 罗马数字 | 对应值 | 罗马数字 | 对应值 | 罗马数字 | 对应值 | 罗马数字 | 对应值 |\r\n| -------- | ------ | -------- | ------ | -------- | ------ | -------- | ------ |\r\n| I        | 1      | XI       | 11     | CI       | 101    | MI       | 1001   |\r\n| II       | 2      | XII      | 12     | CII      | 102    | MII      | 1002   |\r\n| III      | 3      | XIII     | 13     | CIII     | 103    | MIII     | 1003   |\r\n| IV       | 4      | XIV      | 14     | CIV      | 104    | MIV      | 1004   |\r\n| V        | 5      | XV       | 15     | CV       | 105    | MV       | 1005   |\r\n| VI       | 6      | XVI      | 16     | CVI      | 106    | MVI      | 1006   |\r\n| VII      | 7      | XVII     | 17     | CVII     | 107    | MVII     | 1007   |\r\n| VIII     | 8      | XVIII    | 18     | CVIII    | 108    | MVIII    | 1008   |\r\n| IX       | 9      | XIX      | 19     | CIX      | 109    | MIX      | 1009   |\r\n| X        | 10     | XX       | 20     | CX       | 110    | MX       | 1010   |\r\n\r\n## 意义与文化传承\r\n\r\n罗马数字不仅仅是一种计数系统，更是古罗马文化的象征。它们记录了一个强大而辉煌的帝国的兴衰，承载着古代智者对数学和科学的探索。在今天，我们仍然可以在博物馆、历史遗迹以及艺术品中看到这些数字的痕迹，感受到古罗马文明的魅力。\r\n\r\n- 钟表面板\r\n- 君主和教皇的名字\r\n\r\n  如：Elizabeth II of the United Kingdom、Pope Benedict XVI\r\n\r\n- 英文、法文等使用拉丁字母的语言所写的书籍、文件的卷章节编号\r\n\r\n  如：Volume VII、Chapter XXIV、Section VI.3\r\n\r\n- 电影、电视节目和其他艺术作品的制作年份\r\n\r\n  如：Rocky II、Myst III: Exile\r\n\r\n总的来说，罗马数字虽然在日常生活中被淘汰，但它们作为历史的见证者，仍然在文化和艺术中发挥着独特的作用。通过深入了解这个古老的数字系统，我们能够更好地理解古代文明的智慧，同时在现代社会中保留并传承这一独特的数学遗产。\r\n",
+    "number": 34,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-03-06T20:59:37Z",
+    "updatedAt": "2024-12-06T07:48:23Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/34",
+    "jsonFilePath": "discussions/34-D_kwDONRxYmM4AdEwe.json",
+    "markdownFilePath": "2024/12/34-D_kwDONRxYmM4AdEwe.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEv_",
+    "title": "Keep Using Short Password on macOS (2024)",
+    "body": "![image](https://file.onnttf.site/2024/1/30/1.png)\r\n\r\nFollowing the release of **macOS Mojave 10.14**, Apple updated its password requirements to require users to set a password of at least 4 characters for their accounts. However, many people have become accustomed to using short passwords, such as `space`.\r\n\r\nThis article provides a solution for those who wish to keep using short passwords.\r\n\r\n## Step 1: Clear the password policy\r\n\r\nOpen the `Terminal` application and type the following command:\r\n\r\n```bash\r\npwpolicy -clearaccountpolicies\r\n```\r\n\r\nAfter pressing `Enter`, you will be prompted to enter the current password. It's important to note that the password you type is not visible. Simply press `Enter` when you have finished typing.\r\n\r\n![image](https://file.onnttf.site/2024/1/30/2.png)\r\n\r\nWhen the `Terminal` displays \"Clearing global account policies\", it will indicate that the password policy has been successfully cleared, as shown below:\r\n\r\n![image](https://file.onnttf.site/2024/1/30/3.png)\r\n\r\n## Step 2: Change your password\r\n\r\nTo change your password, click on the Apple logo in the top left corner of the screen, select **System Preferences** > **Users & Groups** and follow the on-screen instructions.\r\n\r\n![image](https://file.onnttf.site/2024/1/30/4.png)\r\n\r\nYou can find that there are no password requirements during this process.\r\n\r\nBy following these steps, users can bypass the enforced password restrictions and use short passwords, such as `space`.\r\n",
+    "number": 33,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2024-01-30T16:22:37Z",
+    "updatedAt": "2024-12-06T07:43:02Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/33",
+    "jsonFilePath": "discussions/33-D_kwDONRxYmM4AdEv_.json",
+    "markdownFilePath": "2024/12/33-D_kwDONRxYmM4AdEv_.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEv6",
+    "title": "Excel 教程：如何使用公式取两列的交集",
+    "body": "在工作中，我们经常需要使用 `Excel` 做数据处理，如比较、筛选、清洗等。**找出两个列之间的交集** 这个操作可以在许多情况下派上用场。本文将向您介绍如何使用公式来找出两列的交集，我们使用的公式如下：\r\n\r\n```excel\r\n=IF(ISNUMBER(MATCH(A1,$B:$B,0)),A1,\"\")\r\n```\r\n\r\n## 公式解读\r\n\r\n### IF\r\n\r\n`IF` 函数是 `Excel` 中的条件函数，用于在满足特定条件时执行一个操作，否则执行另一个操作。公式的基本结构如下：\r\n\r\n```excel\r\n=IF(条件, 条件为真时的结果, 条件为假时的结果)\r\n```\r\n\r\n在上面的公式中，条件是通过 `MATCH` 函数和 `ISNUMBER` 函数的组合来确定的，我们将在后面详细讨论。\r\n\r\n### ISNUMBER\r\n\r\n`ISNUMBER` 函数是 `Excel` 中的判断函数，用于检查给定值是否为数字的函数，如果是数字则返回 `TRUE`，否则返回 `FALSE`。公式的基本结构如下：\r\n\r\n```excel\r\n=ISNUMBER(值)\r\n```\r\n\r\n在上面的公式中，它的作用是验证 `MATCH` 函数的结果是否是一个数字。\r\n\r\n### MATCH\r\n\r\n`MATCH` 函数是 `Excel` 中的匹配函数，用于在一个范围内查找某个值，并返回该值在范围中的相应位置，如果找到匹配项，它将返回该项的位置，否则返回错误值 `#N/A`。公式的基本结构如下：\r\n\r\n```excel\r\n=MATCH(要查找的值, 查找范围, [匹配类型])\r\n```\r\n\r\n在上面的公式中，`MATCH` 函数的任务是查找 `A1` 单元格的值是否存在于 `B` 列中。\r\n\r\n## 公式的工作原理\r\n\r\n现在，让我们将这些函数组合起来，看看这个公式是如何工作的：\r\n\r\n```excel\r\n=IF(ISNUMBER(MATCH(A1,$B:$B,0)),A1,\"\")\r\n```\r\n\r\n1. 首先，`MATCH(A1,$B:$B,0)` 查找 `A1` 单元格的值是否在 `B` 列中找到匹配项。如果找到匹配项，它将返回匹配项的位置，否则返回 `#N/A`。\r\n2. 接下来，`ISNUMBER(MATCH(A1,$B:$B,0))` 检查 `MATCH` 函数的结果是否为数字。如果找到匹配项，这个表达式将返回 `TRUE`，否则返回 `FALSE`。\r\n3. 最后，`IF(ISNUMBER(MATCH(A1,$B:$B,0)),A1,\"\")` 利用条件函数。如果 `ISNUMBER` 函数返回 `TRUE`，则返回 `A1` 单元格的值（即 `A1` 单元格的内容），否则返回一个空字符串 \"\"。\r\n\r\n## 如何使用这个公式\r\n\r\n现在，让我们看看如何在实际工作中使用这个公式。\r\n\r\n假设您有一个 `Excel` 工作表，其中包含两列数据：列 `A` 包含要检查匹配的值，列 `B` 包含目标范围：\r\n\r\n| A 列 | B 列 | C 列 |\r\n| ---- | ---- | ---- |\r\n| 1    | 2    |      |\r\n| 2    | 3    |      |\r\n| 3    | 4    |      |\r\n| 4    | 5    |      |\r\n| 5    | 6    |      |\r\n\r\n1. 在 `C1` 单元格中输入公式 `=IF(ISNUMBER(MATCH(A1,$B:$B,0)),A1,\"\")`。\r\n2. 在 `C1` 中输入公式后，将鼠标指针悬停在 `C1` 单元格的右下角，直到光标变为一个黑色十字。然后，点击并拖动以填充下面的单元格，直到您处理完整个数据集。\r\n\r\n完成上述步骤后，`C` 列中将显示两列之间的交集。`C` 列中的每个单元格都包含在 `A` 列和 `B` 列中都存在的值。即：\r\n\r\n| A 列 | B 列 | C 列 |\r\n| ---- | ---- | ---- |\r\n| 1    | 2    |      |\r\n| 2    | 3    | 2    |\r\n| 3    | 4    | 3    |\r\n| 4    | 5    | 4    |\r\n| 5    | 6    | 5    |\r\n\r\n这使您能够轻松识别共同元素，无需手动比较每个单元格。\r\n\r\n## 最后\r\n\r\n在数据处理的工作中，`Excel` 是不可或缺的工具。各种函数的组合提供了一种强大的方式，可以帮助您有效地处理和筛选数据。通过了解和利用这些函数，您可以更好地利用 `Excel` 来处理各种数据分析任务，以提高数据处理的效率和准确性。\r\n",
+    "number": 32,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2023-09-01T08:00:00Z",
+    "updatedAt": "2024-12-06T07:41:26Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/32",
+    "jsonFilePath": "discussions/32-D_kwDONRxYmM4AdEv6.json",
+    "markdownFilePath": "2024/12/32-D_kwDONRxYmM4AdEv6.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEvh",
+    "title": "掌握书签文件：高效管理收藏",
+    "body": "网络浏览早已成为我们日常生活中不可或缺的一部分。面对浩如烟海的网页信息，如何有效地管理和检索成为一个重要课题。幸运的是，现代浏览器都提供了强大的\"书签\"功能来帮助我们解决这个问题。本文将深入剖析浏览器书签文件的结构，帮助您更好地掌握和运用这一实用工具。\r\n\r\n## 书签文件的格式\r\n\r\n书签文件本质上是一个结构化的 `HTML` 文本文件，它记录了您在浏览器中保存的所有网址信息，包括标题、`URL`、添加时间等关键数据。下面是一个典型的书签文件示例：\r\n\r\n```html\r\n<!DOCTYPE NETSCAPE-Bookmark-file-1>\r\n<!-- This is an automatically generated file. -->\r\n<DL><p>\r\n    <DT><H3 ADD_DATE=\"1634454000\" LAST_MODIFIED=\"1634454200\" PERSONAL_TOOLBAR_FOLDER=\"true\">书签栏</H3>\r\n    <DL><p>\r\n        <DT><A HREF=\"https://www.example.com\" ADD_DATE=\"1634454300\" ICON=\"data:image/png;base64,...\" LAST_MODIFIED=\"1634454320\">示例网站</A>\r\n        <!-- 更多书签... -->\r\n    </DL><p>\r\n</DL><p>\r\n```\r\n\r\n### 核心标签解析\r\n\r\n书签文件使用以下几个关键 `HTML` 标签来组织数据：\r\n\r\n- `<DL>`：定义书签列表的容器标签\r\n- `<DT>`：每个书签条目的标签\r\n- `<H3>`：用于标识书签文件夹的标题\r\n- `<A>`：存储具体书签信息，包含 `URL`、名称等属性\r\n\r\n每个标签都携带了丰富的属性信息，如添加时间 `ADD_DATE` 和最后修改时间 `LAST_MODIFIED` 等。\r\n\r\n## 书签文件解析流程\r\n\r\n要将书签文件转换为可用的数据结构，需要遵循以下步骤：\r\n\r\n1. 文件解析：遍历 `<H3>` 标签获取文件夹结构\r\n2. 内容提取：解析 `<DL>` 标签下的书签列表\r\n3. 详情获取：处理每个 `<DT>` 标签中的具体书签信息\r\n4. 层级构建：通过父子关系建立完整的目录树\r\n5. 数据转换：将解析结果转换为标准 `JSON` 格式\r\n\r\n解析后的数据结构示例：\r\n\r\n```json\r\n{\r\n  \"title\": \"书签栏\",\r\n  \"bookmarks\": [\r\n    {\r\n      \"title\": \"示例网站\",\r\n      \"url\": \"https://www.example.com\",\r\n      \"addAt\": \"2021-10-17T15:05:00+08:00\",\r\n      \"updateAt\": \"2021-10-17T15:05:20+08:00\"\r\n    }\r\n  ],\r\n  \"addAt\": \"2021-10-17T15:00:00+08:00\",\r\n  \"updateAt\": \"2021-10-17T15:03:20+08:00\"\r\n}\r\n```\r\n\r\n### 解析书签文件\r\n\r\n```go\r\n// parseBookmarks extracts bookmarks from the goquery document and returns a slice of bookmark entries.\r\nfunc parseBookmarks(doc *goquery.Document) []Bookmark {\r\n    // initialize a map to store bookmarks with their titles as keys.\r\n    bookmarkMap := make(map[string]*Bookmark)\r\n\r\n    // helper function to parse timestamp.\r\n    parseTime := func(timestamp string) *time.Time {\r\n        if len(timestamp) == 0 {\r\n            return nil\r\n        }\r\n        ts, err := strconv.ParseInt(timestamp, 10, 64)\r\n        if err != nil {\r\n            fmt.Println(\"error parsing timestamp:\", err.Error())\r\n            return nil\r\n        }\r\n        t := time.Unix(ts, 0)\r\n        return &t\r\n    }\r\n\r\n    // iterate over each H3 element in the document representing bookmark titles.\r\n    doc.Find(\"H3\").Each(func(i int, header *goquery.Selection) {\r\n        // create a bookmark entry for the current H3 element.\r\n        bookmark := Bookmark{\r\n            Title:    header.Text(),\r\n            AddAt:    parseTime(header.AttrOr(\"add_date\", \"\")),\r\n            UpdateAt: parseTime(header.AttrOr(\"last_modified\", \"\")),\r\n        }\r\n\r\n        // check if the header has a sibling DL element containing bookmarks.\r\n        if dlNode := header.Next(); dlNode.Is(\"DL\") {\r\n            // iterate over each DT element representing sub-bookmark titles.\r\n            dlNode.ChildrenFiltered(\"DT\").Each(func(j int, dtNode *goquery.Selection) {\r\n                if aNode := dtNode.Children().First(); aNode.Is(\"A\") {\r\n                    // create a bookmark entry for each bookmark within the DL element.\r\n                    subBookmark := Bookmark{\r\n                        Title:    aNode.Text(),\r\n                        URL:      aNode.AttrOr(\"href\", \"\"),\r\n                        AddAt:    parseTime(aNode.AttrOr(\"add_date\", \"\")),\r\n                        UpdateAt: parseTime(aNode.AttrOr(\"last_modified\", \"\")),\r\n                    }\r\n                    bookmark.Bookmarks = append(bookmark.Bookmarks, subBookmark)\r\n                }\r\n            })\r\n        }\r\n\r\n        // check if the bookmark has a parent folder (H3 element).\r\n        if parentDL := header.Parent().Parent(); parentDL.Is(\"DL\") && parentDL.Prev().Is(\"H3\") {\r\n            // set the parent field for the current bookmark.\r\n            bookmark.Parent = parentDL.Prev().Text()\r\n        }\r\n\r\n        // add the bookmark to the map.\r\n        bookmarkMap[bookmark.Title] = &bookmark\r\n    })\r\n\r\n    // convert the map values to a slice and return.\r\n    bookmarks := make([]Bookmark, 0, len(bookmarkMap))\r\n    for _, bookmark := range bookmarkMap {\r\n        bookmarks = append(bookmarks, *bookmark)\r\n    }\r\n    return bookmarks\r\n}\r\n```\r\n\r\n### 建立书签的目录树结构\r\n\r\n```go\r\n// buildTree constructs the bookmark tree by finding the root folder and building the sub-trees.\r\nfunc buildTree(bookmarks []Bookmark) Bookmark {\r\n    // function to find the root folder by looking for a bookmark without a parent.\r\n    findRootFolder := func(bookmarks []Bookmark) *Bookmark {\r\n          for i := range bookmarks {\r\n            if bookmarks[i].Parent == \"\" {\r\n                return &bookmarks[i]\r\n            }\r\n        }\r\n        return nil\r\n    }\r\n\r\n    root := findRootFolder(bookmarks)\r\n    if root == nil {\r\n        fmt.Println(\"root folder not found\")\r\n        return Bookmark{}\r\n    }\r\n\r\n    // function to build the sub-tree recursively.\r\n    var buildSubTree func(parent *Bookmark)\r\n    buildSubTree = func(parent *Bookmark) {\r\n        for i := range bookmarks {\r\n            if bookmarks[i].Parent == parent.Title {\r\n                parent.Bookmarks = append(parent.Bookmarks, bookmarks[i])\r\n                buildSubTree(&parent.Bookmarks[len(parent.Bookmarks)-1])\r\n            }\r\n        }\r\n    }\r\n\r\n    // build the sub-tree for the root folder.\r\n    buildSubTree(root)\r\n    return *root\r\n}\r\n```\r\n\r\n## 书签数据的实际应用\r\n\r\n成功解析书签文件后，您可以充分发挥数据的价值：\r\n\r\n1. 智能分类与管理\r\n\r\n   - 基于访问频率进行排序\r\n   - 根据内容相关性自动分类\r\n   - 清理重复和失效链接\r\n\r\n2. 数据备份与迁移\r\n\r\n   - 定期自动备份重要书签\r\n   - 跨设备无缝同步\r\n   - 快速恢复历史书签\r\n\r\n3. 协作与分享\r\n\r\n   - 团队书签库共享\r\n   - 个性化推荐系统\r\n   - 社交化书签分享\r\n\r\n4. 数据分析\r\n\r\n   - 浏览习惯分析\r\n   - 兴趣偏好追踪\r\n   - 时间管理优化\r\n\r\n## 最后\r\n\r\n书签管理是提升网络使用效率的关键工具。通过深入理解书签文件的结构和解析方法，我们可以构建更智能、更个性化的书签管理系统。\r\n",
+    "number": 31,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2023-07-01T08:00:00Z",
+    "updatedAt": "2024-12-06T07:36:48Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/31",
+    "jsonFilePath": "discussions/31-D_kwDONRxYmM4AdEvh.json",
+    "markdownFilePath": "2024/12/31-D_kwDONRxYmM4AdEvh.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEur",
+    "title": "如何构建 Docker 镜像",
+    "body": "## Docker 镜像是什么\r\n\r\nDocker 镜像是容器运行时的只读模板，它包含了运行应用程序所需的一切：代码、运行时环境、系统工具、系统库和设置等。[Docker 官方文档](https://docs.docker.com/get-started/overview/)对镜像的定义如下：\r\n\r\n> An image is a read-only template with instructions for creating a Docker container. Often, an image is based on another image, with some additional customization. For example, you may build an image which is based on the ubuntu image, but installs the Apache web server and your application, as well as the configuration details needed to make your application run.\r\n\r\n简单来说，Docker 镜像就像是一个\"快照\"，它可以保存并复制一个完整的运行环境。\r\n\r\n## 三种构建镜像的方法\r\n\r\nDocker 提供了三种主流的构建镜像方式：\r\n\r\n1. 使用 `Dockerfile` 构建（推荐）\r\n2. 基于已有镜像构建\r\n3. 基于容器构建\r\n\r\n让我们详细了解每种方法。\r\n\r\n### 使用 Dockerfile 构建镜像（推荐）\r\n\r\n`Dockerfile` 是一个文本文件，包含构建镜像所需的所有[命令](https://docs.docker.com/engine/reference/builder/)。它提供了一种简单且可重复的方式来创建镜像。\r\n\r\n下面通过一个实例，演示如何使用 `Dockerfile` 构建一个包含 `vim` 编辑器的镜像：\r\n\r\n1. 创建工作目录\r\n\r\n   ```bash\r\n   ~/Desktop\r\n   ❯ mkdir vim && cd vim\r\n   ~/Desktop/vim\r\n   ❯\r\n   ```\r\n\r\n2. 编写 Dockerfile\r\n\r\n   ```dockerfile\r\n   # 指定基础镜像\r\n   FROM ubuntu:latest\r\n   # 镜像作者及联系方式\r\n   LABEL author=\"zhangpeng\" \\\r\n       mail=\"onnttf@gmail.com\"\r\n   # 更新源\r\n   RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list\r\n   RUN sed -i 's/security.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list\r\n   # 更新可用包\r\n   RUN apt update \\\r\n       && apt full-upgrade -y\r\n   # 安装 vim\r\n   RUN apt -y install vim\r\n   # 清理 apt 缓存\r\n   RUN apt autoremove -y \\\r\n       && apt clean -y \\\r\n       && rm -rf /var/lib/apt/lists/*\r\n   ```\r\n\r\n   > 提示：Dockerfile 还支持 `CMD`、`ENV`、`ENTRYPOINT` 等多种指令，详见[官方文档](https://docs.docker.com/engine/reference/builder/)。\r\n\r\n3. 构建镜像\r\n\r\n   执行 `docker build` 命令：\r\n\r\n   ```bash\r\n   ➜  vim docker build -t vim .\r\n   [+] Building 0.1s (10/10) FINISHED\r\n   => [internal] load build definition from Dockerfile               0.0s\r\n   => => transferring dockerfile: 37B                                0.0s\r\n   => [internal] load .dockerignore                                  0.0s\r\n   => => transferring context: 2B                                    0.0s\r\n   => [internal] load metadata for docker.io/library/ubuntu:latest   0.0s\r\n   => [1/6] FROM docker.io/library/ubuntu:latest                     0.0s\r\n   => CACHED [2/6] RUN sed -i 's/archive.ubuntu.com/mirrors.ustc.ed  0.0s\r\n   => CACHED [3/6] RUN sed -i 's/security.ubuntu.com/mirrors.ustc.e  0.0s\r\n   => CACHED [4/6] RUN apt update     && apt full-upgrade -y         0.0s\r\n   => CACHED [5/6] RUN apt -y install vim                            0.0s\r\n   => CACHED [6/6] RUN apt autoremove -y     && apt clean -y     &&  0.0s\r\n   => exporting to image                                             0.0s\r\n   => => exporting layers                                            0.0s\r\n   => => writing image sha256:0350ae574b3e008092a110a818d266ab1dc45  0.0s\r\n   => => naming to docker.io/library/vim                             0.0s\r\n\r\n   Use 'docker scan' to run Snyk tests against images to find vulnerabilities and learn how to fix them\r\n   ```\r\n\r\n### 基于已有镜像构建\r\n\r\n已有镜像可以分为两类：\r\n\r\n- 带文件系统的镜像：通过 [docker export](https://docs.docker.com/engine/reference/commandline/export/) 导出，需使用 [docker import](https://docs.docker.com/engine/reference/commandline/import/) 导入\r\n\r\n    ```bash\r\n    ❯ docker import --help\r\n\r\n    Usage:  docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]\r\n\r\n    Import the contents from a tarball to create a filesystem image\r\n\r\n    Aliases:\r\n    docker image import, docker import\r\n\r\n    Options:\r\n    -c, --change list       Apply Dockerfile instruction to the created image\r\n    -m, --message string    Set commit message for imported image\r\n        --platform string   Set platform if server is multi-platform capable\r\n    ```\r\n\r\n- 普通镜像：通过 [docker save](https://docs.docker.com/engine/reference/commandline/save/) 导出，需使用 [docker load](https://docs.docker.com/engine/reference/commandline/load/) 导入\r\n\r\n    ```bash\r\n    ❯ docker save --help\r\n\r\n    Usage:  docker save [OPTIONS] IMAGE [IMAGE...]\r\n\r\n    Save one or more images to a tar archive (streamed to STDOUT by default)\r\n\r\n    Aliases:\r\n    docker image save, docker save\r\n\r\n    Options:\r\n    -o, --output string   Write to a file, instead of STDOUT\r\n    ```\r\n\r\n### 基于容器构建镜像\r\n\r\n这种方式主要用于保存容器的运行状态，比如：\r\n\r\n- 调试异常问题\r\n- 保存 CPU/内存异常现场\r\n- 复现 Bug 场景\r\n\r\n使用 [docker commit](https://docs.docker.com/engine/reference/commandline/commit/) 命令可以将容器保存为新的镜像：\r\n\r\n```bash\r\n❯ docker commit --help\r\n\r\nUsage:  docker commit [OPTIONS] CONTAINER [REPOSITORY[:TAG]]\r\n\r\nCreate a new image from a container's changes\r\n\r\nAliases:\r\n  docker container commit, docker commit\r\n\r\nOptions:\r\n  -a, --author string    Author (e.g., \"John Hannibal Smith <hannibal@a-team.com>\")\r\n  -c, --change list      Apply Dockerfile instruction to the created image\r\n  -m, --message string   Commit message\r\n  -p, --pause            Pause container during commit (default true)\r\n```\r\n\r\n## 最后\r\n\r\n本文详细介绍了构建 Docker 镜像的三种方法，其中[通过 Dockerfile 构建镜像](#使用-dockerfile-构建镜像推荐)是最推荐的方式，因为它：\r\n\r\n- 过程清晰透明\r\n- 易于维护和版本控制\r\n- 可重复使用\r\n- 适合自动化构建\r\n\r\n建议你从编写简单的 `Dockerfile` 开始，逐步掌握 Docker 镜像的构建技巧。\r\n",
+    "number": 30,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2023-03-01T08:00:00Z",
+    "updatedAt": "2024-12-06T07:26:12Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/30",
+    "jsonFilePath": "discussions/30-D_kwDONRxYmM4AdEur.json",
+    "markdownFilePath": "2024/12/30-D_kwDONRxYmM4AdEur.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdEtg",
+    "title": "为什么每个脚本都需要 Shebang",
+    "body": "在阅读脚本文件时，通常会看到文件的第一行有一个符号组合 `#!`。这个符号被称为 `Shebang`（也写作 `Hashbang`），是 Unix/Linux 系统中的一个特殊注释，它决定了脚本的解析和执行方式。\r\n\r\n## 什么是 Shebang\r\n\r\n`Shebang` 是一个特殊的注释，位于脚本文件的首行，以 `#!` 开头，紧随其后的是解释器的完整路径或可执行文件名。它的核心作用是告诉系统应该使用哪个解释器来执行这个脚本。\r\n\r\n## 为什么需要 Shebang\r\n\r\n虽然系统通常会根据文件扩展名来判断使用哪种解释器执行脚本（例如 `.sh` 文件用 `bash`，`.py` 文件用 `python`），但这种方式存在一些局限性：\r\n\r\n- 无法控制解释器版本：当脚本依赖于特定版本的解释器（如 `python2` 或 `python3`）时，仅依赖扩展名无法确保脚本使用正确的版本\r\n- 缺乏灵活性：有些脚本需要附加参数或特定配置才能正确执行，而扩展名无法提供这种灵活的支持\r\n- 跨平台兼容性差：不同系统或环境中，扩展名与解释器的关联可能不同，导致脚本在不同环境下无法一致运行，尤其是在目标系统中没有安装特定解释器时\r\n\r\n`Shebang` 有效解决了上述问题。通过在脚本首行明确指定解释器的路径和版本，它确保了脚本在不同环境中的一致性执行，并支持灵活添加运行参数和配置选项，从而显著提高了脚本的可靠性和可移植性。\r\n\r\n示例：\r\n\r\n如果需要使用 `bash` 执行脚本，只需在文件的第一行添加：\r\n\r\n```text\r\n#!/bin/bash\r\n```\r\n\r\n这行代码明确告诉系统使用 `/bin/bash` 作为解释器来解析和执行该脚本。\r\n\r\n## Shebang 的语法\r\n\r\n`Shebang` 的语法非常简单。只需在脚本文件的第一行添加 `#!` 符号，后跟解释器的完整路径或可执行文件名。`Shebang` 有两种常见的写法：\r\n\r\n1. 直接指定解释器路径：\r\n\r\n   ```python\r\n   #!/usr/bin/python3\r\n   print(\"Hello World\")\r\n   ```\r\n\r\n2. 通过 `env` 查找解释器：\r\n\r\n   ```python\r\n   #!/usr/bin/env python3\r\n   print(\"Hello World\")\r\n   ```\r\n\r\n这两种写法各有优势，下面详细分析它们的区别：\r\n\r\n- 使用 `env`：\r\n\r\n  1. **更好的可移植性**：`env` 会在系统的 `PATH` 路径中自动查找解释器，使脚本能够适应不同系统中解释器的安装位置。\r\n\r\n  2. **版本灵活性**：通过修改环境变量可以轻松切换解释器版本，无需修改脚本。\r\n\r\n  3. **虚拟环境友好**：在 Python 等语言的虚拟环境中特别有用，能自动找到正确的解释器。\r\n\r\n  不过需要注意的是，使用 `env` 也存在一定安全风险——攻击者可能通过修改 `PATH` 来劫持解释器。\r\n\r\n- 不使用 `env`：\r\n\r\n  1. **安全性更高**：硬编码的解释器路径不受环境变量影响，可以防止路径劫持。\r\n\r\n  2. **确定性更强**：明确指定解释器版本和位置，避免环境依赖带来的不确定性。\r\n\r\n  3. **部署环境可控**：适合在固定环境（如生产服务器）中使用，确保脚本行为稳定。\r\n\r\n在实际使用中，应根据具体场景选择合适的方式：\r\n\r\n- 开发环境或需要分享的脚本，推荐使用 `env` 方式确保可移植性\r\n- 生产环境或安全敏感场景，建议直接指定解释器路径\r\n\r\n## 最后\r\n\r\n通过本文的介绍，相信你已经了解了 `Shebang` 的重要性及其作用。它不仅是一个简单的符号组合，更是确保脚本可靠执行的关键。\r\n",
+    "number": 29,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2023-02-01T08:00:00Z",
+    "updatedAt": "2024-12-06T07:10:42Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/29",
+    "jsonFilePath": "discussions/29-D_kwDONRxYmM4AdEtg.json",
+    "markdownFilePath": "2024/12/29-D_kwDONRxYmM4AdEtg.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdB4z",
+    "title": "Shell 和脚本",
+    "body": "**本文为译文，原文链接**：[Shell](https://missing.csail.mit.edu/2019/shell/)\r\n\r\nShell 是一个高效的、文本化的计算机接口。\r\n\r\nShell 提示符：当你打开终端时看到的一切。可以让用户执行的程序和命令，常见的有：\r\n\r\n- `cd` 改变目录\r\n- `ls` 列出文件和目录\r\n- `mv` 和 `cp` 移动和复制文件\r\n\r\n但是 Shell 允许你做更多的事情；你可以调用计算机上的任何程序，并且命令行工具的存在就是为了完成你可能想做的任何事情。它们往往比它们的图形界面对手更有效率。我们这门课会讲到很多。\r\n\r\nShell 提供交互式编程语言\"脚本\"。有很多种 Shell：\r\n\r\n- 你可能用过 `sh` 或者 `bash`\r\n- 和语言相关的 Shell：`csh`\r\n- 或者更好用的 Shell：`fish`、`zsh`、`ksh`\r\n\r\n在这个课堂上，我们将关注无处不在的 `sh` 和 `bash`，但是使用其他的 Shell 感觉更好。我喜欢 `fish`。\r\n\r\n在你的工具箱中，Shell 程序是一个非常有用的工具。可以直接在提示符下编写程序，也可以将程序写入文件。\r\n\r\n通过 `#!/bin/sh` + `chmod +x` 将 Shell 程序变成可以执行的。\r\n\r\n## 使用 Shell 工作\r\n\r\n将一个命令运行多次：\r\n\r\n```bash\r\nfor i in $(seq 1 5); do echo hello; done\r\n```\r\n\r\n有很多东西可以展开来讲：\r\n\r\n- `for x in list; do BODY; done`\r\n  - `;` 终止一个命令 -- 相当于换行\r\n  - 遍历 `list`，将每个值赋值给 `x`，然后运行\r\n  - 分割标志符是\"空格\"，我们稍后会讲到\r\n  - Shell 中没有花括号，所以使用 `do` + `done`\r\n- `$(seq 1 5)`\r\n\r\n  - 运行 `seq` 命令，参数分别为 1 和 5\r\n  - 使用括号内命令的输出替换 `$()`\r\n  - 相当于\r\n\r\n    ```bash\r\n    for i in 1 2 3 4 5\r\n    ```\r\n\r\n- `echo hello`\r\n  - Shell 脚本中的所有内容都是命令\r\n  - 在本例中，运行 `echo` 命令，将打印该命令的参数 `hello`\r\n  - 所有命令都可以在 `$PATH` 搜索到\r\n\r\n我们可以举个例子：\r\n\r\n```bash\r\nfor f in $(ls); do echo $f; done\r\n```\r\n\r\n将打印当前目录中的每个文件名。可以使用 `=` 设置变量的值（`=` 两边不需要空格）\r\n\r\n```bash\r\nfoo=bar\r\necho $foo\r\n```\r\n\r\n这里也有一些特殊的变量：\r\n\r\n- `$1` - `$9`：脚本的参数\r\n- `$0`：脚本的名称\r\n- `$#`：脚本的参数个数\r\n- `$$`：当前脚本的进程 ID\r\n\r\n只打印目录：\r\n\r\n```bash\r\nfor f in $(ls); do if test -d $f; then echo dir $f; fi; done\r\n```\r\n\r\n这里展开来讲：\r\n\r\n- `if CONDITION; then BODY; fi`\r\n\r\n  - `CONDITION` 是一个命令，如果返回时为 0（`success`），就会执行 `BODY`\r\n  - 也可以继续执行 `else` 或者 `elif`\r\n  - 同样，没有花括号，所以使用 `then` 和 `fi`\r\n\r\n- `test` 是另外一个命令，提供各式各样的检查与对比功能，退出时会返回对比结果，如果为真，则返回 0（`$?`）\r\n\r\n  - `man COMMAND` 会对你有很大的帮助，比如：`man test`\r\n  - 也可以使用 `[` + `]` 执行，比如：`[ -d $f ]`\r\n    - 查看一下 `man test` 和 `which [` 的执行结果\r\n\r\n可是等等！结果是错误的！如果有个文件叫做\"我的文档怎么办\"？\r\n\r\n- `for f in $(ls)` 展开为 `for f in My Documents`\r\n- 先以 `My` 为 `test` 的执行参数，然后以 `Documents` 作为参数\r\n- 这不是我们想要的！\r\n- Shell 脚本中导致出现问题最多的原因\r\n\r\n## 参数分割\r\n\r\nBash 是通过空格分割参数；但这并不总是你想要的！\r\n\r\n- 需要使用引号处理 `for f in \"My Documents\"` 中 `f` 的空格，才能正确地执行\r\n- 其他地方也有同样的问题，你看到过吗？比如 `test -d $f`：如果 `$f` 中包含空格，`test` 将会发生错误！\r\n- `echo` 碰巧没有问题，因为按空格分隔连接，但是如果文件名包含换行符，怎么办？变成空格！\r\n- 引号用于所有不希望被拆分的参数\r\n- 我们该如何修复上面的脚本呢？你认为 `for f in \"$(ls)\"` 怎么样？\r\n\r\n答案是通配符！\r\n\r\n- Bash 知道如何使用模板查找文件\r\n\r\n  - `*` 任意字符串\r\n  - `?` 任意字符\r\n  - `{a,b,c}` 这些字符中的任意一个\r\n- `for f in *`：这个文件夹下所有的文件\r\n\r\n- 在使用通配符时，每个匹配的文件都将变成自己的参数\r\n\r\n  - 在使用时，仍需要确保引号的正确使用：`test -d \"$f\"`\r\n\r\n- 可以使用这些提高通配符效率\r\n\r\n  - `for f in a*`：当前文件夹下，所有以 `a` 开头的文件\r\n  - `for f in foo/*.txt`：`foo` 文件夹下，所有以 `.txt` 结尾的文件\r\n  - `for f in foo/*/p??.txt`：在 `foo` 的子文件夹下，以 `p` 开头的三个字母的文件\r\n\r\n空格的问题不止于此：\r\n\r\n- `if [ $foo = \"bar\" ]; then` -- 看看这个问题？\r\n- 如果 `$foo` 是空的呢？`[` 的参数是 `=` 和 `bar`...\r\n- 可以用 `[ x$foo = \"xbar\" ]` 来解决这个问题，但是效率低\r\n- 相反，使用 `[[`：一个 Bash 内置的具有特殊解析的比较器\r\n\r\n  - 也可以使用 `&&` 代替 `-a`，`-o` 连接 `||` 等等\r\n\r\n## 可组合性\r\n\r\nShell 之所以强大，部分原因在于它的可组合性。可以将多个程序链接在一起，而不是让一个程序做每一件事情。\r\n\r\n关键字是 `|`。\r\n\r\n`a|b` 表示同时运行 `a` 和 `b`，将 `a` 的所有输出，当作 `b` 的输入，打印 `b` 的输出。\r\n\r\n你启动的所有程序（\"进程\"）都有三个\"流\"：\r\n\r\n- `STDIN`：当程序读取输入时，它从这里开始\r\n- `STDOUT`：当程序打印东西时，它就在这里\r\n- `STDERR`：程序可以选择使用的第二个输出\r\n- 默认的，`STDIN` 是你的键盘输入，`STDOUT` 和 `STDERR` 都是你的终端。但是你可以改变它们！\r\n\r\n  - `a | b` 将 `a` 的输出当作 `b` 的输入\r\n  - 同样还有\r\n\r\n    - `a > foo`（将 `a` 的标准输出写入 `foo` 文件）\r\n    - `a 2> foo`（将 `a` 的标准错误输出写入 `foo` 文件）\r\n    - `a < foo`（`a` 的标准输入是从 `foo` 文件读取的）\r\n    - 提示：`tail -f` 将打印文件内容，即使它正在被写入\r\n\r\n为什么这个这么有用？你亲自试试下面程序的输出！\r\n\r\n- `ls | grep foo`：包含单词 `foo` 的所有文件\r\n- `ps | grep foo`：包含单词 `foo` 的所有进程\r\n- `journalctl | grep -i intel | tail -n5`：最后 5 条带有 Intel（不区分大小写）的系统日志消息\r\n- `who | sendmail -t me@example.com`：将登录用户列表发送到 `me@example.com`\r\n- 形成了许多数据处理的基础，稍后我们将讨论它\r\n\r\nBash 还提供了许多其他编写程序的方法。\r\n\r\n你可以组合形成一个命令 `(a; b) | tac`：先运行 `a`，然后运行 `b`，然后把它们的所有输出当作 `tac` 命令的输入，`tac` 是一个将输入反序的命令。\r\n\r\n一个不太为人所知但超级有用的方法是过程替换。`b <(a)` 将运行 a，为输出流生成一个临时文件名，并将该文件名传递给 b。举个例子：\r\n\r\n```bash\r\ndiff <(journalctl -b -1 | head -n20) <(journalctl -b -2 | head -n20)\r\n```\r\n\r\n将向你展示前一个引导日志的前 20 行与更前一个引导日志的前 20 行之间的区别。\r\n\r\n## 任务和进程控制\r\n\r\n如果你在后台执行周期更长的任务呢？\r\n\r\n- 在后台运行的程序是以 `&` 结尾\r\n\r\n  - 它会立即给你提示\r\n  - 如果你想同时运行两个程序，比如服务器和客户端，这很好解决：`server & client`\r\n  - 注意：正在运行的程序仍将终端设置为标准输出，试一试：`server > server.log & client`\r\n\r\n- 通过 `jobs` 查看所有的进程\r\n\r\n  - 注意显示 `Running` 的\r\n\r\n- 使用 `fg %JOB` 将其放到前台（没有参数是最新的）\r\n- 如果你想将当前的程序放入后台：`^Z` + `bg`（这里的 `^Z` 代表按 `Ctrl+Z`）\r\n\r\n  - `^Z` 将当前的进程停止，并将它变成一个 `job`\r\n  - `bg` 将最新的 `job` 在后台运行（就像使用了 `&`）\r\n\r\n- 后台 `jobs` 仍然绑定到当前会话，如果注销，则退出。你可以使用 `disown` 或者 `nohup` 切断这种绑定关系。\r\n- `$!` 是最后一个后台进程的 PID\r\n\r\n在你的电脑上运行的其他东西呢？\r\n\r\n- `ps` 很好用：列出正在运行的进程\r\n\r\n  - `ps -A`：打印所有用户的进程（也包括 `ps ax`）\r\n  - `ps` 有很多参数：可以通过 `man ps` 查看\r\n\r\n- `pgrep`：搜索进程（和 `ps -A | grep` 类似）\r\n\r\n  - `pgrep -af`：通过参数搜索和显示\r\n\r\n- `kill`：通过 ID 向进程发送信号（`pkill` by search + `-f`）\r\n\r\n  - 信号告诉进程\"做什么事\"\r\n  - 最常见：`SIGKILL`（`-9` 或 `-KILL`）：立刻退出，相当于 `^`\r\n  - 还有：`SIGTERM`（`-15` 或 `-TERM`）：立刻优雅地退出，相当于 `^C`\r\n\r\n## 标志符\r\n\r\n大多数命令行程序都使用**标志符**接受参数。标志符通常有短形式（`-h`）和长形式（`--help`）。通常运行 `CMD -h` 或 `man CMD` 会给你展示该 `CMD` 可用的标识符的列表。短标志通常可以组合使用，运行 `rm -r -f` 相当于运行 `rm -rf` 或者 `rm -fr`。一些常见的标识符是有约定俗成的标准的，你会发现它们在很多命令中：\r\n\r\n- `-a` 一般指所有文件（也包括那些以点开头的）\r\n- `-f` 通常指强制做什么事情，比如说 `rm -f`\r\n- `-h` 大多数命令都是显示帮助\r\n- `-v` 通常启用详细输出\r\n- `-V` 通常打印命令的版本\r\n\r\n此外，双破折号 `--` 用于内置命令和许多其他命令中，表示命令选项的结束，之后只接受位置参数。因此，如果你有一个可以使用 `-v` 参数的文件（文件类型支持使用），并且想要 `grep` 它，`grep pattern -- -v` 可以，但是 `grep pattern -v` 不行。事实上，创建这种文件的方法是 `touch -- -v`。\r\n",
+    "number": 28,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2023-02-01T08:00:00Z",
+    "updatedAt": "2024-12-04T12:23:54Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/28",
+    "jsonFilePath": "discussions/28-D_kwDONRxYmM4AdB4z.json",
+    "markdownFilePath": "2024/12/28-D_kwDONRxYmM4AdB4z.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdB4X",
+    "title": "一文了解 JWT",
+    "body": "![image](https://file.onnttf.site/2022/10/09/1.jpg)\r\n\r\n`JWT`（JSON Web Token）是一种在网络各方之间安全传输信息的令牌。它采用 `JSON` 对象格式存储信息，具有简洁、安全和易于使用的特点。\r\n\r\n作为一个[开放标准](https://www.rfc-editor.org/rfc/rfc7519)，`JWT` 提供了一种紧凑且可靠的方式来传递信息。其工作原理是：首先将信息编码为 `JSON` 对象，然后将该对象嵌入到 `JSON Web Signature`（`JWS`）结构中作为有效载荷，或者作为 `JSON Web Encryption`（`JWE`）结构的明文。通过这种方式，信息可以被数字签名或使用消息验证码（`MAC`）进行完整性和真实性验证，从而确保数据传输的安全性。\r\n\r\n## JWT 的构成\r\n\r\n`JWT` 由三个关键部分组成：\r\n\r\n- 头部（`header`）：包含令牌类型和签名算法等元数据\r\n- 有效载荷（`payload`）：存储需要传递的实际数据内容\r\n- 签名（`signature`）：用于验证令牌的有效性和完整性\r\n\r\n生成 `JWT` 的过程如下：\r\n\r\n1. 分别对这三个部分进行 `Base64URL` 编码\r\n2. 使用 `.` 符号将编码后的字符串按顺序连接\r\n3. 最终形成一个完整的 `JWT` 字符串\r\n\r\n下面是一个典型的 `JWT` 示例：\r\n\r\n```text\r\neyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqd3QiLCJzdWIiOiIxIiwiYXVkIjoiYXBwMSIsImlhdCI6MTY2NTMwNzgwMCwibmJmIjoxNjY1Mzk0MjAwLCJleHAiOjE2NjU5MTI2MDAsImp0aSI6MSwibmFtZSI6InpoYW5ncGVuZyJ9.8QhYZSONATlpO-oZtUoQOlyzjGSpeNvizPofT5ep0WQ\r\n```\r\n\r\n接下来，让我们深入了解 JWT 的三个核心组成部分。每个部分都有其独特的作用和特点：\r\n\r\n### 头部（header）\r\n\r\n`header` 是一个描述 `JWT` 元数据的 `JSON` 对象。这个简洁但重要的部分通常包含两个关键字段：\r\n\r\n| 字段 | 描述                                               |\r\n| :--- | :------------------------------------------------- |\r\n| typ  | `type`，表示令牌的类型，统一写为 `JWT`             |\r\n| alg  | `algorithm`，表示签名使用的算法，如：`HMAC SHA256` |\r\n\r\n来看一个具体示例：\r\n\r\n```json\r\n{\r\n    \"typ\": \"JWT\",\r\n    \"alg\": \"HS256\"\r\n}\r\n```\r\n\r\n经过 `Base64URL` 编码后，我们得到 JWT 的第一部分：\r\n\r\n```text\r\neyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9\r\n```\r\n\r\n### 有效载荷（payload）\r\n\r\n作为 JWT 的核心部分，`payload` 承载着我们需要传递的实际数据。它同样是一个 `JSON` 对象，其字段分为标准字段（在 [RFC7519](https://www.rfc-editor.org/rfc/rfc7519#section-4.1) 中定义）和自定义字段两类。\r\n\r\n以下是常用的标准字段：\r\n\r\n| 字段 | 描述                                                                    |\r\n| :--- | :---------------------------------------------------------------------- |\r\n| iss  | `issuer`，签发人，可以用于确定签发 `JWT` 的人                           |\r\n| sub  | `subject`，签发的主题，可以用于表示被签发的人是谁或者被签发的内容是什么 |\r\n| aud  | `audience`，受众者，可以用于表示该 `JWT` 该被哪些主体使用               |\r\n| iat  | `issued at`，签发时间                                                   |\r\n| nbf  | `not before`，启用时间，在该时间前，此 `JWT` 是无效的                   |\r\n| exp  | `expiration time`，过期时间，在该时间后，此 `JWT` 是无效的              |\r\n| jti  | `JWT ID`，唯一标识                                                      |\r\n\r\n一个包含标准字段和自定义字段的实例：\r\n\r\n```json\r\n{\r\n    \"iss\": \"jwt\",\r\n    \"sub\": \"1\",\r\n    \"aud\": \"app1\",\r\n    \"iat\": 1665307800,\r\n    \"nbf\": 1665394200,\r\n    \"exp\": 1665912600,\r\n    \"jti\": 1,\r\n    \"name\": \"zhangpeng\"\r\n}\r\n```\r\n\r\n将该 payload 进行 `Base64URL` 编码，得到：\r\n\r\n```text\r\neyJpc3MiOiJqd3QiLCJzdWIiOiIxIiwiYXVkIjoiYXBwMSIsImlhdCI6MTY2NTMwNzgwMCwibmJmIjoxNjY1Mzk0MjAwLCJleHAiOjE2NjU5MTI2MDAsImp0aSI6MSwibmFtZSI6InpoYW5ncGVuZyJ9\r\n```\r\n\r\n**注意**：由于 JWT 的 payload 仅做 `Base64URL` 编码而非加密，任何人都可以解码查看其中的内容。因此切勿在其中存储敏感信息（如密码）。\r\n\r\n### 签名（signature）\r\n\r\n`signature` 是确保 JWT 完整性和真实性的关键。它的生成过程如下：\r\n\r\n1. 获取编码后的 header 和 payload\r\n2. 使用 \".\" 将它们连接\r\n3. 使用 header 中指定的算法（如 `HMACSHA256`）和密钥进行签名\r\n\r\n签名的计算公式：\r\n\r\n```text\r\nHMACSHA256(\r\n  Base64URLEncode(header) + \".\" + Base64URLEncode(payload),\r\n  secret\r\n)\r\n```\r\n\r\n使用我们之前的 header 和 payload，计算得到的签名为：\r\n\r\n```text\r\n8QhYZSONATlpO-oZtUoQOlyzjGSpeNvizPofT5ep0WQ-hoICKvR06A\r\n```\r\n\r\n**注意**：为了确保安全性，JWT 的签发必须在服务器端进行，这样可以有效保护签名密钥（`secret`）。一旦密钥泄露，任何人都可以伪造有效的 JWT。\r\n\r\n最后，将这三个部分用 \".\" 连接，得到完整的 JWT：\r\n\r\n```text\r\neyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqd3QiLCJzdWIiOiIxIiwiYXVkIjoiYXBwMSIsImlhdCI6MTY2NTMwNzgwMCwibmJmIjoxNjY1Mzk0MjAwLCJleHAiOjE2NjU5MTI2MDAsImp0aSI6MSwibmFtZSI6InpoYW5ncGVuZyJ9.8QhYZSONATlpO-oZtUoQOlyzjGSpeNvizPofT5ep0WQ\r\n```\r\n\r\n## JWT 的优缺点\r\n\r\n### 优点\r\n\r\n- **跨语言兼容性**：由于基于 `JSON` 格式，JWT 可以在任何编程语言中轻松使用和处理\r\n- **信息丰富**：`payload` 部分可灵活存储业务所需的各类信息，使其成为功能强大的信息载体\r\n- **轻量便携**：结构简单紧凑，易于在网络中传输，适合移动端等场景\r\n- **自包含性**：包含了验证和授权所需的所有信息，减少了数据库查询的需求\r\n- **无状态**：服务器无需存储会话信息，有助于应用扩展\r\n\r\n### 缺点\r\n\r\n- **吊销困难**：由于服务端不保存 token 状态，要让已签发的 JWT 立即失效需要额外的实现机制\r\n- **安全性考量**：\r\n  - `payload` 部分仅做 `Base64` 编码，敏感数据需要额外加密\r\n  - `token` 一旦泄露，在过期前都可能被他人使用\r\n- **大小限制**：由于需要在请求中传输，过大的 payload 可能影响传输效率\r\n- **续期机制**：token 过期后需要重新认证，实现自动续期相对复杂\r\n\r\n## JWT 常见的使用场景\r\n\r\n### 身份认证与授权\r\n\r\nJWT 最常见且重要的应用场景是用于身份认证和授权系统。具体表现在：\r\n\r\n- **登录认证**：用户登录成功后，服务器生成包含用户身份信息的 JWT，后续请求只需携带该令牌即可验证身份\r\n- **访问控制**：通过在 JWT 中包含权限信息，可以精确控制用户对特定路由、服务和资源的访问权限\r\n- **单点登录（SSO）**：JWT 轻量级的特性使其成为跨域单点登录的理想选择，用户只需登录一次即可访问多个系统\r\n\r\n### 安全的信息传输\r\n\r\nJWT 提供了一种安全可靠的信息传输机制：\r\n\r\n- **数据完整性**：通过签名机制确保数据在传输过程中未被篡改\r\n- **身份验证**：使用非对称加密（公钥/私钥）可以验证发送方身份\r\n- **信息加密**：支持对敏感信息进行加密保护\r\n- **时效控制**：可以为传输的信息设置有效期，超时自动失效\r\n\r\n这些特性使 JWT 成为在分布式系统中传递重要信息的理想方案。\r\n\r\n## 总结\r\n\r\n通过以上的探讨，我们深入了解了 `JWT` 这一设计精巧而优雅的技术方案。让我们回顾其关键特点：\r\n\r\n- **本质简单**：`JWT` 本质上是一个承载 `JSON` 格式信息的字符串，易于理解和使用\r\n- **结构紧凑**：通过 `Base64URL` 编码压缩数据体积，在保证功能的同时实现高效传输\r\n- **安全可靠**：采用数字签名和加密算法确保信息完整性，有效防止数据被篡改\r\n- **使用灵活**：既可用于身份认证，也可作为安全的信息传输载体，应用场景丰富\r\n- **跨平台兼容**：基于开放标准，支持多种编程语言和平台，便于系统集成\r\n\r\n这些优秀的特性使 `JWT` 成为现代 Web 应用中不可或缺的重要工具，为分布式系统的身份认证和信息传输提供了可靠的解决方案。虽然存在一些局限性，但只要在合适的场景下合理使用，`JWT` 仍然是一个强大而实用的技术选择。\r\n",
+    "number": 27,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2022-10-09T08:00:00Z",
+    "updatedAt": "2024-12-04T12:15:52Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/27",
+    "jsonFilePath": "discussions/27-D_kwDONRxYmM4AdB4X.json",
+    "markdownFilePath": "2024/12/27-D_kwDONRxYmM4AdB4X.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdBsd",
+    "title": "Linux 文件权限详解",
+    "body": "![image](https://file.onnttf.site/2022/01/27/1.png)\r\n\r\n在 Linux 系统中，`permission denied` 是一个常见的错误提示，通常在执行脚本或读写文件时遇到。作为一个开发者，理解这个错误的原因以及掌握解决方法非常重要。本文将详细介绍 Linux 文件权限的相关知识，帮助你彻底理解和解决这个问题。\r\n\r\n## Permission Denied\r\n\r\n`Permission Denied` 问题的本质是**当前用户或者当前用户组缺乏相应的操作权限**。\r\n\r\n作为一种[多用户系统](https://www.runoob.com/linux/linux-user-manage.html)，Linux 为不同用户分配不同的权限级别，以保证系统安全和资源管理的有序性。当用户试图执行某个操作但缺乏相应权限时，系统就会返回 `Permission Denied` 错误。\r\n\r\nLinux 系统中主要有三种基本权限：\r\n\r\n- 读权限（read）：允许查看文件内容\r\n- 写权限（write）：允许修改文件内容\r\n- 执行权限（execute）：允许运行可执行文件\r\n\r\n这些权限的合理分配和管理是 Linux 系统安全的重要基础。在实际使用中，我们需要根据具体需求为用户和用户组设置适当的权限组合。\r\n\r\n## 查看文件基本属性\r\n\r\n在 Linux 系统中，我们可以使用 `ll` 或 `ls -l` 命令来查看文件的基本属性。这是一个非常实用的命令，不仅可以显示文件的权限设置，还能查看文件的所有者、大小、修改时间等重要信息。\r\n\r\n```bash\r\n➜  temp ll\r\ntotal 32\r\n-rwxr-xr-x  1 zhangpeng  staff       10K 10 29 19:41 init_dotfiles.sh\r\n-rwxr-xr-x  1 zhangpeng  everyone   664B 11  1 13:15 reset.sh\r\n```\r\n\r\n每条文件信息都包含多个重要字段，按从左到右的顺序依次是：\r\n\r\n1. **权限标识符**：如 `-rwxr-xr-x`\r\n2. **硬链接数**：通常为 1，表示指向该文件的硬链接数量\r\n3. **所有者**：文件的创建者或被指定的所有者，如 `zhangpeng`\r\n4. **用户组**：文件所属的用户组，如 `staff` 或 `everyone`\r\n5. **文件大小**：以字节（B）、千字节（K）等为单位，如 `10K`\r\n6. **修改时间**：最后一次修改的日期和时间\r\n7. **文件名**：包含扩展类型的完整文件名\r\n\r\n其中，权限标识符是最复杂也是最重要的部分，它是 Linux 文件权限管理的核心。让我们通过详细解析来理解它的构成：\r\n\r\n### 权限标识符\r\n\r\n权限标识符由 10 个字符组成，包括 1 位文件类型标识和 9 位权限标识。这个看似复杂的字符串实际上是一个精心设计的权限控制系统，让我们一步步解析每个部分：\r\n\r\n- 文件类型（第 1 位）\r\n\r\n    这个字符揭示了文件的基本属性，Linux 系统支持以下几种类型：\r\n\r\n  - `-` ：普通文件（包括文本文件、二进制文件、图片等常见文件）\r\n  - `d` ：目录（也就是我们常说的文件夹）\r\n  - `l` ：符号链接（类似 Windows 系统中的快捷方式，指向其他文件）\r\n  - `b` ：块设备文件（如硬盘、U 盘等可随机访问的存储设备）\r\n  - `c` ：字符设备文件（如键盘、鼠标等按字符流处理的设备）\r\n  - `p` ：命名管道文件（用于进程间的数据通信）\r\n  - `s` ：套接字文件（实现网络通信的特殊文件）\r\n\r\n- 所有者权限（第 2-4 位）\r\n\r\n    这三个字符定义了文件所有者的权限。作为文件的创建者或指定拥有者，这组权限通常最为完整，以确保文件主人能够完全控制自己的文件。\r\n\r\n- 所属组权限（第 5-7 位）\r\n\r\n    这部分规定了同组用户的访问权限。在团队协作中特别重要，允许项目组成员共享适当的文件访问权限，既保证协作效率，又维护文件安全。\r\n\r\n- 其他用户权限（第 8-10 位）\r\n\r\n    最后三位字符规定了系统中其他用户的访问权限。出于安全考虑，这组权限通常最为受限，防止未经授权的访问。\r\n\r\n每组权限标识中的三个字符都遵循统一的规则：\r\n\r\n- `r`：读取权限（read）- 允许查看文件内容\r\n- `w`：写入权限（write）- 允许修改文件内容\r\n- `x`：执行权限（execute）- 允许运行程序或进入目录\r\n- `-`：表示无对应权限\r\n\r\n以 `-rwxr-xr-x` 为例：\r\n\r\n```bash\r\n-    rwx    r-x    r-x\r\n│     │      │      │\r\n│     │      │      └── 其他用户：可读（r）、可执行（x）\r\n│     │      └─────── 组用户：可读（r）、可执行（x）\r\n│     └──────────── 所有者：可读（r）、可写（w）、可执行（x）\r\n└────────────────── 文件类型：普通文件\r\n```\r\n\r\n## 修改文件权限\r\n\r\n在理解了文件权限的基本概念后，接下来让我们学习如何修改文件权限。Linux 系统提供了功能强大的 `chmod` 命令来完成权限管理工作。\r\n\r\n`chmod` 命令支持两种使用方式：\r\n\r\n- 符号模式：使用字母和操作符来修改权限，直观易记\r\n- 数字模式：使用八进制数字来表示权限组合，简洁高效\r\n\r\n![image](https://www.runoob.com/wp-content/uploads/2014/08/rwx-standard-unix-permission-bits.png)\r\n\r\n### 符号模式\r\n\r\n符号模式是一种直观灵活的权限设置方法，通过组合不同类型的符号来精确控制文件权限。\r\n\r\n符号模式使用三类核心符号来精确控制文件权限，分别用于指定用户类型、操作方式和具体权限：\r\n\r\n- 用户类型（指定权限作用对象）\r\n\r\n    | 符号 | 用户类型    | 说明                                     | 使用场景               |\r\n    | ---- | ----------- | ---------------------------------------- | ---------------------- |\r\n    | `u`  | user        | 文件所有者                               | 设置文件创建者的权限   |\r\n    | `g`  | group       | 文件所属组                               | 控制团队成员的访问权限 |\r\n    | `o`  | other users | 既不是文件所有者，也不在文件所属组的用户 | 管理其他用户的访问级别 |\r\n    | `a`  | all         | 所有用户，相当于 ugo 的合集              | 统一设置所有用户权限   |\r\n\r\n- 操作方式（指定权限变更方式）\r\n\r\n    | 符号 | 说明     | 常见用例                 |\r\n    | ---- | -------- | ------------------------ |\r\n    | `+`  | 增加权限 | `chmod u+x` 添加执行权限 |\r\n    | `-`  | 去除权限 | `chmod g-w` 移除写权限   |\r\n    | `=`  | 设置权限 | `chmod a=r` 只保留读权限 |\r\n\r\n- 具体权限（指定具体权限）\r\n\r\n    | 符号 | 说明       | 实际含义         |\r\n    | ---- | ---------- | ---------------- |\r\n    | `r`  | 可读权限   | 允许查看文件内容 |\r\n    | `w`  | 可写权限   | 允许修改文件内容 |\r\n    | `x`  | 可执行权限 | 允许运行程序文件 |\r\n\r\n### 数字模式\r\n\r\n数字模式采用八进制数值来表示权限组合，是一种更简洁和系统化的权限设置方式。\r\n\r\n权限与数字的对应关系：\r\n\r\n| 权限类型 | 对应数字 | 说明       | 二进制表示 |\r\n| -------- | -------- | ---------- | ---------- |\r\n| `r`      | 4        | 可读权限   | 100        |\r\n| `w`      | 2        | 可写权限   | 010        |\r\n| `x`      | 1        | 可执行权限 | 001        |\r\n| `-`      | 0        | 无权限     | 000        |\r\n\r\n例如：\r\n\r\n- `755` 表示 `rwxr-xr-x`\r\n- `644` 表示 `rw-r--r--`\r\n- `777` 表示 `rwxrwxrwx`\r\n\r\n## 实践应用：常见权限场景演示\r\n\r\n让我们通过一个典型的实际案例来理解权限设置。假设你是一个开发团队的技术负责人，需要为团队的部署脚本 `reset.sh` 配置合理的访问权限。根据安全最佳实践，我们有以下具体需求：\r\n\r\n- 文件所有者（如技术负责人）需要完整权限：可读、可写、可执行\r\n- 同组用户（如开发团队成员）需要部分权限：可读、可执行\r\n- 其他用户（如系统其他人员）仅需最小权限：只可执行\r\n\r\n这种权限配置在企业开发环境中十分常见且实用：\r\n\r\n- 确保负责人可以随时修改和维护脚本\r\n- 允许团队成员查看脚本内容并执行部署\r\n- 限制团队外部人员只能执行但不能查看敏感内容\r\n- 符合最小权限原则，平衡可用性和安全性\r\n\r\n我们可以通过符号模式和数字模式两种方式来灵活实现这个权限配置方案：\r\n\r\n- 使用符号模式\r\n\r\n    ```bash\r\n    ➜  temp chmod u=rwx,g=rx,o=x reset.sh\r\n    ➜  temp ll\r\n    total 32\r\n    -rwxr-xr-x  1 zhangpeng  staff    10K 10 29 19:41 init_dotfiles.sh\r\n    -rwxr-x--x  1 zhangpeng  staff   664B 11  1 13:15 reset.sh\r\n    ```\r\n\r\n- 使用数字模式\r\n\r\n    ```bash\r\n    ➜  temp chmod 751 reset.sh    # 7(rwx)5(rx)1(x)\r\n    ➜  temp ll\r\n    total 32\r\n    -rwxr-xr-x  1 zhangpeng  staff    10K 10 29 19:41 init_dotfiles.sh\r\n    -rwxr-x--x  1 zhangpeng  staff   664B 11  1 13:15 reset.sh\r\n    ```\r\n\r\n这个示例展示了如何在实际工作中灵活运用权限管理机制来解决具体问题。它不仅体现了 Linux 权限系统的强大功能，也为我们提供了实用的最佳实践参考。在日常工作中，我们应当始终遵循\"最小权限原则\"（Principle of Least Privilege），即只为用户分配完成工作所必需的最小权限集合。这样不仅可以有效降低系统安全风险，还能帮助我们建立更清晰的权限管理体系，为团队协作提供可靠的安全保障。\r\n\r\n## 解决 Permission Denied 问题\r\n\r\n现在我们可以回到文章开头提到的问题：当执行脚本遇到 `Permission Denied` 错误时该如何处理？\r\n\r\n这个错误的本质是**执行者（当前用户）缺少文件的执行权限**。解决步骤如下：\r\n\r\n1. 检查当前用户身份（使用 `whoami` 命令）\r\n2. 确认是否需要执行权限\r\n3. 使用 `chmod +x` 添加执行权限\r\n\r\n具体操作示例：\r\n\r\n```bash\r\n➜  temp chmod +x reset.sh   # 为所有用户添加执行权限\r\n➜  temp ./reset.sh          # 现在可以成功执行了\r\nMacOS:\r\ndone.\r\n```\r\n\r\n## 最后\r\n\r\n在实际工作中，合理的权限管理是一项重要的技能。它不仅可以提高系统的安全性，防止未经授权的访问，还能让团队协作变得更加规范和高效。通过遵循\"最小权限原则\"，我们可以在保障安全的同时，最大程度地提升工作效率。\r\n\r\n希望这篇文章能够帮助你在日常工作中更好地运用这些知识，构建更安全、可靠的开发环境。\r\n",
+    "number": 25,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2022-01-01T08:00:00Z",
+    "updatedAt": "2024-12-04T09:11:07Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/25",
+    "jsonFilePath": "discussions/25-D_kwDONRxYmM4AdBsd.json",
+    "markdownFilePath": "2024/12/25-D_kwDONRxYmM4AdBsd.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AdAU0",
+    "title": "如何在 macOS 系统中设置简单密码",
+    "body": "![image](https://file.onnttf.site/2021/12/01/1.png)\r\n\r\n自 `macOS Mojave 10.14` 版本开始，`Apple` 加强了账户安全性管理，要求用户必须设置至少 `4` 个字符的密码。然而，有些用户习惯使用简单的单字符密码（如空格键），因为这样更便捷易用。本文将详细介绍如何自定义密码策略，实现更灵活的密码设置。\r\n\r\n## 修改密码策略\r\n\r\n要解除系统默认的密码限制，需要通过终端执行特定命令。以下是详细的操作步骤：\r\n\r\n1. 打开「终端」应用程序\r\n2. 执行密码策略清除命令，该命令将移除系统预设的密码复杂度要求\r\n\r\n    ```bash\r\n    pwpolicy -clearaccountpolicies\r\n    ```\r\n\r\n3. 验证身份\r\n\r\n    - 系统会要求输入当前用户的管理员密码\r\n    - 输入过程中屏幕不会显示任何字符\r\n    - 输入完成后按回车键确认\r\n\r\n    ![image](https://file.onnttf.site/2021/12/01/2.png)\r\n\r\n4. 确认操作成功\r\n\r\n    - 若显示 `Clearing global account policies` 信息，表示密码策略已成功清除\r\n    - 此时您可以开始设置新的简化密码\r\n\r\n    ![image](https://file.onnttf.site/2021/12/01/3.png)\r\n\r\n## 设置新密码\r\n\r\n完成密码策略清除后，您可以按照以下步骤设置新的自定义密码：\r\n\r\n1. 点击屏幕左上角的 `Apple` 图标，打开系统菜单\r\n2. 在下拉菜单中选择\"系统偏好设置\"，然后导航至\"用户与群组\"面板\r\n3. 在左侧用户列表中选择您的账户，点击\"更改密码\"按钮\r\n4. 在弹出的对话框中，您需要完成以下步骤\r\n\r\n   - 在\"旧密码\"栏输入您当前使用的密码\r\n   - 在\"新密码\"栏设置您想要的新密码（现在已解除字符数限制）\r\n   - 在\"验证\"栏再次输入新密码以确认\r\n   - 如有需要，可以在\"密码提示\"栏添加提示信息，以防遗忘\r\n\r\n    ![image](https://file.onnttf.site/2021/12/01/4.png)\r\n\r\n5. 点击\"更改密码\"完成设置\r\n\r\n## 最后\r\n\r\n虽然系统现在允许设置简单密码，但为了保护您的数据安全，仍建议：\r\n\r\n- 使用包含字母、数字和特殊符号的组合\r\n- 避免使用易被猜测的个人信息\r\n- 定期更换密码\r\n",
+    "number": 24,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2021-12-01T08:00:00Z",
+    "updatedAt": "2024-12-03T12:25:32Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/24",
+    "jsonFilePath": "discussions/24-D_kwDONRxYmM4AdAU0.json",
+    "markdownFilePath": "2024/12/24-D_kwDONRxYmM4AdAU0.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac_7L",
+    "title": "如何解决端口占用问题",
+    "body": "## 背景介绍\r\n\r\n当我们启动某项服务时，我们可能会遇到 `Address already in use` 这个常见错误。这个错误表明当前要使用的端口已被其他进程占用，导致服务无法正常启动。\r\n\r\n出现端口占用通常有以下几个原因：\r\n\r\n1. 其他正在运行的服务也在使用这个端口\r\n2. 之前的服务没有正常关闭，仍然占用着端口\r\n3. 系统服务或第三方程序默认使用了该端口\r\n\r\n本文将详细介绍如何排查和解决端口占用问题。\r\n\r\n## 查看端口占用情况\r\n\r\n要解决端口占用问题，第一步是准确定位占用端口的进程。以下是各操作系统下查看端口占用的常用命令和详细步骤：\r\n\r\n- macOS 系统\r\n\r\n    使用 `lsof` 命令可以快速查看端口占用情况：\r\n\r\n    ```bash\r\n    $ lsof -i :8080\r\n    COMMAND  PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\r\n    main    6667 zhangpeng    7u  IPv6 0x645a94383c79337f      0t0  TCP *:http-alt (LISTEN)\r\n    ```\r\n\r\n- Linux 系统\r\n\r\n    Linux 下可使用功能强大的 `netstat` 命令：\r\n\r\n    ```bash\r\n    $ netstat -tunlp | grep \"8080\"\r\n    Proto Recv-Q Send-Q Local Address   Foreign Address   State    PID/Program name\r\n    tcp   0      0     0.0.0.0:8080    0.0.0.0:*        LISTEN   131/nginx: master p\r\n    ```\r\n\r\n- Windows 系统\r\n\r\n    Windows 下查看端口占用需要以下步骤：\r\n\r\n    1. 使用快捷键 `Windows + R` 打开运行窗口\r\n    2. 输入 `cmd` 打开命令提示符\r\n    3. 执行 `netstat` 命令：\r\n\r\n        ```bash\r\n        $ netstat -ano | findstr \"8080\"\r\n        协议  本地地址          外部地址        状态           PID\r\n        TCP    0.0.0.0:8080     0.0.0.0:0      LISTENING      16248\r\n        TCP    [::]:8080        [::]:0         LISTENING      16248\r\n        TCP    [::1]:8080       [::1]:51273    ESTABLISHED    16248\r\n        ```\r\n\r\n## 终止占用端口的进程\r\n\r\n> 注意：在终止进程前，一定要先确认该进程是否可以安全关闭。对于重要的系统进程或正在运行的关键服务，建议更换其他可用端口，而不是强制终止进程。\r\n\r\n找到占用端口的进程后，可以使用以下命令来终止进程：\r\n\r\n- macOS/Linux 系统\r\n\r\n    使用 `kill` 命令终止进程：\r\n\r\n    ```bash\r\n    # 请将<PID>替换为实际的进程 ID\r\n    kill -9 <PID>  # 替换实际进程 ID\r\n    ```\r\n\r\n- Windows 系统\r\n\r\n    使用 `taskkill` 命令终止进程：\r\n\r\n    ```bash\r\n    # 请将<processid>替换为实际的进程 ID\r\n    taskkill /PID <processid> /F\r\n    ```\r\n\r\n## 最后\r\n\r\n在处理端口占用问题时，我们应当遵循以下原则：\r\n\r\n1. 操作需谨慎，一定要先确认进程是否可以安全终止\r\n2. 对于重要的系统进程，建议更换端口而不是强制终止\r\n3. 养成良好习惯，服务使用完及时关闭释放端口\r\n\r\n通过本文的学习，相信你已经掌握了排查和解决端口占用问题的基本技能，希望这些内容对你有所帮助。\r\n",
+    "number": 23,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2021-07-22T08:00:00Z",
+    "updatedAt": "2024-12-03T05:55:16Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/23",
+    "jsonFilePath": "discussions/23-D_kwDONRxYmM4Ac_7L.json",
+    "markdownFilePath": "2024/12/23-D_kwDONRxYmM4Ac_7L.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac_4v",
+    "title": "如何评估算法优劣",
+    "body": "评估算法的优劣，有两个关键维度需要考虑：\r\n\r\n* 时间复杂度 - 执行效率\r\n\r\n  反映算法执行所需要的时间成本，衡量程序运行快慢。\r\n\r\n* 空间复杂度 - 内存占用\r\n\r\n  反映算法执行过程中对存储空间的需求。\r\n\r\n## 如何描述算法复杂度\r\n\r\n我们通常使用 **大 O 表示法**来描述算法复杂度，它表示随着输入数据规模的增长，算法的性能变化趋势。\r\n\r\n大 O 表示法本质上是一种粗略的分析模型。它通过估算算法运行时间随输入规模的增长趋势，帮助我们评估不同算法的性能表现。虽然这种表示法并不精确，但在实际工作中非常实用，能够帮助开发者快速选择合适的算法方案。\r\n\r\n### 时间复杂度\r\n\r\n时间复杂度是评估算法运行效率的关键指标，它反映了**随着输入规模的增长，算法执行时间的变化趋势**。\r\n\r\n我们可以遵循以下三个步骤计算时间复杂度：\r\n\r\n1. 识别核心操作\r\n\r\n   找出算法中执行次数最多的基本语句，它们通常位于最内层循环中\r\n\r\n2. 建立数学模型\r\n\r\n   分析这些核心操作的执行次数与输入规模 `n` 的关系，**只保留主要影响项**\r\n\r\n3. 转化为大 O 表示法\r\n\r\n   利用大 O 符号表示最终的时间复杂度增长趋势\r\n\r\n下面通过典型例子来加深理解：\r\n\r\n* 常数时间 `O(1)`，如 `9`\r\n* 线性时间 `O(n)`，如 `2n + 3`\r\n* 平方时间 `O(n²)`，如 `n² + 2n + 3`\r\n* 立方时间 `O(n³)`，如 `4n³ + 3n² + 22n + 100`\r\n* 对数时间 `O(logn)`，如 `5log₂n + 20`\r\n* 线性对数 `O(nlogn)`，如 `2n + 3nlog₂n + 19`\r\n* 指数时间 `O(2ⁿ)`，如 `2ⁿ`\r\n\r\n#### 常见时间复杂度排序\r\n\r\n下面从最优到最差的顺序，列出了常见的时间复杂度：\r\n\r\n`O(1)` < `O(logn)` < `O(n)` < `O(nlogn)` < `O(n²)` < `O(n³)` < `O(n^k)` < `O(2^n)` < `O(n!)`\r\n\r\n随着复杂度的增加，算法的性能会急剧下降。在实际开发中，我们通常会尽量避免使用后几种复杂度较高的算法。\r\n\r\n### 空间复杂度\r\n\r\n空间复杂度是评估算法效率的另一个关键指标，它反映了**随着输入规模的增长，算法占用存储空间的变化趋势**。\r\n\r\n在分析算法的空间开销时，我们需要考虑三个主要组成部分：\r\n\r\n1. 输入空间：用于存储算法输入数据的内存空间，与问题规模直接相关\r\n2. 程序空间：存储算法代码本身所需的内存空间，通常为固定值\r\n3. 工作空间：算法运行过程中临时使用的额外内存空间，包括临时变量、递归栈等\r\n\r\n在评估空间复杂度时，我们主要关注**工作空间**的增长趋势。这是因为输入空间和程序空间通常是固定的，且由具体问题和实现决定，优化空间有限。而工作空间则直接反映了算法本身对额外内存的需求，是算法设计时最需要关注的部分。\r\n\r\n常见的空间复杂度有：\r\n\r\n1. `O(1)` - 常量空间\r\n\r\n   * 空间消耗与输入规模无关\r\n   * 只需要固定的临时变量即可完成计算\r\n   * 如简单的数值计算、遍历等\r\n\r\n2. `O(n)` - 线性空间\r\n\r\n   * 空间消耗与输入规模呈线性增长\r\n   * 需要额外的数组或链表来存储中间结果\r\n   * 如归并排序等需要辅助数组的算法\r\n\r\n3. `O(n²)` - 平方空间\r\n\r\n   * 需要二维数组这样的数据结构\r\n   * 如动态规划中的状态转移矩阵\r\n\r\n4. `O(logn)` - 对数空间\r\n\r\n   * 主要出现在递归算法中\r\n   * 如二分查找的递归实现\r\n\r\n## 如何优化算法\r\n\r\n算法优化的本质是在时间和空间复杂度之间找到最佳平衡。以下是一些常见的优化策略：\r\n\r\n1. 降低内存使用\r\n\r\n   * 及时释放闲置内存，避免内存泄漏\r\n   * 重复利用已分配的空间，减少频繁分配\r\n   * 使用合适的数据结构，避免空间浪费\r\n   * 采用原地算法，减少辅助空间\r\n\r\n2. 提升执行效率\r\n\r\n   * 选择合适的数据结构提高访问效率\r\n   * 消除重复计算，利用中间结果\r\n   * 合理使用缓存加速数据访问\r\n   * 优化循环结构，减少不必要的迭代\r\n   * 利用位运算代替乘除运算\r\n   * 避免频繁的对象创建\r\n\r\n3. 权衡取舍\r\n\r\n   * 结合具体业务场景选择合适方案\r\n   * 灵活运用\"时空互换\"策略\r\n   * 在算法复杂度和代码可读性间平衡\r\n   * 综合考虑开发成本和维护难度\r\n\r\n## 最后\r\n\r\n在实际开发中，没有完美的算法，关键是根据具体应用场景找到最合适的解决方案。\r\n\r\n* 有时为了获得更好的时间性能，可以适当增加空间开销，这就是经典的\"空间换时间\"策略\r\n* 有时也可能需要牺牲一些时间性能来节省内存使用\r\n\r\n优化时应当保持代码的可维护性，过度优化可能会带来更多问题。\r\n",
+    "number": 22,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2020-07-22T08:00:00Z",
+    "updatedAt": "2024-12-03T05:15:09Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/22",
+    "jsonFilePath": "discussions/22-D_kwDONRxYmM4Ac_4v.json",
+    "markdownFilePath": "2024/12/22-D_kwDONRxYmM4Ac_4v.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac-1F",
+    "title": "如何清理 Git 仓库",
+    "body": "## Git 仓库体积增长的原因\r\n\r\nGit 通过版本控制系统记录文件的每一个变更。即使只修改了文件中的一行内容，Git 也会生成一个新的 `blob` 对象来存储更新后的文件内容。每次提交都会生成新对象，导致仓库体积不断增加。随着项目开发的深入，这些对象会越来越多。\r\n\r\n虽然 Git 会在 `git gc` 打包或 `git push` 时自动进行打包压缩，将 `blob` 对象合并成包文件并使用增量编码只保存差异内容，但仓库体积仍会随着使用逐渐增长。因此需要定期清理来保持仓库轻量。\r\n\r\n## 清理方法\r\n\r\n### 清理大文件\r\n\r\n这种方法主要用于清理占用空间较大或不再需要的文件（以下称为冗余文件）及其提交记录。**注意：以下操作会真实删除文件，请谨慎操作！**\r\n\r\n1. 定位冗余文件\r\n\r\n   使用 [git-rev-list](https://git-scm.com/docs/git-rev-list) 和 [git-verify-pack](https://git-scm.com/docs/git-verify-pack) 命令查找最占空间的文件：\r\n\r\n   ```bash\r\n   git rev-list --objects --all | \\\r\n   grep \"$(git verify-pack -v .git/objects/pack/*.idx | \\\r\n   sort -k 3 -n | tail -5 | awk '{print $1}')\"\r\n   ```\r\n\r\n2. 删除冗余文件\r\n\r\n   使用 [git-filter-branch](https://git-scm.com/docs/git-filter-branch) 删除冗余文件：\r\n\r\n   ```bash\r\n   git filter-branch --force --index-filter \\\r\n   'git rm -r --cached --ignore-unmatch 文件名' \\\r\n   --prune-empty -- --all\r\n   ```\r\n\r\n   **执行删除前务必仔细检查文件列表！**\r\n\r\n3. 彻底清理\r\n\r\n   执行以下命令彻底清理仓库，删除备份引用、过期的reflog记录，并对仓库进行垃圾回收:\r\n\r\n   ```bash\r\n   # 删除备份的引用\r\n   git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin\r\n   # 清理过期的 reflog 记录\r\n   git reflog expire --expire=now --all\r\n   # 进行垃圾回收，清理不可达对象\r\n   git gc --prune=now\r\n   ```\r\n\r\n4. 确认无误后，推送更新到远程仓库\r\n\r\n   ```bash\r\n   git push --force\r\n   ```\r\n\r\n### 重置仓库\r\n\r\n这是一个快速但激进的解决方案，会**完全清除仓库的所有历史记录**。由于操作不可逆，建议仅在以下情况使用:\r\n\r\n- 仓库体积过大且历史记录不再重要\r\n- 需要彻底清除敏感信息\r\n- 重新开始一个干净的版本历史\r\n\r\n操作步骤如下:\r\n\r\n1. 清理所有远程分支\r\n\r\n   ```bash\r\n   # 删除除了master之外的所有远程分支\r\n   git branch -r | grep origin | grep -v '>' | grep -v master | xargs -L1 | awk '{sub(/origin\\//,\"\");print}'| xargs git push origin --delete\r\n   ```\r\n\r\n2. 重新初始化仓库\r\n\r\n   ```bash\r\n   # 删除旧的 .git 目录并初始化新仓库\r\n   rm -rf .git\r\n   git init\r\n   git add .\r\n   git commit -m \"Initial commit: Reset repository\"\r\n   ```\r\n\r\n3. 重新关联远程仓库\r\n\r\n   ```bash\r\n   # 添加远程仓库地址并强制推送\r\n   git remote add origin <仓库地址>\r\n   git push -f origin master\r\n   ```\r\n\r\n**注意:** 此操作会永久删除所有提交历史、分支信息和标签。\r\n",
+    "number": 21,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2020-07-28T08:00:00Z",
+    "updatedAt": "2024-12-03T03:22:40Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/21",
+    "jsonFilePath": "discussions/21-D_kwDONRxYmM4Ac-1F.json",
+    "markdownFilePath": "2024/12/21-D_kwDONRxYmM4Ac-1F.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac-zM",
+    "title": "如何保持 SSH 服务不掉线",
+    "body": "在日常工作中，保持 `SSH` 服务不掉线是一个非常重要的需求。常见保持 `SSH` 服务不掉线的方法有两种：\r\n\r\n1. 服务端发送心跳包\r\n2. 客户端发送心跳包\r\n\r\n这两种方案都能有效解决 `SSH` 连接断开的问题。接下来，我们将深入探讨这两种方案的具体配置方法。\r\n\r\n## 服务端发送心跳包\r\n\r\n1. 登录服务器后，打开配置文件\r\n\r\n   ```bash\r\n   sudo vim /etc/ssh/sshd_config\r\n   ```\r\n\r\n2. 检查并配置心跳包相关参数\r\n\r\n    1. 找到以下两个关键配置项（如有 `#`，需要去掉）\r\n\r\n        - `ClientAliveInterval` - 控制服务器向客户端发送心跳包的时间间隔\r\n        - `ClientAliveCountMax` - 设置心跳包检测失败的最大重试次数\r\n\r\n    2. 推荐的参数配置\r\n\r\n        ```ini\r\n        # 每 30 秒发送一次心跳包检测，可以及时发现连接异常\r\n        ClientAliveInterval 30\r\n        # 允许连续 3 次心跳包失败，在网络波动时仍保持稳定\r\n        ClientAliveCountMax 3\r\n        ```\r\n\r\n3. 保存配置文件\r\n\r\n   - 按 `ESC` 键退出编辑模式\r\n   - 输入 `:wq` 保存文件并退出\r\n   - 如遇到权限问题，使用 `:w!` 强制保存\r\n\r\n4. 重启 `SSH` 服务应用新配置\r\n\r\n   ```bash\r\n   sudo systemctl restart ssh\r\n   ```\r\n\r\n> 核心参数详解：\r\n>\r\n> **ClientAliveInterval**\r\n>\r\n> - 功能：服务器定时发送心跳包检测客户端是否存活\r\n> - 单位：秒（s）\r\n> - 默认：`0`（禁用）\r\n> - 建议：`30` 秒（平衡性能与及时性）\r\n> - 说明：超过设定时间未收到客户端响应，则发送心跳包\r\n>\r\n> **ClientAliveCountMax**\r\n>\r\n> - 功能：允许心跳检测失败的最大次数\r\n> - 默认：`3`\r\n> - 建议：`3` 次（可靠性与资源消耗的最佳平衡）\r\n> - 作用：防止临时网络波动造成连接断开\r\n> - 说明：实际最大超时时间 = 间隔 × 次数\r\n\r\n## 客户端发送心跳包\r\n\r\n1. 进入客户端的 `SSH` 配置目录\r\n\r\n   ```bash\r\n   cd ~/.ssh/\r\n   ```\r\n\r\n2. 打开配置文件\r\n\r\n   ```bash\r\n   vim config\r\n   ```\r\n\r\n3. 添加以下心跳配置参数并保存\r\n\r\n   ```ini\r\n   # 配置客户端每 30 秒发送一次心跳包\r\n   ServerAliveInterval 30\r\n   # 允许最多 120 次重试\r\n   ServerAliveCountMax 120\r\n   ```\r\n\r\n4. 保存并退出\r\n\r\n   - 按 `ESC` 键退出编辑模式\r\n   - 输入 `:wq` 保存并退出\r\n\r\n> 核心参数说明：\r\n>\r\n> **ServerAliveInterval**\r\n>\r\n> - 功能：客户端向服务器发送心跳的时间间隔\r\n> - 单位：秒（s）\r\n> - 默认值：`0`（表示禁用）\r\n> - 建议值：`20-60` 秒\r\n> - 注意：设置过小会增加服务器负载\r\n>\r\n> **ServerAliveCountMax**\r\n>\r\n> - 功能：客户端允许心跳检测失败的最大次数\r\n> - 默认值：`3`\r\n> - 建议值：根据需要设置，通常 `100-999`\r\n> - 说明：实际最大保持时间 = 间隔 × 次数\r\n\r\n## 如何选择最佳方案\r\n\r\n两种方案各有优势，选择哪种主要取决于您的具体使用场景：\r\n\r\n- **一台服务器连接多个客户端**\r\n\r\n  推荐服务端心跳方案，只需在服务器配置一次，对所有客户端生效\r\n\r\n- **一台客户端连接多台服务器**\r\n\r\n  推荐客户端心跳方案，只需在客户端配置一次，对所有服务器连接生效\r\n",
+    "number": 20,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2020-03-01T08:00:00Z",
+    "updatedAt": "2024-12-02T10:22:03Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/20",
+    "jsonFilePath": "discussions/20-D_kwDONRxYmM4Ac-zM.json",
+    "markdownFilePath": "2024/12/20-D_kwDONRxYmM4Ac-zM.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac-w1",
+    "title": "10 分钟创建你的第一个 CocoaPods 公有库",
+    "body": "想让你的代码被全世界的开发者使用吗？本文将手把手教你创建、配置并发布一个 `CocoaPods` 公有库。\r\n\r\n## 注册 CocoaPods 账号\r\n\r\n### 创建账号\r\n\r\n```bash\r\n# 使用 --verbose 参数可以看到详细的注册过程，方便排查问题\r\n$ pod trunk register {你的邮箱} '{你的用户名}' --verbose\r\n# ... 更多连接信息 ...\r\nopening connection to trunk.cocoapods.org:443...\r\n[!] Please verify the session by clicking the link in the verification email\r\n```\r\n\r\n### 验证邮箱\r\n\r\n1. 打开邮箱查收标题为 **[CocoaPods] Confirm your session** 的验证邮件\r\n2. 点击验证链接，完成注册\r\n\r\n### 验证注册状态\r\n\r\n```bash\r\n$ pod trunk me\r\n  - Name:     YOURNAME\r\n  - Email:    YOURMAIL\r\n  - Since:    May 23rd, 2018 03:02\r\n  - Pods:\r\n    - PodName\r\n  - Sessions:\r\n    - June 20th, 08:17     -        October 26th, 08:39. IP: xxx.xxx.xxx.xxx\r\n```\r\n\r\n## 创建公有 Pod 库\r\n\r\n### 创建 GitHub 仓库\r\n\r\n1. 在 `GitHub` 创建新仓库\r\n2. 记录重要信息\r\n\r\n    - 仓库主页：<https://github.com/{GitHub用户名}/{Pod名称}>\r\n    - Clone 地址：<https://github.com/{GitHub用户名}/{Pod名称}.git>\r\n\r\n### 使用 pod 脚手架创建 pod 库\r\n\r\n```bash\r\n$ pod lib create {YOURPODNAME}\r\nCloning `https://github.com/CocoaPods/pod-template.git` into `YOURPODNAME`.\r\nConfiguring YOURPODNAME template.\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\n\r\n------------------------------\r\n\r\nTo get you started we need to ask a few questions, this should only take a minute.\r\n\r\nIf this is your first time we recommend running through with the guide:\r\n - https://guides.cocoapods.org/making/using-pod-lib-create.html\r\n ( hold cmd and click links to open in a browser. )\r\n\r\n\r\nWhat platform do you want to use?? [ iOS / macOS ]\r\n > {iOS}\r\n\r\nWhat language do you want to use?? [ Swift / ObjC ]\r\n > {ObjC}\r\n\r\nWould you like to include a demo application with your library? [ Yes / No ]\r\n > {Yes}\r\n\r\nWhich testing frameworks will you use? [ Specta / Kiwi / None ]\r\n > {None}\r\n\r\nWould you like to do view based testing? [ Yes / No ]\r\n > {No}\r\n\r\nWhat is your class prefix?\r\n > {Prefix}\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\nsecurity: SecKeychainSearchCopyNext: The specified item could not be found in the keychain.\r\n\r\nRunning pod install on your new library.\r\n\r\nAnalyzing dependencies\r\nFetching podspec for `YOURPODNAME` from `../`\r\nDownloading dependencies\r\nInstalling YOURPODNAME (0.1.0)\r\nGenerating Pods project\r\nIntegrating client project\r\n```\r\n\r\n### 配置 .podspec\r\n\r\n`.podspec` 文件是你的 `Pod` 库的核心配置信息，包含了版本、作者、依赖等重要元数据，需要仔细配置每一项：\r\n\r\n```ruby\r\nPod::Spec.new do |s|\r\n  s.name             = '{Pod名称}'              # Pod 名称\r\n  s.version          = '0.1.0'                # 版本号\r\n  s.summary          = '一句话描述你的 Pod'      # 简短描述\r\n  s.description      = <<-DESC                # 详细描述\r\n                       详细描述你的 Pod 能做什么，\r\n                       有什么特点和优势。\r\n                       DESC\r\n  s.homepage         = 'https://github.com/{GitHub用户名}/{Pod名称}'\r\n  s.license          = { :type => 'MIT', :file => 'LICENSE' }\r\n  s.author           = { '{作者}' => '{邮箱}' }\r\n  s.source           = { :git => '你的仓库地址.git', :tag => s.version.to_s }\r\n  s.ios.deployment_target = '8.0'\r\n  s.source_files = '{Pod名称}/Classes/**/*'\r\nend\r\n```\r\n\r\n### 验证与发布\r\n\r\n1. 验证配置\r\n\r\n    ```bash\r\n    pod lib lint\r\n    ```\r\n\r\n2. 提交代码\r\n\r\n    ```bash\r\n    git add .\r\n    git commit -m \"初始化 Pod 库\"\r\n    git push\r\n    ```\r\n\r\n3. 创建发布版本\r\n\r\n    ```bash\r\n    git tag -a 0.1.0 -m '第一个版本'\r\n    git push origin --tags\r\n    ```\r\n\r\n4. 发布到 `CocoaPods`\r\n\r\n    ```bash\r\n    $ pod trunk push\r\n\r\n    [!] Found podspec `YOURPODNAME.podspec`\r\n    Updating spec repo `master`\r\n    Validating podspec\r\n    -> YOURPODNAME (0.1.0)\r\n        - NOTE  | xcodebuild:  note: Using new build system\r\n        - NOTE  | [iOS] xcodebuild:  note: Planning build\r\n        - NOTE  | [iOS] xcodebuild:  note: Constructing build description\r\n        - NOTE  | xcodebuild:  note: Execution policy exception registration failed and was skipped: Error Domain=NSPOSIXErrorDomain Code=1 \"Operation not permitted\"\r\n        - NOTE  | [iOS] xcodebuild:  warning: Skipping code signing because the target does not have an Info.plist file and one is not being generated automatically.\r\n\r\n    Updating spec repo `master`\r\n\r\n    --------------------------------------------------------------------------------\r\n    🎉  Congrats\r\n\r\n    🚀  YOURPODNAME (0.1.0) successfully published\r\n    📅  June 18th, 10:30\r\n    🌎  https://cocoapods.org/pods/YOURPODNAME\r\n    👍  Tell your friends!\r\n    --------------------------------------------------------------------------------\r\n    ```\r\n\r\n## 如何在项目中集成你的 Pod\r\n\r\n至此，你已成功发布了自己的第一个 `CocoaPods` 公有库，让我们看看其他开发者如何使用它：\r\n\r\n1. 在项目的 `Podfile` 中添加依赖\r\n\r\n    ```ruby\r\n    # 使用最新版本\r\n    pod '{你的Pod名称}'\r\n\r\n    # 或指定版本\r\n    pod '{你的Pod名称}', '~> 0.1.0'\r\n    ```\r\n\r\n2. 执行安装命令\r\n\r\n    ```bash\r\n    pod install\r\n    ```\r\n\r\n3. 在代码中导入并使用\r\n\r\n    ```objc\r\n    // Objective-C\r\n    #import <你的Pod名称/头文件名称.h>\r\n\r\n    // Swift\r\n    import 你的Pod名称\r\n    ```\r\n\r\n## 最后\r\n\r\n你可以通过以下方式来持续改进你的库：\r\n\r\n- 添加详细的文档说明和使用示例\r\n- 不断优化代码质量\r\n- 及时处理用户反馈和 `issue`\r\n- 定期发布新版本修复问题和增加功能\r\n\r\n希望你能在开源社区收获成长，让更多开发者受益于你的代码！\r\n",
+    "number": 19,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2019-06-21T08:00:00Z",
+    "updatedAt": "2024-12-02T09:27:12Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/19",
+    "jsonFilePath": "discussions/19-D_kwDONRxYmM4Ac-w1.json",
+    "markdownFilePath": "2024/12/19-D_kwDONRxYmM4Ac-w1.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac5pj",
+    "title": "Ubuntu 安装 MySQL 指南",
+    "body": "## 安装步骤\r\n\r\n### 安装 MySQL APT 配置包\r\n\r\n1. 访问 [MySQL APT Repository](https://dev.mysql.com/downloads/repo/apt/)，找到最新的配置包\r\n2. 点击 `Download` 按钮并复制 `No thanks, just start my download` 的下载链接\r\n3. 使用以下命令下载并安装配置包：\r\n\r\n   ```bash\r\n   # 下载配置包\r\n   wget https://dev.mysql.com/get/mysql-apt-config_0.8.12-1_all.deb\r\n   # 安装配置包\r\n   sudo dpkg -i mysql-apt-config_0.8.12-1_all.deb\r\n   ```\r\n\r\n4. 在配置界面中选择 `MySQL 5.7` 版本，按 `OK` 确认\r\n\r\n   ![image](https://file.onnttf.site/2019/04/03/1.jpg)\r\n\r\n### 安装 MySQL\r\n\r\n```bash\r\n# 更新软件包列表\r\nsudo apt-get update\r\n# 安装 MySQL\r\nsudo apt-get install mysql-server mysql-common mysql-client\r\n```\r\n\r\n> 注意：安装过程中系统会弹出 `root` 密码设置界面，请设置一个安全的密码并牢记。如果没有出现密码设置界面，不用担心，您可以在完成安装后按照后续步骤中的说明进行密码设置。确保选择的密码具有足够的复杂度，建议包含大小写字母、数字和特殊字符。\r\n\r\n### 验证安装\r\n\r\n`MySQL` 安装完成后会自动启动。使用以下命令检查状态：\r\n\r\n```bash\r\nsudo systemctl status mysql\r\n```\r\n\r\n常用服务命令：\r\n\r\n```bash\r\nsudo systemctl start mysql   # 启动\r\nsudo systemctl stop mysql    # 停止\r\nsudo systemctl restart mysql # 重启\r\n```\r\n\r\n### 安全配置\r\n\r\n#### 修改 root 密码\r\n\r\n```bash\r\n# 以 root 身份登录 MySQL\r\nsudo mysql\r\n\r\n# 修改验证方式和密码\r\nmysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '您的新密码';\r\nmysql> FLUSH PRIVILEGES;\r\nmysql> EXIT;\r\n```\r\n\r\n#### 创建新用户\r\n\r\n```bash\r\nmysql> CREATE USER '用户名'@'%' IDENTIFIED BY '密码';\r\n```\r\n\r\n> `%` 表示允许远程访问，`localhost` 表示仅允许本地访问\r\n\r\n### 优化配置\r\n\r\n#### 设置 `UTF-8` 字符集\r\n\r\n编辑 `/etc/mysql/mysql.conf.d/mysqld.cnf`：\r\n\r\n```ini\r\n[client]\r\ndefault-character-set=utf8mb4\r\n\r\n[mysql]\r\ndefault-character-set=utf8mb4\r\n\r\n[mysqld]\r\ncharacter-set-server=utf8mb4\r\ncollation-server=utf8mb4_unicode_ci\r\n```\r\n\r\n#### 配置远程访问\r\n\r\n1. 编辑配置文件\r\n\r\n    ```bash\r\n    sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf\r\n    # 注释掉 bind-address = 127.0.0.1\r\n    ```\r\n\r\n2. 授权远程访问\r\n\r\n    ```bash\r\n    mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '密码' WITH GRANT OPTION;\r\n    mysql> FLUSH PRIVILEGES;\r\n    ```\r\n\r\n3. 重启 `MySQL`：\r\n\r\n    ```bash\r\n    sudo systemctl restart mysql\r\n    ```\r\n\r\n## 常见问题排查\r\n\r\n1. 无法远程连接\r\n\r\n   - 检查防火墙配置\r\n   - 验证 `bind-address` 设置\r\n   - 确认用户权限\r\n\r\n2. 字符集问题\r\n\r\n   - 使用 `SHOW VARIABLES LIKE 'character%';` 检查配置\r\n   - 确保应用端使用正确的字符集\r\n\r\n## 参考资料\r\n\r\n1. [MySQL 官方文档](https://dev.mysql.com/doc/)\r\n2. [Ubuntu MySQL 安装指南](https://ubuntu.com/server/docs/databases-mysql)\r\n",
+    "number": 18,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2019-04-03T08:00:00Z",
+    "updatedAt": "2024-11-29T08:40:37Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/18",
+    "jsonFilePath": "discussions/18-D_kwDONRxYmM4Ac5pj.json",
+    "markdownFilePath": "2024/11/18-D_kwDONRxYmM4Ac5pj.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac5n6",
+    "title": "+load 和 +initialize 的特点与区别",
+    "body": "`+load` 和 `+initialize` 是 `Objective-C` 中两个重要的初始化方法，它们有着不同的使用场景和特点。\r\n\r\n|  | `+load` | `+initialize` |\r\n|---|---|---|\r\n| 调用时机 | 类、分类被加载到运行时时立即调用 | 类第一次接收到消息时懒加载调用 |\r\n| 调用方式 | 直接通过函数地址调用，更快速 | 通过 `objc_msgSend` 消息发送机制调用，更灵活 |\r\n| 调用顺序 | 编译顺序决定，严格遵循继承链 | 继承链顺序调用，每个类仅调用一次 |\r\n| 使用场景 | 运行时方法替换、关联对象等底层操作 | 类的一般性初始化工作 |\r\n\r\n## +load\r\n\r\n`+load` 方法主要用于类的早期设置，具有以下特点：\r\n\r\n1. 在 `main()` 函数执行前就会调用，按照编译先后顺序调用，加载时机最早\r\n2. 继承链上的调用顺序为：父类 -> 子类 -> 分类\r\n3. 通过函数指针直接调用，性能较好\r\n4. 适合进行 `Method Swizzling` 等运行时操作\r\n5. 每个类的 `+load` 方法仅会调用一次\r\n\r\n## +initialize\r\n\r\n`+initialize` 方法用于类的延迟初始化，特点如下：\r\n\r\n1. 采用消息发送机制调用，支持继承和动态特性\r\n2. 调用顺序遵循继承链：父类 -> 子类\r\n3. 懒加载特性 - 仅在首次使用类时调用，提高性能\r\n4. 线程安全，运行时保证每个类只初始化一次\r\n5. 子类若未实现会继承父类实现\r\n6. 适合处理类的一般初始化工作\r\n",
+    "number": 17,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2019-03-11T08:00:00Z",
+    "updatedAt": "2024-11-29T08:20:34Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/17",
+    "jsonFilePath": "discussions/17-D_kwDONRxYmM4Ac5n6.json",
+    "markdownFilePath": "2024/11/17-D_kwDONRxYmM4Ac5n6.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac5m-",
+    "title": "Charles 证书安装指南",
+    "body": "`Charles` 是一款功能强大的网络调试工具，它集 `HTTP` 代理服务器、`HTTP` 监视器和反向代理服务器于一体。作为开发者，您可以通过 `Charles` 监控所有的 `HTTP`、`HTTPS` 通信，包括请求、响应以及完整的头信息（`cookies`、缓存等）。\r\n\r\n## Charles 核心功能\r\n\r\n1. **网络请求监控**：实时抓取 `HTTP/HTTPS` 请求和响应\r\n2. **调试辅助**：支持请求重发，方便后端接口调试\r\n3. **参数修改**：可拦截并修改请求参数，灵活控制请求内容\r\n4. **网络模拟**：支持模拟各种网络环境（`2G`/`3G`/`4G`），测试应用表现\r\n5. **本地/远程映射**：可将线上资源映射到本地，便于开发调试\r\n6. **移动端支持**：完整支持移动设备的抓包需求\r\n7. **请求编辑**：支持动态修改和拦截网络请求\r\n\r\n## 证书安装指南\r\n\r\n要使用 Charles 的全部功能，我们需要先完成证书安装：\r\n\r\n![image](https://file.onnttf.site/2019/01/02/1.jpg)\r\n\r\n### PC 端证书安装\r\n\r\n1. **安装证书**\r\n\r\n   进入 `Charles` 菜单：`Help -> SSL Proxying -> Install Charles Root Certificate`\r\n\r\n   系统会提示选择证书存储位置,请根据实际需求选择合适的钥匙串：\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/2.jpg)\r\n\r\n2. **信任证书**\r\n\r\n   - 打开系统的\"钥匙串访问\"\r\n   - 在搜索框中输入 `Charles` 定位证书\r\n   - 双击 `Charles Proxy CA` 证书\r\n   - 展开\"信任\"选项,将证书信任级别设置为\"始终信任\"\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/3.jpg)\r\n\r\n### iOS 模拟器证书安装\r\n\r\n1. **安装证书**\r\n\r\n   `Charles` 菜单操作：`Help -> SSL Proxying -> Install Charles Root Certificate in iOS Simulators`\r\n\r\n2. **信任证书**\r\n\r\n   在模拟器中依次打开：`Settings -> General -> About -> Certificate Trust Settings`\r\n\r\n   找到 `Charles` 证书并启用信任开关：\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/4.jpg)\r\n\r\n### 移动设备证书安装\r\n\r\n1. **安装证书**\r\n\r\n   在 `Charles` 中打开证书安装向导：`Help -> SSL Proxying -> Install Charles Root Certificate on a Mobile Device or Remote Browser`\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/5.jpg)\r\n\r\n   安装步骤：\r\n\r\n   - 确保移动设备与运行 `Charles` 的电脑处于同一网络\r\n   - 在移动设备的 `WiFi` 设置中配置代理服务器\r\n   - 输入 `Charles` 显示的代理地址: `xxx.xx.xxx.xxx:xxxx`\r\n   - 使用移动设备浏览器访问 [chls.pro/ssl](https://github.com/onnttf/blog/tree/322c1a6adda8dd6be880c9622823871046e6654b/mac/chls.pro/ssl/README.md) 下载安装证书\r\n\r\n2. **信任证书**\r\n\r\n   在移动设备中依次打开：设置 -> 通用 -> 关于本机 -> 证书信任设置\r\n\r\n   找到并启用 `Charles` 证书的信任选项：\r\n\r\n   ![image](https://file.onnttf.site/2019/01/02/7.jpg)\r\n",
+    "number": 16,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2019-01-02T08:00:00Z",
+    "updatedAt": "2024-11-29T08:08:14Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/16",
+    "jsonFilePath": "discussions/16-D_kwDONRxYmM4Ac5m-.json",
+    "markdownFilePath": "2024/11/16-D_kwDONRxYmM4Ac5m-.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac5lf",
+    "title": "打造高效美观的终端工具：iTerm2 配置全攻略",
+    "body": "不想在黑漆漆的终端里敲命令？本文将手把手教你打造一个颜值与实力并存的终端环境。\r\n\r\n## iTerm2 安装指南\r\n\r\n从[官网](https://iterm2.com/downloads.html)下载最新版本，按照提示完成安装。\r\n\r\n## Oh My Zsh - 让终端更智能高效\r\n\r\n`Oh My Zsh` 是一个令人惊叹的命令行工具，它不仅能美化你的终端界面，更重要的是能显著提升你的工作效率。基于 `Zsh shell`，它提供了丰富的主题与实用插件生态系统。想了解更多精彩特性？访问[官方网站](https://ohmyz.sh/)。\r\n\r\n### 一键安装\r\n\r\n```bash\r\nsh -c \"$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)\"\r\n```\r\n\r\n### 打造个性化终端\r\n\r\n1. 主题美化\r\n\r\n   - [内置主题](https://github.com/robbyrussell/oh-my-zsh/wiki/themes)\r\n   - [扩展主题](https://github.com/robbyrussell/oh-my-zsh/wiki/External-themes)\r\n\r\n2. 插件安装\r\n\r\n   - [插件列表 1](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins)\r\n   - [插件列表 2](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins-Overview)\r\n\r\n#### 命令语法高亮\r\n\r\n命令行中的命令高亮是通过 `zsh-syntax-highlighting` 实现，安装 `zsh-syntax-highlighting` 的方法有很多，具体可以查看 [Install zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)。\r\n\r\n#### 文件和目录的彩色显示\r\n\r\n文件和目录的彩色显示是通过 `coreutils` 实现，安装 `coreutils` 的方法很简单，具体可以查看：\r\n\r\n1. [coreutils README-install](https://github.com/coreutils/coreutils/blob/master/README-install)\r\n2. [coreutils 介绍](https://blog.csdn.net/lengye7/article/details/80270379)\r\n\r\n## 最后\r\n\r\n通过以上的配置和优化，你的终端不仅变得更加美观，而且在使用过程中也会更加高效。`iTerm2` 配合 `Oh My Zsh`，再加上各种实用的插件和主题，可以极大地提升命令行的使用体验。希望这篇教程能帮助你打造一个得心应手的终端环境，让日常开发工作事半功倍\r\n",
+    "number": 15,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-12-18T08:00:00Z",
+    "updatedAt": "2024-11-29T07:48:54Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/15",
+    "jsonFilePath": "discussions/15-D_kwDONRxYmM4Ac5lf.json",
+    "markdownFilePath": "2024/11/15-D_kwDONRxYmM4Ac5lf.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac5jX",
+    "title": "动态更换 App 图标",
+    "body": "从 `iOS 10.3` 开始，Apple 提供了动态更换应用图标的功能。这个功能让我们可以在不发版的情况下更换 App 图标，但也有一些限制需要注意：\r\n\r\n1. 所有可替换的图标必须预先打包到项目中\r\n2. 更换图标时需要获得用户授权（虽然有绕过方法但不建议使用）\r\n\r\n尽管存在这些限制，但这个功能仍然能为用户体验带来显著提升：\r\n\r\n1. 在节假日期间可以无需发版即可更换应季图标\r\n2. 在重大活动期间可以及时更换营销图标，无需担心发版风险\r\n\r\n**注意**：更换图标会同步更新应用在通知栏、设置界面等所有场景下的图标。\r\n\r\n## 准备替换图标\r\n\r\n需要将待替换的图标文件放在项目目录下（不能放在 `.xcassets` 中）。建议按如下格式命名图标文件：\r\n例如 `<xx20x20@2x.png>`、`<xx20x20@3x.png>` 等，这样在配置 `Info.plist` 时会更方便。\r\n\r\n![image](https://file.onnttf.site/2018/07/10/1.jpg)\r\n\r\n**提示**：理论上也可以只提供一套图标文件，命名为 `<xx@2x.png>`、`<xx@3x.png>` 等。但为了更好的显示效果，建议提供完整的尺寸系列。因为系统会对大尺寸图标进行压缩来适配小尺寸场景。\r\n\r\n## 修改 `Info.plist`\r\n\r\n要实现动态换图标功能，需要在 `Info.plist` 中进行必要的配置：\r\n\r\n![image](https://file.onnttf.site/2018/07/10/2.jpg)\r\n\r\n- CFBundleIcons\r\n\r\n  包含所有应用图标信息的字典\r\n\r\n- CFBundlePrimaryIcon\r\n\r\n  主图标配置，如果在 `Assets.xcassets` 中已配置则会被自动使用\r\n\r\n- CFBundleAlternateIcons\r\n\r\n  可替换图标的配置数组\r\n\r\n- UIPrerenderedIcon\r\n\r\n  是否预渲染，若未设置或设为 `NO` 则系统会自动添加光泽效果\r\n\r\n详细的配置说明请参考 [CFBundleIcons, CFBundlePrimaryIcon, CFBundleAlternateIcons](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html#//apple_ref/doc/uid/TP40009249-SW10)。\r\n\r\n**注意**：如需支持 iPad，需要在 `CFBundleIcons~ipad` 中进行相同配置。\r\n\r\n## 编写代码\r\n\r\n系统提供了以下几个关键 `API`：\r\n\r\n```objc\r\n// If false, alternate icons are not supported for the current process.\r\n// 检查是否支持更换图标\r\n@property (readonly, nonatomic) BOOL supportsAlternateIcons NS_EXTENSION_UNAVAILABLE(\"Extensions may not have alternate icons\") API_AVAILABLE(ios(10.3), tvos(10.2));\r\n\r\n// Pass `nil` to use the primary application icon. The completion handler will be invoked asynchronously on an arbitrary background queue; be sure to dispatch back to the main queue before doing any further UI work.\r\n// 更换图标\r\n- (void)setAlternateIconName:(nullable NSString *)alternateIconName completionHandler:(nullable void (^)(NSError *_Nullable error))completionHandler NS_EXTENSION_UNAVAILABLE(\"Extensions may not have alternate icons\") API_AVAILABLE(ios(10.3), tvos(10.2));\r\n\r\n// If `nil`, the primary application icon is being used.\r\n// 当前图标的名称\r\n@property (nullable, readonly, nonatomic) NSString *alternateIconName NS_EXTENSION_UNAVAILABLE(\"Extensions may not have alternate icons\") API_AVAILABLE(ios(10.3), tvos(10.2));\r\n```\r\n\r\n这些 `API` 使用起来相对简单，需要特别注意的是：\r\n\r\n```objc\r\n- (void)setAlternateIconName:(nullable NSString *)alternateIconName completionHandler:(nullable void (^)(NSError *_Nullable error))completionHandler\r\n```\r\n\r\n其中的 `alternateIconName` 参数需要与 `Info.plist` 中配置的名称保持一致，如示例中的 `female` 或 `male`。\r\n\r\n## 代码示例\r\n\r\n以下是一个完整的图标管理工具类实现。您也可以在 [DynamicAppIconDemo](https://github.com/onnttf/DynamicAppIconDemo) 查看 `FSAppIconManager` 的源码：\r\n\r\n```objc\r\n+ (NSString *)getCurrentAppIconName {\r\n    if (@available(iOS 10.3, *)) {\r\n        return ([UIApplication sharedApplication].alternateIconName.length == 0) ? @\"\" : [UIApplication sharedApplication].alternateIconName;\r\n    } else {\r\n        // Fallback on earlier versions\r\n        return @\"\";\r\n    }\r\n}\r\n\r\n+ (BOOL)canChangeAppIcon {\r\n    if (@available(iOS 10.3, *)) {\r\n        return [[UIApplication sharedApplication] supportsAlternateIcons];\r\n    } else {\r\n        // Fallback on earlier versions\r\n        return NO;\r\n    }\r\n}\r\n\r\n+ (void)changeAppIconWithIconName:(NSString *)iconName completionHandler:(void (^)(NSError * _Nullable))completionHandler {\r\n    if (@available(iOS 10.3, *)) {\r\n        [[UIApplication sharedApplication] setAlternateIconName:iconName completionHandler:^(NSError * _Nullable error) {\r\n            if (!error) {\r\n                completionHandler(nil);\r\n            } else {\r\n                completionHandler(error);\r\n            }\r\n        }];\r\n    } else {\r\n        // Fallback on earlier versions\r\n        NSDictionary *userInfo = @{\r\n            NSLocalizedDescriptionKey: NSLocalizedString(@\"AppIcon change failed\", nil),\r\n            NSLocalizedFailureReasonErrorKey: NSLocalizedString(@\"The current system version does not support replacing the AppIcon.\", nil),\r\n            NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@\"\", nil)\r\n        };\r\n        NSError *error = [NSError errorWithDomain:@\"\"\r\n                                             code:34001\r\n                                         userInfo:userInfo];\r\n        completionHandler(error);\r\n    }\r\n}\r\n```\r\n\r\n## App Icon 相关的资料\r\n\r\n### 属性要求\r\n\r\n| Attribute   | Value                                                                                                                                                  |\r\n| :---------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |\r\n| Format      | PNG                                                                                                                                                    |\r\n| Color space | sRGB or P3 (see [Color Management](https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/color/#color-management))           |\r\n| Layers      | Flattened with no transparency                                                                                                                         |\r\n| Resolution  | Varies. See [Image Size and Resolution](https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/image-size-and-resolution/) |\r\n| Shape       | Square with no rounded corners                                                                                                                         |\r\n\r\n### 尺寸规格\r\n\r\n| Device or context | Icon size                             |\r\n| :---------------- | :------------------------------------ |\r\n| iPhone            | 180px × 180px (60pt × 60pt @3x)       |\r\n|                   | 120px × 120px (60pt × 60pt @2x)       |\r\n| iPad Pro          | 167px × 167px (83.5pt × 83.5pt @2x)   |\r\n| iPad, iPad mini   | 152px × 152px (76pt × 76pt @2x)       |\r\n| App Store         | 1024px × 1024px (1024pt × 1024pt @1x) |\r\n\r\n### Spotlight、Settings 和 Notification 图标尺寸\r\n\r\n| Device or context         | Spotlight icon size             | Settings icon size            | Notification icon size        |\r\n| :------------------------ | :------------------------------ | :---------------------------- | :---------------------------- |\r\n| iPhone                    | 120px × 120px (40pt × 40pt @3x) | 87px × 87px (29pt × 29pt @3x) | 60px × 60px (20pt × 20pt @3x) |\r\n|                           | 80px × 80px (40pt × 40pt @2x)   | 58px × 58px (29pt × 29pt @2x) | 40px × 40px (20pt × 20pt @2x) |\r\n| iPad Pro, iPad, iPad mini | 80px × 80px (40pt × 40pt @2x)   | 58px × 58px (29pt × 29pt @2x) | 40px × 40px (20pt × 20pt @2x) |\r\n\r\n### 注意事项\r\n\r\n关于 `Settings` 图标的特别说明：请勿手动为其添加边框或遮罩效果,因为系统会自动为图标添加 1 像素宽的描边,以确保图标在白色背景上能够清晰显示。这样的自动处理可以保证图标在系统设置界面中有统一的展示效果。\r\n\r\n## 最后\r\n\r\n本文详细介绍了 `iOS` 动态更换应用图标的实现方法，从准备图标文件、配置 `Info.plist` 到编写代码，为开发者提供了完整的技术指南。\r\n\r\n虽然这个功能有一些使用限制，但它为提升用户体验提供了灵活的解决方案。通过合理运用这一功能，我们可以在节假日或营销活动期间，无需发版即可动态更新应用图标，让应用界面更具吸引力和时效性。\r\n\r\n希望这篇文章能帮助开发者更好地运用这一功能，为用户带来更丰富的应用体验。\r\n",
+    "number": 14,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-07-10T08:00:00Z",
+    "updatedAt": "2024-11-29T07:12:03Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/14",
+    "jsonFilePath": "discussions/14-D_kwDONRxYmM4Ac5jX.json",
+    "markdownFilePath": "2024/11/14-D_kwDONRxYmM4Ac5jX.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac5h7",
+    "title": "macOS 系统重装指南",
+    "body": "虽然 `macOS` 系统的稳定性已经非常优秀，但在一些特殊情况下，我们依然需要重装系统。本文将帮助你了解 `macOS` 系统重装的几种方式和相关注意事项，帮助你轻松完成系统重装。\r\n\r\n## 为什么需要重装系统\r\n\r\n- 系统臃肿问题\r\n\r\n    随着使用时间增长，我们不可避免地会安装大量软件、插件和环境配置。虽然这些累积可能不会导致系统变慢，但对于追求\"干净\"系统的用户来说却是一种困扰。\r\n\r\n    这种情况下，重装系统不失为一个彻底解决问题的方案。\r\n\r\n- `Beta` 版本的烦恼\r\n\r\n    对于喜欢尝鲜的用户来说，升级到最新的 `Beta` 版系统往往充满诱惑。然而 `Beta` 版本可能存在诸多问题，此时你面临两个选择：\r\n\r\n  - 等待更稳定的新版本发布\r\n  - 降级回稳定版本（需要完整备份数据）\r\n\r\n## 三种重装方式\r\n\r\n本文以 `macOS High Sierra` 为例，介绍以下三种重装方案。\r\n\r\n### App Store 安装（推荐）\r\n\r\n获取系统镜像有两种方式：\r\n\r\n- 直接在 `App Store` 搜索下载\r\n- 通过[官方链接](https://search.itunes.apple.com/WebObjects/MZContentLink.woa/wa/link?mt=11&path=mac%2fmacoshighsierra)下载\r\n\r\n下载完成后按提示操作即可\r\n\r\n### 在线恢复\r\n\r\n重启时按不同组合键可进入不同的恢复模式：\r\n\r\n| 按键组合                       | 功能说明             |\r\n| ------------------------------ | -------------------- |\r\n| `Command + R`                  | 安装最近的已安装版本 |\r\n| `Option + Command + R`         | 升级至最新兼容版本   |\r\n| `Shift + Option + Command + R` | 安装出厂版本         |\r\n\r\n进入恢复模式后，可以：\r\n\r\n1. 使用磁盘工具抹掉磁盘（可选）\r\n2. 选择重新安装系统\r\n3. 按照向导完成安装\r\n\r\n### U 盘安装\r\n\r\n这种方式适合网络不稳定的情况：\r\n\r\n1. 下载系统镜像\r\n2. 制作启动盘\r\n\r\n```bash\r\nsudo /Applications/Install\\ macOS\\ High\\ Sierra.app/Contents/Resources/createinstallmedia --volume /Volumes/MyVolume --applicationpath /Applications/Install\\ macOS\\ High\\ Sierra.app\r\n```\r\n\r\n3. 通过 U 盘启动并安装系统\r\n\r\n    1. 将 U 盘插到电脑上\r\n    2. 进入恢复模式，将启动磁盘改为我们制作的启动盘，启动盘的修改可以参考附件\r\n    3. 从\"实用工具\"窗口中选择\"安装 macOS\"（或\"安装 OS X\"），然后点按\"继续\"，按照屏幕上的说明进行操作\r\n\r\n## 最后\r\n\r\n无论选择哪种重装方式，在开始之前都请注意：\r\n\r\n1. 备份重要数据，可以使用 `Time Machine` 或手动备份\r\n2. 记录已安装的软件列表，方便重装后恢复\r\n3. 确保有足够的磁盘空间和稳定的网络环境\r\n\r\n重装系统虽然需要花费一些时间，但能够帮助我们获得一个全新、干净的使用环境。如果你遇到无法解决的系统问题，或是想彻底清理系统，不妨尝试重装一次。\r\n",
+    "number": 13,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-06-16T08:00:00Z",
+    "updatedAt": "2024-11-29T06:53:19Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/13",
+    "jsonFilePath": "discussions/13-D_kwDONRxYmM4Ac5h7.json",
+    "markdownFilePath": "2024/11/13-D_kwDONRxYmM4Ac5h7.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac2v4",
+    "title": "GCD 同步异步与串行并行的深入理解",
+    "body": "并发编程是提升 `iOS` 应用性能和用户体验的关键技术，而 `Grand Central Dispatch (GCD)` 作为 `Apple` 推出的强大线程管理框架，为我们提供了简洁而高效的多线程开发方案。然而，面对 `GCD` 中同步/异步、串行/并行等多种组合方式，很多开发者往往感到困惑，无法充分发挥其性能优势。\r\n\r\n本文将以通俗易懂的方式深入剖析 `GCD` 的核心概念，通过大量实例和详细解析，帮助你全面理解线程执行的关键细节，掌握在实际开发中灵活运用这些技术的最佳实践。\r\n\r\n## 核心概念解析\r\n\r\n在开始深入学习 `GCD` 之前，让我们先通过生动的类比来理解几个核心概念：\r\n\r\n- **线程**\r\n\r\n    一条生产线上的工人：\r\n\r\n  - 是执行具体工作的最小单位\r\n  - 由工厂（`CPU`）统一调度安排工作\r\n  - 可以独立完成分配的任务\r\n  - 多个工人可以同时工作\r\n\r\n- **任务**\r\n\r\n    工厂里需要完成的具体工作：\r\n\r\n  - 一件明确的工作（如组装一个零件）\r\n  - 可以用不同方式描述（任务清单或口头指令）\r\n  - 包含具体的操作步骤和目标\r\n\r\n- **队列**\r\n\r\n    工厂的任务分发通道：\r\n\r\n  - 任务按照先来先做的顺序排队\r\n  - 统一管理待处理的工作\r\n  - 决定工人如何领取和执行任务\r\n\r\n- **串行队列**\r\n\r\n    一条的生产线：\r\n\r\n  - 一个工人按顺序处理\r\n  - 必须一个任务做完再做下一个\r\n  - 适合有先后顺序要求的工作\r\n\r\n- **并行队列**\r\n\r\n    多条并行的生产线：\r\n\r\n  - 多个工人可以同时工作\r\n  - 多个任务可以同步进行\r\n  - 适合可以独立完成的工作\r\n\r\n- **同步执行**\r\n\r\n    等待工人当场完成任务：\r\n\r\n  - 工人不能同时做其他事\r\n  - 必须等这件事做完才能继续\r\n  - 任务按顺序逐个完成\r\n\r\n- **异步执行**\r\n\r\n    分配任务后不用等待：\r\n\r\n  - 可以调用多个工人同时工作\r\n  - 任务可以并行处理\r\n  - 分配完就可以做其他事\r\n\r\n## GCD 实战指南\r\n\r\n让我们通过详细的代码示例和执行结果分析，全面掌握 `GCD` 中各种执行组合方式。每个组合都配有完整的示例代码、执行特点说明和实际运行效果。\r\n\r\n### 同步执行 + 串行队列：严格按序执行\r\n\r\n特点：\r\n\r\n- 在当前线程同步执行\r\n- 任务按严格顺序依次执行\r\n- 需等待当前任务完成才能继续\r\n\r\n```objc\r\ndispatch_queue_t queue = dispatch_queue_create(\"blog.onnttf.site\", DISPATCH_QUEUE_SERIAL);\r\nNSLog(@\"---start---%@\", [NSThread currentThread]);\r\n\r\ndispatch_sync(queue, ^{\r\n    sleep(5);\r\n    NSLog(@\"任务 1---%@\", [NSThread currentThread]);\r\n});\r\n\r\ndispatch_sync(queue, ^{\r\n    sleep(3);\r\n    NSLog(@\"任务 2---%@\", [NSThread currentThread]);\r\n});\r\n\r\ndispatch_sync(queue, ^{\r\n    sleep(1);\r\n    NSLog(@\"任务 3---%@\", [NSThread currentThread]);\r\n});\r\n\r\nNSLog(@\"---end---%@\", [NSThread currentThread]);\r\n\r\n/**\r\n 控制台输出：\r\n ---start---<NSThread: 0x6000000741c0>{number = 1, name = main}\r\n 任务 1---<NSThread: 0x6000000741c0>{number = 1, name = main}\r\n 任务 2---<NSThread: 0x6000000741c0>{number = 1, name = main}\r\n 任务 3---<NSThread: 0x6000000741c0>{number = 1, name = main}\r\n ---end---<NSThread: 0x6000000741c0>{number = 1, name = main}\r\n*/\r\n```\r\n\r\n### 同步执行 + 并行队列：顺序执行但可多线程\r\n\r\n特点：\r\n\r\n- 虽为并行队列但同步执行导致顺序执行\r\n- 仍在当前线程中执行\r\n- 任务完成后才执行下一个\r\n\r\n```objc\r\ndispatch_queue_t queue = dispatch_queue_create(\"concurrent.queue\", DISPATCH_QUEUE_CONCURRENT);\r\n\r\nNSLog(@\"---start---%@\", [NSThread currentThread]);\r\n\r\ndispatch_sync(queue, ^{\r\n    sleep(3);\r\n    NSLog(@\"任务1---%@\", [NSThread currentThread]);\r\n});\r\n\r\ndispatch_sync(queue, ^{\r\n    sleep(2);\r\n    NSLog(@\"任务2---%@\", [NSThread currentThread]);\r\n});\r\n\r\nNSLog(@\"---end---%@\", [NSThread currentThread]);\r\n\r\n/* 输出结果：\r\n ---start---<NSThread: main>\r\n 任务1---<NSThread: main>   // 3秒后\r\n 任务2---<NSThread: main>   // 2秒后\r\n ---end---<NSThread: main>\r\n*/\r\n```\r\n\r\n### 异步执行 + 串行队列：开启新线程顺序执行\r\n\r\n特点：\r\n\r\n- 会开启新的线程\r\n- 任务在新线程中按顺序执行\r\n- 不会阻塞当前线程\r\n\r\n```objc\r\ndispatch_queue_t queue = dispatch_queue_create(\"serial.queue\", DISPATCH_QUEUE_SERIAL);\r\n\r\nNSLog(@\"---start---%@\", [NSThread currentThread]);\r\n\r\ndispatch_async(queue, ^{\r\n    sleep(3);\r\n    NSLog(@\"任务1---%@\", [NSThread currentThread]);\r\n});\r\n\r\ndispatch_async(queue, ^{\r\n    sleep(2);\r\n    NSLog(@\"任务2---%@\", [NSThread currentThread]);\r\n});\r\n\r\nNSLog(@\"---end---%@\", [NSThread currentThread]);\r\n\r\n/* 输出结果：\r\n ---start---<NSThread: main>\r\n ---end---<NSThread: main>\r\n 任务1---<NSThread: {number = 2}>   // 3秒后\r\n 任务2---<NSThread: {number = 2}>   // 2秒后\r\n*/\r\n```\r\n\r\n### 异步执行 + 并行队列：多线程并发执行\r\n\r\n特点：\r\n\r\n- 开启多个线程并发执行\r\n- 任务执行顺序不确定\r\n- 效率最高的执行方式\r\n\r\n```objc\r\ndispatch_queue_t queue = dispatch_queue_create(\"concurrent.queue\", DISPATCH_QUEUE_CONCURRENT);\r\n\r\nNSLog(@\"---start---%@\", [NSThread currentThread]);\r\n\r\ndispatch_async(queue, ^{\r\n    sleep(3);\r\n    NSLog(@\"任务1---%@\", [NSThread currentThread]);\r\n});\r\n\r\ndispatch_async(queue, ^{\r\n    sleep(2);\r\n    NSLog(@\"任务2---%@\", [NSThread currentThread]);\r\n});\r\n\r\nNSLog(@\"---end---%@\", [NSThread currentThread]);\r\n\r\n/* 输出结果：\r\n ---start---<NSThread: main>\r\n ---end---<NSThread: main>\r\n 任务2---<NSThread: {number = 3}>   // 2秒后\r\n 任务1---<NSThread: {number = 2}>   // 3秒后\r\n*/\r\n```\r\n\r\n### 同步执行 + 主队列：死锁风险\r\n\r\n特点：\r\n\r\n- 在主线程中执行会造成死锁\r\n- 应避免在主线程使用此组合\r\n- 常见的线程安全隐患\r\n\r\n```objc\r\ndispatch_queue_t queue = dispatch_get_main_queue();\r\n\r\nNSLog(@\"---start---%@\", [NSThread currentThread]);\r\n\r\n// 会导致死锁\r\ndispatch_sync(queue, ^{\r\n    NSLog(@\"任务1---%@\", [NSThread currentThread]);\r\n});\r\n\r\nNSLog(@\"---end---%@\", [NSThread currentThread]);\r\n\r\n/* 输出结果：\r\n ---start---<NSThread: main>\r\n // 程序死锁\r\n*/\r\n```\r\n\r\n### 异步执行 + 主队列：主线程安全执行\r\n\r\n特点：\r\n\r\n- 确保任务在主线程执行\r\n- 适合 `UI` 操作相关任务\r\n- 不会造成死锁问题\r\n\r\n```objc\r\ndispatch_queue_t queue = dispatch_get_main_queue();\r\n\r\nNSLog(@\"---start---%@\", [NSThread currentThread]);\r\n\r\ndispatch_async(queue, ^{\r\n    sleep(3);\r\n    NSLog(@\"任务1---%@\", [NSThread currentThread]);\r\n});\r\n\r\ndispatch_async(queue, ^{\r\n    sleep(2);\r\n    NSLog(@\"任务2---%@\", [NSThread currentThread]);\r\n});\r\n\r\nNSLog(@\"---end---%@\", [NSThread currentThread]);\r\n\r\n/* 输出结果：\r\n ---start---<NSThread: main>\r\n ---end---<NSThread: main>\r\n 任务1---<NSThread: main>   // 3秒后\r\n 任务2---<NSThread: main>   // 2秒后\r\n*/\r\n```\r\n\r\n## 最后\r\n\r\n通过本文的详细讲解，我们系统地学习了 `GCD` 中的核心概念和各种执行组合方式。以下是关键要点总结：\r\n\r\n- 同步/异步决定是否阻塞当前线程\r\n\r\n  - 同步执行会等待任务完成\r\n  - 异步执行立即返回继续执行\r\n\r\n- 串行/并行决定任务执行方式\r\n\r\n  - 串行队列按顺序执行任务\r\n  - 并行队列可同时执行多个任务\r\n\r\n- 常见使用场景\r\n\r\n  - `UI` 操作优先使用主队列\r\n  - 耗时操作使用异步并行队列\r\n  - 有序操作使用串行队列\r\n  - 避免主线程同步执行造成死锁\r\n\r\n在实际开发中，应根据具体需求选择最合适的组合方式。合理运用这些特性，既可以保证代码的正确性，又能充分发挥系统性能，从而开发出高效稳定的应用程序。\r\n",
+    "number": 12,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-05-29T08:00:00Z",
+    "updatedAt": "2024-11-29T06:36:50Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/12",
+    "jsonFilePath": "discussions/12-D_kwDONRxYmM4Ac2v4.json",
+    "markdownFilePath": "2024/11/12-D_kwDONRxYmM4Ac2v4.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac2pZ",
+    "title": "CocoaPods 安装及错误处理",
+    "body": "CocoaPods 是 iOS/macOS 开发中的重要依赖管理工具，可以帮助开发者自动管理第三方库依赖。本文将详细介绍 CocoaPods 的安装方法和常见问题的解决方案。无论你是初学者还是有经验的开发者，掌握 CocoaPods 的使用都是必不可少的。让我们开始吧。\r\n\r\n## 安装前准备工作\r\n\r\n安装 CocoaPods 需要 `Ruby` 环境。macOS 系统通常已内置 `Ruby`。首先需要检查 `Ruby` 环境：\r\n\r\n```bash\r\n$ ruby -v\r\nruby 2.3.3p222 (2016-11-21 revision 56859) [universal.x86_64-darwin17]\r\n```\r\n\r\n看到类似输出即表示 `Ruby` 环境正常，可以继续后续步骤。\r\n\r\n## CocoaPods 安装教程\r\n\r\n### 安装 CocoaPods\r\n\r\n打开终端，执行以下命令进行安装：\r\n\r\n```bash\r\nsudo gem install cocoapods\r\n```\r\n\r\n### 配置国内镜像源\r\n\r\n由于网络原因，强烈建议将默认源更换为国内源，这样可以大幅提升访问速度：\r\n\r\n```bash\r\n# 移除默认源\r\n$ gem sources --remove https://rubygems.org/\r\n# 添加国内源\r\n$ gem sources --add https://gems.ruby-china.com/\r\n# 验证源配置是否成功\r\n$ gem sources -l\r\n*** CURRENT SOURCES ***\r\nhttps://gems.ruby-china.com/\r\n```\r\n\r\n## 常见问题及解决方案\r\n\r\n### Ruby 版本依赖问题\r\n\r\n遇到以下错误时：\r\n\r\n```bash\r\nERROR:While executing gem ... (Gem::DependencyError)\r\nUnable to resolve dependencies...\r\n```\r\n\r\n解决方案 - 更新 `Ruby` 系统：\r\n\r\n```bash\r\nsudo gem update --system\r\n```\r\n\r\n### 安装权限问题\r\n\r\n在 OS X El Capitan 及更高版本系统中可能遇到权限错误：\r\n\r\n```bash\r\nERROR:While executing gem ... (Errno::EPERM)\r\nOperation not permitted - /usr/bin/xcodeproj\r\n```\r\n\r\n解决方案 - 指定安装路径：\r\n\r\n```bash\r\nsudo gem install -n /usr/local/bin cocoapods\r\n```\r\n\r\n### pod setup 进度查看\r\n\r\n当 `setup` 执行进度较慢时，可通过以下命令查看具体进度：\r\n\r\n```bash\r\ndu-sh ~/.cocoaPods\r\n```\r\n\r\n### 搜索功能异常修复\r\n\r\n当搜索功能失效时，尝试清理搜索缓存：\r\n\r\n```bash\r\nrm ~/Library/Caches/CocoaPods/search_index.json\r\n```\r\n\r\n## 最后\r\n\r\n本文介绍了 CocoaPods 的安装步骤和常见问题的解决方案。CocoaPods 作为 iOS 开发中最常用的依赖管理工具，掌握其使用方法对开发工作非常重要。如果在使用过程中遇到其他问题，可以：\r\n\r\n- 查看 CocoaPods 官方文档获取更多信息\r\n- 在 Stack Overflow 等技术社区寻求帮助\r\n- 通过 GitHub Issues 反馈问题\r\n\r\n希望本文能帮助你更顺利地使用 CocoaPods 进行 iOS 开发工作。如有任何补充或建议，也欢迎交流讨论。\r\n",
+    "number": 11,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-05-24T08:00:00Z",
+    "updatedAt": "2024-11-27T11:02:17Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/11",
+    "jsonFilePath": "discussions/11-D_kwDONRxYmM4Ac2pZ.json",
+    "markdownFilePath": "2024/11/11-D_kwDONRxYmM4Ac2pZ.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac2ko",
+    "title": "如何监听 UIScrollView 停止滚动事件",
+    "body": "在开发过程中，监听 `UIScrollView` 的停止滚动事件是一个常见需求。我们可能需要在停止滚动时执行以下操作：\r\n\r\n- 图片的按需加载与预加载\r\n- 列表数据的异步预加载\r\n- 滚动结束动画效果\r\n- 性能优化与资源释放\r\n- 数据统计与埋点\r\n\r\n虽然苹果没有直接提供相应的回调方法，但本文将介绍如何通过 `Runtime` 实现一个简单易用且低侵入性的监听方案。\r\n\r\n## Runtime\r\n\r\n[Runtime](https://developer.apple.com/documentation/objectivec/objective_c_runtime) 提供了在运行时动态修改类、方法和消息传递的能力。通过 `Runtime`，我们可以：\r\n\r\n- 在运行时动态修改方法实现\r\n- 为已有类添加新的方法和属性\r\n- 实现更灵活的消息转发机制\r\n\r\n本文将结合实际场景，详细介绍如何运用 `Runtime` 的 `Method Swizzling` 实现一个监听 `UIScrollView` 停止滚动事件的方案。\r\n\r\n相比传统方案，具有以下优势：\r\n\r\n- 使用简单，接入成本低\r\n- 代码侵入性小，易于维护\r\n- 运行时性能开销小\r\n- 具备良好的扩展性\r\n\r\n## UIScrollView 停止滚动事件的场景分析\r\n\r\n基于大量用户交互数据分析，停止滚动事件主要可以归纳为以下三种情况:\r\n\r\n1. 快速滑动后的惯性停止\r\n\r\n   - 用户快速滑动后松开手指\r\n   - `ScrollView` 根据滑动速度进行减速\r\n   - 在物理引擎作用下自然停止\r\n   - 常见于快速浏览长列表场景\r\n\r\n2. 交互式强制停止\r\n\r\n   - 用户在惯性滚动过程中\r\n   - 通过按压屏幕进行制动\r\n   - 立即终止当前滚动状态\r\n   - 多用于紧急停止或位置调整\r\n\r\n3. 精确式缓慢停止\r\n\r\n   - 用户通过缓慢拖动内容\r\n   - 精确控制内容偏移量\r\n   - 在目标位置直接松手\r\n   - 适用于精确定位需求\r\n\r\n## 核心代理方法与实现思路\r\n\r\n为了准确捕获这些停止事件，我们需要合理运用以下代理方法：\r\n\r\n```objc\r\n// 即将开始减速滚动\r\n- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView;\r\n\r\n// 滚动减速结束\r\n- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;\r\n\r\n// 拖拽结束，decelerate 表示是否将要进入减速过程\r\n- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate;\r\n```\r\n\r\n通过这些代理方法的组合调用，我们可以实现对每种停止事件的精确识别。\r\n\r\n## Runtime 方案实现详解\r\n\r\n通过 `Runtime` 实现 `UIScrollView` 停止滚动事件的监听，本节将详细介绍这套方案的具体实现细节。\r\n\r\n`UIScrollView` 为我们提供了三个状态，通过它们我们可以精确判断滚动视图的当前状态：\r\n\r\n```objc\r\n@property(nonatomic,readonly,getter=isTracking) BOOL tracking;     // 手指是否触摸屏幕\r\n@property(nonatomic,readonly,getter=isDragging) BOOL dragging;     // 是否正在拖拽滑动\r\n@property(nonatomic,readonly,getter=isDecelerating) BOOL decelerating;  // 是否在减速过程中\r\n```\r\n\r\n### 监听停止滚动事件的核心逻辑\r\n\r\n通过组合 `tracking`、`dragging` 和 `decelerating` 这三个状态，我们可以准确识别 `UIScrollView` 停止滚动事件的时机。具体判断逻辑如下:\r\n\r\n```objc\r\n- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {\r\n    // 判断减速停止：手指未触摸 + 未拖拽 + 未减速\r\n    BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;\r\n    if (scrollToScrollStop) {\r\n        [self scrollViewDidEndScroll];\r\n    }\r\n}\r\n\r\n- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {\r\n    if (!decelerate) {\r\n        // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速\r\n        BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;\r\n        if (dragToDragStop) {\r\n            [self scrollViewDidEndScroll];\r\n        }\r\n    }\r\n}\r\n\r\n- (void)scrollViewDidEndScroll {\r\n    NSLog(@\"停止滚动事件触发！！！\");\r\n}\r\n```\r\n\r\n### 添加停止滚动事件的回调\r\n\r\n1. 封装健壮的 `Hook` 工具方法\r\n\r\n    ```objc\r\n    static void Hook_Method(Class originalClass, SEL originalSel,\r\n                          Class replacedClass, SEL replacedSel, SEL noneSel) {\r\n        // 获取原始方法\r\n        Method originalMethod = class_getInstanceMethod(originalClass, originalSel);\r\n        Method replacedMethod = class_getInstanceMethod(replacedClass, replacedSel);\r\n\r\n        // 处理原始方法不存在的情况\r\n        if (!originalMethod) {\r\n            Method noneMethod = class_getInstanceMethod(replacedClass, noneSel);\r\n            class_addMethod(originalClass, originalSel,\r\n                          method_getImplementation(noneMethod),\r\n                          method_getTypeEncoding(noneMethod));\r\n            return;\r\n        }\r\n\r\n        // 添加替换方法\r\n        BOOL addMethod = class_addMethod(originalClass, replacedSel,\r\n                                       method_getImplementation(replacedMethod),\r\n                                       method_getTypeEncoding(replacedMethod));\r\n\r\n        // 交换方法实现\r\n        if (addMethod) {\r\n            Method newMethod = class_getInstanceMethod(originalClass, replacedSel);\r\n            method_exchangeImplementations(originalMethod, newMethod);\r\n        }\r\n    }\r\n    ```\r\n\r\n2. 对 `UIScrollView` 的代理方法进行替换\r\n\r\n    ```objc\r\n    + (void)load {\r\n        static dispatch_once_t onceToken;\r\n        dispatch_once(&onceToken, ^{\r\n            // 确保方法替换只执行一次\r\n            Method originalMethod = class_getInstanceMethod([UIScrollView class], @selector(setDelegate:));\r\n            Method replaceMethod = class_getInstanceMethod([UIScrollView class], @selector(hook_setDelegate:));\r\n            method_exchangeImplementations(originalMethod, replaceMethod);\r\n        });\r\n    }\r\n\r\n    // 替换 setDelegate 方法，注入自定义逻辑\r\n    - (void)hook_setDelegate:(id<UIScrollViewDelegate>)delegate {\r\n        // 调用原始 setDelegate 方法（通过方法交换实现）\r\n        [self hook_setDelegate:delegate];\r\n\r\n        // 仅对 UIScrollView 实例进行方法注入\r\n        if ([self isMemberOfClass:[UIScrollView class]]) {\r\n            NSLog(@\"是 UIScrollView，注入自定义逻辑\");\r\n\r\n            // Hook scrollViewDidEndDecelerating: 方法\r\n            Hook_Method(\r\n                [delegate class],\r\n                @selector(scrollViewDidEndDecelerating:),\r\n                [self class],\r\n                @selector(p_scrollViewDidEndDecelerating:),\r\n                @selector(add_scrollViewDidEndDecelerating:)\r\n            );\r\n\r\n            // Hook scrollViewDidEndDragging:willDecelerate: 方法\r\n            Hook_Method(\r\n                [delegate class],\r\n                @selector(scrollViewDidEndDragging:willDecelerate:),\r\n                [self class],\r\n                @selector(p_scrollViewDidEndDragging:willDecelerate:),\r\n                @selector(add_scrollViewDidEndDragging:willDecelerate:)\r\n            );\r\n        } else {\r\n            NSLog(@\"不是 UIScrollView，跳过注入逻辑\");\r\n        }\r\n    }\r\n\r\n    #pragma mark - Replace Method\r\n\r\n    // 替换 scrollViewDidEndDecelerating: 方法\r\n    - (void)p_scrollViewDidEndDecelerating:(UIScrollView *)scrollView {\r\n        NSLog(@\"%s\", __func__);\r\n\r\n        // 调用原始方法\r\n        [self p_scrollViewDidEndDecelerating:scrollView];\r\n\r\n        // 判断减速停止：手指未触摸 + 未拖拽 + 未减速\r\n        BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;\r\n        if (scrollToScrollStop) {\r\n            [self stopScroll:scrollView];\r\n        }\r\n    }\r\n\r\n    // 替换 scrollViewDidEndDragging:willDecelerate: 方法\r\n    - (void)p_scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {\r\n        NSLog(@\"%s\", __func__);\r\n\r\n        // 调用原始方法\r\n        [self p_scrollViewDidEndDragging:scrollView willDecelerate:decelerate];\r\n\r\n        if (!decelerate) {\r\n            // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速\r\n            BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;\r\n            if (dragToDragStop) {\r\n                [self stopScroll:scrollView];\r\n            }\r\n        }\r\n    }\r\n\r\n    #pragma mark - Add Method\r\n\r\n    // 实现 scrollViewDidEndDecelerating: 方法\r\n    - (void)add_scrollViewDidEndDecelerating:(UIScrollView *)scrollView {\r\n        NSLog(@\"%s\", __func__);\r\n\r\n        // 判断减速停止：手指未触摸 + 未拖拽 + 未减速\r\n        BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;\r\n        if (scrollToScrollStop) {\r\n            [self stopScroll:scrollView];\r\n        }\r\n    }\r\n\r\n    // 实现 scrollViewDidEndDragging:willDecelerate: 方法\r\n    - (void)add_scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {\r\n        NSLog(@\"%s\", __func__);\r\n\r\n        if (!decelerate) {\r\n            // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速\r\n            BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;\r\n            if (dragToDragStop) {\r\n                [self stopScroll:scrollView];\r\n            }\r\n        }\r\n    }\r\n\r\n    #pragma mark - 停止滚动事件的处理逻辑\r\n\r\n    // 停止滚动时执行的统一处理逻辑\r\n    - (void)stopScroll:(UIScrollView *)scrollView {\r\n        NSLog(@\"滚动停止事件触发，执行自定义逻辑\");\r\n        // 在此添加停止滚动时的处理代码，例如通知或回调\r\n    }\r\n    ```\r\n\r\n3. 添加停止滚动事件的回调\r\n\r\n    ```objc\r\n    // 定义回调 block 类型\r\n    typedef void(^ScrollStopBlock)(UIScrollView *scrollView);\r\n\r\n    // 定义回调属性\r\n    @property (nonatomic, copy, nullable) ScrollStopBlock stopScrollBlock;\r\n\r\n    // 统一的停止回调方法\r\n    - (void)stopScroll:(UIScrollView *)scrollView {\r\n        if (self.stopScrollBlock) {\r\n            // 确保回调在主线程执行\r\n            dispatch_async(dispatch_get_main_queue(), ^{\r\n                self.stopScrollBlock(scrollView);\r\n            });\r\n        }\r\n    }\r\n    ```\r\n\r\n### 使用方式\r\n\r\n经过上述封装，我们现在可以通过一种简洁的方式来监听滚动停止事件。下面通过一个完整而实用的示例来展示具体用法:\r\n\r\n```objc\r\n// 1. 创建并配置 ScrollView\r\nUIScrollView *scrollView = [[UIScrollView alloc] init];\r\nscrollView.frame = self.view.bounds;\r\nscrollView.delegate = self;\r\n[self.view addSubview:scrollView];\r\n\r\n// 2. 配置滚动内容\r\nUIView *contentView = [[UIView alloc] init];\r\n// 设置内容视图宽度为屏幕宽度的3倍，便于横向滚动\r\ncontentView.frame = CGRectMake(0, 0, self.view.bounds.size.width * 3, self.view.bounds.size.height);\r\n[scrollView addSubview:contentView];\r\nscrollView.contentSize = contentView.frame.size;\r\n\r\n// 3. 添加业务处理回调\r\nscrollView.stopScrollBlock = ^(UIScrollView *scrollView) {\r\n    // 在这里处理停止滚动事件后的业务逻辑\r\n    NSLog(@\"ScrollView停止滚动事件 - 当前偏移量: %@\", NSStringFromCGPoint(scrollView.contentOffset));\r\n};\r\n```\r\n\r\n通过以上简洁的配置，我们就实现了一个功能完备的滚动停止事件监听方案。这种实现方式具有以下显著优势:\r\n\r\n1. **使用便捷**: 仅需设置一个 block 回调即可完成所有功能\r\n2. **功能全面**: 自动处理拖拽停止、减速停止等多种滚动场景\r\n3. **解耦设计**: 将滚动检测与业务逻辑完全分离\r\n4. **易于维护**: 核心逻辑已封装，开发者只需关注业务实现\r\n5. **扩展性强**: 可以方便地添加更多自定义处理逻辑\r\n\r\n通过这种方式，开发者无需关心具体的停止滚动实现细节，可以将精力完全集中在业务逻辑开发上。\r\n\r\n## 最后\r\n\r\n本文详细介绍了如何通过 `Runtime` 实现一个监听 `UIScrollView` 停止滚动事件的方案。这种方式具有以下优势：\r\n\r\n- 代码侵入性低，无需修改现有业务逻辑\r\n- 使用方便直观，只需设置一个 `block` 回调\r\n- 性能影响小，运行时开销可控\r\n- 扩展性强，易于添加新功能\r\n\r\n你在实际开发中是否遇到过类似的需求？欢迎在评论区分享你的经验和解决方案？\r\n",
+    "number": 8,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2018-01-14T08:00:00Z",
+    "updatedAt": "2024-11-27T10:01:07Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/8",
+    "jsonFilePath": "discussions/8-D_kwDONRxYmM4Ac2ko.json",
+    "markdownFilePath": "2024/11/8-D_kwDONRxYmM4Ac2ko.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Ac1vX",
+    "title": "二维码生成与美化",
+    "body": "在移动互联网时代，二维码作为信息传递的重要载体，已深度融入我们的日常生活。从移动支付、社交分享到身份验证，二维码以其快速便捷的特点，成为现代移动应用不可或缺的标配功能。\r\n\r\n本文将系统讲解如何使用 [CIQRCodeGenerator](https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/#//apple_ref/doc/filter/ci/CIQRCodeGenerator) 实现二维码的生成与美化。\r\n\r\n## 需求背景\r\n\r\n本文源于一个实际项目需求 - 开发类似支付宝红包的二维码分享功能。\r\n\r\n具体要求包括:\r\n\r\n1. 生成高清的二维码，确保稳定的识别效果\r\n2. 在二维码中央嵌入品牌 `logo`，提升品牌辨识度\r\n3. 支持添加精美背景图片，让二维码更具视觉吸引力\r\n4. 实现二维码颜色的灵活定制，满足不同场景的设计需求\r\n\r\n在接下来的内容中，将系统且详细地讲解实现二维码生成与美化的完整流程。\r\n\r\n## 核心功能实现\r\n\r\n在开始编码之前，我们先了解几个关键概念:\r\n\r\n- **CIQRCodeGenerator**: `CoreImage` 框架提供的原生二维码生成器\r\n- **纠错级别**: 二维码的容错能力，分为L(7%)、M(15%)、Q(25%)、H(30%)四个等级\r\n- **清晰度处理**: 原生生成的二维码可能模糊，需要进行优化\r\n\r\n### 生成二维码\r\n\r\n生成二维码的场景非常广泛，为了实现二维码功能的灵活复用，我们将二维码生成逻辑封装为 `UIImage` 的扩展。\r\n\r\n整个生成过程主要包含以下步骤：\r\n\r\n1. 导入 `Core Image` 框架\r\n\r\n    ```objc\r\n    #import <CoreImage/CoreImage.h>\r\n    ```\r\n\r\n2. 利用 `CIFilter` 创建二维码\r\n\r\n    ```objc\r\n    // 创建 QR Code 生成器滤镜\r\n    CIFilter *filter = [CIFilter filterWithName:@\"CIQRCodeGenerator\"];\r\n    // 将 filter 所有属性设置为默认值\r\n    [filter setDefaults];\r\n\r\n    // 将待编码的字符串转换为 UTF-8 格式的数据\r\n    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];\r\n    [filter setValue:data forKey:@\"inputMessage\"];\r\n\r\n    // 设置二维码的纠错级别，纠错级别越高，二维码的抗损坏能力越强\r\n    // L (7%): 适用于环境较好的场景\r\n    // M (15%): 常规使用的推荐级别\r\n    // Q (25%): 适合复杂场景或需要添加 Logo\r\n    // H (30%): 对清晰度要求最高的场景\r\n    [filter setValue:@\"H\" forKey:@\"inputCorrectionLevel\"];\r\n\r\n    // 获取生成的二维码图像\r\n    CIImage *outputImage = [filter outputImage];\r\n    ```\r\n\r\n### 清晰度优化\r\n\r\n原生生成的二维码图像分辨率较低，为了获得更好的识别效果和视觉体验，我们提供两种优化方案。\r\n\r\n#### CoreGraphics 优化方案\r\n\r\n这种方案通过 `CoreGraphics` 框架对二维码图像进行重绘和缩放，能有效提升图像清晰度。\r\n\r\n```objc\r\n/**\r\n 调整二维码清晰度\r\n\r\n @param img 原始二维码图片\r\n @param size 目标二维码尺寸\r\n @return 优化后的清晰二维码图片\r\n */\r\n- (UIImage *)getHDImgWithCIImage:(CIImage *)img size:(CGSize)size {\r\n    // 计算绘制区域和缩放比例\r\n    CGRect extent = CGRectIntegral(img.extent);\r\n    CGFloat scale = MIN(size.width / CGRectGetWidth(extent), size.height / CGRectGetHeight(extent));\r\n\r\n    // 创建灰度色彩空间的位图上下文\r\n    size_t width = CGRectGetWidth(extent) * scale;\r\n    size_t height = CGRectGetHeight(extent) * scale;\r\n    CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();\r\n    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaNone);\r\n\r\n    // 将 CIImage 转换为 CGImage\r\n    CIContext *context = [CIContext contextWithOptions:nil];\r\n    CGImageRef bitmapImage = [context createCGImage:img fromRect:extent];\r\n\r\n    // 设置图像质量并执行缩放绘制\r\n    CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);\r\n    CGContextScaleCTM(bitmapRef, scale, scale);\r\n    CGContextDrawImage(bitmapRef, extent, bitmapImage);\r\n\r\n    // 生成最终图像\r\n    CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);\r\n\r\n    // 清理资源\r\n    CGContextRelease(bitmapRef);\r\n    CGImageRelease(bitmapImage);\r\n\r\n    // 创建并返回 UIImage\r\n    UIImage *outputImage = [UIImage imageWithCGImage:scaledImage];\r\n\r\n    // 释放图像资源\r\n    CGImageRelease(scaledImage);\r\n    CGColorSpaceRelease(cs);\r\n\r\n    return outputImage;\r\n}\r\n```\r\n\r\n#### CIFilter 优化方案\r\n\r\n这种方案通过 `CIFilter` 滤镜对二维码图像进行处理，可以有效提升图像清晰度。\r\n\r\n```objc\r\n/**\r\n 使用 CIFilter 调整二维码清晰度\r\n\r\n @param img 原始二维码图片\r\n @param size 目标二维码尺寸\r\n @return 优化后的清晰二维码图片\r\n */\r\n- (UIImage *)getHDImgWithCIFilterAndCIImage:(CIImage *)img size:(CGSize)size {\r\n    // 设置二维码颜色\r\n    UIColor *pointColor = [UIColor blackColor];\r\n    UIColor *backgroundColor = [UIColor whiteColor];\r\n\r\n    // 创建颜色滤镜\r\n    CIFilter *colorFilter = [CIFilter filterWithName:@\"CIFalseColor\"\r\n                                    keysAndValues:\r\n                            @\"inputImage\", img,\r\n                            @\"inputColor0\", [CIColor colorWithCGColor:pointColor.CGColor],\r\n                            @\"inputColor1\", [CIColor colorWithCGColor:backgroundColor.CGColor],\r\n                            nil];\r\n\r\n    CIImage *qrImage = colorFilter.outputImage;\r\n\r\n    // 绘制最终图像\r\n    CGImageRef cgImage = [[CIContext contextWithOptions:nil] createCGImage:qrImage fromRect:qrImage.extent];\r\n    UIGraphicsBeginImageContext(size);\r\n    CGContextRef context = UIGraphicsGetCurrentContext();\r\n    CGContextSetInterpolationQuality(context, kCGInterpolationNone);\r\n    CGContextScaleCTM(context, 1.0, -1.0);\r\n    CGContextDrawImage(context, CGContextGetClipBoundingBox(context), cgImage);\r\n    UIImage *codeImage = UIGraphicsGetImageFromCurrentImageContext();\r\n    UIGraphicsEndImageContext();\r\n\r\n    CGImageRelease(cgImage);\r\n\r\n    return codeImage;\r\n}\r\n```\r\n\r\n下面这张图片展示了经过清晰度处理后的二维码，你可以发现每个像素点都清晰可见，扫描识别也更加稳定可靠。\r\n\r\n![image](https://file.onnttf.site/2017/12/15/1.jpeg)\r\n\r\n经过优化后的图像质量完全可以满足大多数实际应用场景的需求。\r\n\r\n### 美化二维码\r\n\r\n创建基础二维码后，我们可以通过多种方式对其进行美化，主要包括颜色修改、添加 `logo` 和图片拼接等功能。\r\n\r\n#### 修改二维码颜色\r\n\r\n二维码颜色修改的核心原理是遍历并修改图像的每个像素点。我们通过位图上下文来处理图像数据：\r\n\r\n```objc\r\n/**\r\n 修改二维码颜色\r\n\r\n @param image 原始二维码图片\r\n @param red 红色通道值 (0-255)\r\n @param green 绿色通道值 (0-255)\r\n @param blue 蓝色通道值 (0-255)\r\n @return 修改颜色后的二维码图片\r\n */\r\n+ (UIImage *)changeColorWithQRCodeImg:(UIImage *)image\r\n                                  red:(NSUInteger)red\r\n                                green:(NSUInteger)green\r\n                                 blue:(NSUInteger)blue {\r\n    const int imageWidth = image.size.width;\r\n    const int imageHeight = image.size.height;\r\n    size_t bytesPerRow = imageWidth * 4;\r\n    uint32_t *rgbImageBuf = (uint32_t *)malloc(bytesPerRow * imageHeight);\r\n\r\n    // 创建 RGB 色彩空间和位图上下文\r\n    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();\r\n    CGContextRef context = CGBitmapContextCreate(rgbImageBuf, imageWidth, imageHeight, 8, bytesPerRow, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaNoneSkipLast);\r\n\r\n    // 绘制原始图像到位图上下文\r\n    CGContextDrawImage(context, (CGRect){CGPointZero, image.size}, image.CGImage);\r\n\r\n    int pixelNumber = imageHeight * imageWidth;\r\n    // 修改像素颜色\r\n    [self changeColorOnPixel:rgbImageBuf pixelNum:pixelNumber red:red green:green blue:blue];\r\n\r\n    // 创建新的图像\r\n    CGDataProviderRef dataProvider = CGDataProviderCreateWithData(NULL, rgbImageBuf, bytesPerRow, ProviderReleaseData);\r\n    CGImageRef imageRef = CGImageCreate(imageWidth, imageHeight, 8, 32, bytesPerRow, colorSpace, kCGImageAlphaLast | kCGBitmapByteOrder32Little, dataProvider, NULL, true, kCGRenderingIntentDefault);\r\n    UIImage *resultImage = [UIImage imageWithCGImage:imageRef];\r\n\r\n    // 释放资源\r\n    CGImageRelease(imageRef);\r\n    CGColorSpaceRelease(colorSpace);\r\n    CGContextRelease(context);\r\n\r\n    return resultImage;\r\n}\r\n\r\n/**\r\n 遍历并修改像素点颜色\r\n\r\n @param rgbImageBuf 像素数据缓冲区\r\n @param pixelNum 像素总数\r\n @param red 红色通道值 (0-255)\r\n @param green 绿色通道值 (0-255)\r\n @param blue 蓝色通道值 (0-255)\r\n */\r\n+ (void)changeColorOnPixel:(uint32_t *)rgbImageBuf\r\n                 pixelNum:(int)pixelNum\r\n                      red:(NSUInteger)red\r\n                   green:(NSUInteger)green\r\n                    blue:(NSUInteger)blue {\r\n    uint32_t *pCurPtr = rgbImageBuf;\r\n\r\n    for (int i = 0; i < pixelNum; i++, pCurPtr++) {\r\n        // 识别二维码的数据点\r\n        if ((*pCurPtr & 0xffffff00) < 0xd0d0d000) {\r\n            uint8_t *ptr = (uint8_t *)pCurPtr;\r\n            ptr[3] = red;\r\n            ptr[2] = green;\r\n            ptr[1] = blue;\r\n        } else {\r\n            // 将背景设为透明\r\n            uint8_t *ptr = (uint8_t *)pCurPtr;\r\n            ptr[0] = 0;\r\n        }\r\n    }\r\n}\r\n```\r\n\r\n![image](https://file.onnttf.site/2017/12/15/2.jpeg)\r\n\r\n#### 添加 logo\r\n\r\n为二维码添加 `logo` 可以提升品牌识别度。注意 `logo` 大小要适中，避免影响二维码的识别：\r\n\r\n```objc\r\n/**\r\n 为二维码添加 logo\r\n\r\n @param img 原始二维码图片\r\n @param size 目标二维码尺寸\r\n @param logoImg logo 图片\r\n @return 添加 logo 后的二维码图片\r\n */\r\n- (UIImage *)getHDImgWithCIImage:(CIImage *)img\r\n                            size:(CGSize)size\r\n                         logoImg:(UIImage *)logoImg {\r\n    // 计算二维码缩放比例\r\n    CGRect extent = CGRectIntegral(img.extent);\r\n    CGFloat scale = MIN(size.width / CGRectGetWidth(extent), size.height / CGRectGetHeight(extent));\r\n\r\n    // 创建位图上下文\r\n    size_t width = CGRectGetWidth(extent) * scale;\r\n    size_t height = CGRectGetHeight(extent) * scale;\r\n    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();\r\n    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, colorSpace, kCGBitmapByteOrder32Little | kCGImageAlphaNone);\r\n\r\n    // 绘制二维码图像到上下文\r\n    CIContext *context = [CIContext contextWithOptions:nil];\r\n    CGImageRef bitmapImage = [context createCGImage:img fromRect:extent];\r\n    CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);\r\n    CGContextScaleCTM(bitmapRef, scale, scale);\r\n    CGContextDrawImage(bitmapRef, extent, bitmapImage);\r\n\r\n    // 生成二维码图像\r\n    CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);\r\n    UIImage *outputImage = [UIImage imageWithCGImage:scaledImage];\r\n\r\n    // 开始绘制 logo\r\n    UIGraphicsBeginImageContextWithOptions(outputImage.size, NO, [[UIScreen mainScreen] scale]);\r\n    [outputImage drawInRect:CGRectMake(0, 0, size.width, size.height)];\r\n    // logo 居中绘制\r\n    [logoImg drawInRect:CGRectMake((size.width - logoImg.size.width) / 2.0,\r\n                                   (size.height - logoImg.size.height) / 2.0,\r\n                                   logoImg.size.width,\r\n                                   logoImg.size.height)];\r\n    UIImage *newPic = UIGraphicsGetImageFromCurrentImageContext();\r\n    UIGraphicsEndImageContext();\r\n\r\n    // 清理资源\r\n    CGContextRelease(bitmapRef);\r\n    CGImageRelease(bitmapImage);\r\n    CGImageRelease(scaledImage);\r\n    CGColorSpaceRelease(colorSpace);\r\n\r\n    return newPic;\r\n}\r\n```\r\n\r\n#### 拼接图片\r\n\r\n我们还可以将二维码与其他图片灵活拼接，从而实现更丰富的视觉效果。\r\n\r\n下面的代码演示了如何将二维码与其他图片按照指定位置组合在一起:\r\n\r\n```objc\r\n/**\r\n 拼接两张图片\r\n\r\n @param img1 底图\r\n @param img2 上层图片\r\n @param location 上层图片相对于底图的位置\r\n @return 拼接后的图片\r\n */\r\n+ (UIImage *)spliceImg1:(UIImage *)img1\r\n                   img2:(UIImage *)img2\r\n          img2Location:(CGPoint)location {\r\n    CGSize img2Size = img2.size;\r\n\r\n    // 创建绘图上下文\r\n    UIGraphicsBeginImageContextWithOptions(img1.size, NO, [[UIScreen mainScreen] scale]);\r\n\r\n    // 绘制底图\r\n    [img1 drawInRect:CGRectMake(0, 0, img1.size.width, img1.size.height)];\r\n\r\n    // 在指定位置绘制上层图片\r\n    [img2 drawInRect:CGRectMake(location.x, location.y, img2Size.width, img2Size.height)];\r\n\r\n    // 获取最终拼接后的图片\r\n    UIImage *newPic = UIGraphicsGetImageFromCurrentImageContext();\r\n    UIGraphicsEndImageContext();\r\n\r\n    return newPic;\r\n}\r\n```\r\n\r\n下图展示了二维码与图片素材拼接后的效果。\r\n\r\n![image](https://file.onnttf.site/2017/12/15/3.jpeg)\r\n\r\n通过这种灵活的组合方式，我们不仅保持了二维码的功能性，还大大提升了其视觉表现力和品牌辨识度。\r\n\r\n在实际应用中，你可以通过以下方式进一步优化拼接效果:\r\n\r\n- 调整图片尺寸比例，确保视觉重点突出\r\n- 精心设计图片位置，打造合理的视觉层次\r\n- 选择合适的背景图片，提升整体美感\r\n- 注意保持二维码识别区域的清晰度\r\n\r\n## 最后\r\n\r\n本文详细介绍了如何使用苹果原生框架实现二维码的生成和美化，希望这些内容对你的工作有所帮助。\r\n",
+    "number": 6,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-12-15T08:00:00Z",
+    "updatedAt": "2024-11-27T02:10:49Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/6",
+    "jsonFilePath": "discussions/6-D_kwDONRxYmM4Ac1vX.json",
+    "markdownFilePath": "2024/11/6-D_kwDONRxYmM4Ac1vX.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AcsW4",
+    "title": "iOS Widget 开发指南",
+    "body": "在 `iOS` 应用中，`Widget` 是一种小型的应用扩展，它允许用户通过设备的通知中心或主屏幕直接访问应用中的关键信息。开发一个 `Widget` 需要进行一系列的配置和代码实现。在本文中，我们将逐步介绍如何开发一个 `Widget`，从账号配置到实际开发的每个步骤，帮助你顺利完成开发。\r\n\r\n## 账号配置\r\n\r\n### 申请 `GroupID`\r\n\r\n1. 在开发者账户中，进入 `App Groups` 配置页\r\n\r\n   ![image](https://file.onnttf.site/2017/08/29/1.jpeg)\r\n\r\n2. 根据页面提示，按要求填写相关信息\r\n\r\n   - **`Description`**\r\n\r\n      填写这个 `App Group` 的描述。示例：`Shared Resources for MyApp Widget`\r\n\r\n   - **`ID`**\r\n\r\n      填写这个 `App Group` 的标识，建议以 `com.{aaa}.{bbb}` 命名，填写完毕时，会默认在前面加上 `group`。示例：`com.mycompany.myapp`\r\n\r\n完成创建后，如图:\r\n\r\n![image](https://file.onnttf.site/2017/08/29/2.jpeg)\r\n\r\n### 将 `App Group` 添加到 `App ID` 中\r\n\r\n1. 打开你的 `App ID` 配置页面\r\n2. 找到 `App Groups` 选项，将之前创建的 `GroupID` 勾选启用\r\n\r\n![image](https://file.onnttf.site/2017/08/29/3.jpeg)\r\n\r\n### 重新激活 Provisioning Profile\r\n\r\n操作过 `App ID` 后，需要重新激活或更新关联的 `Provisioning Profile` 以同步新的权限。\r\n\r\n1. 在 `Apple Developer Account` 中找到对应的 `Provisioning Profile`\r\n2. 点击 Edit 或重新生成\r\n\r\n## 项目配置\r\n\r\n### App Target 配置\r\n\r\n1. 打开项目设置，进入 `App Target` 的 `Capabilities` 页签\r\n2. 找到 `App Groups` 选项\r\n3. 勾选之前创建的 `App Group`\r\n\r\n   ![image](https://file.onnttf.site/2017/08/29/5.jpeg)\r\n\r\n### Widget Target 配置\r\n\r\n1. 打开项目设置，进入 `Widget Target` 的 `General` 页签\r\n2. 设置 `Bundle Identifier`，需遵循以下规则\r\n\r\n   - 前缀必须包含主应用的 `Bundle Identifier`\r\n   - 后缀可以自定义，但不能是 `widget`\r\n\r\n示例：\r\n\r\n如果主项目的 `Bundle Identifier` 是 `com.mycompany.myapp`。那 `Widget` 的 `Bundle identifier` 可以是 `com.mycompany.myapp.today`。\r\n\r\n## 开发阶段\r\n\r\n在完成基础配置后，我们进入 `Widget` 的开发阶段。\r\n\r\n### 创建 Widget Target\r\n\r\n1. 在主项目中创建一个新的 `Target`，选择 `Today Extension`\r\n\r\n    ![image](https://file.onnttf.site/2017/09/07/1.jpeg)\r\n\r\n2. 完成后会自动生成如下文件\r\n\r\n    ![image](https://file.onnttf.site/2017/09/07/2.jpeg)\r\n\r\n### 修改 Widget Target 配置\r\n\r\n按需对 `Widget` 的 `Info.plist` 进行修改。\r\n\r\n- 修改 `Widget` 在通知栏中显示的名称\r\n\r\n  通过修改 `Bundle Display Name` 内容，给 `Widget` 名称设置一个简洁易懂的名字\r\n\r\n- 使用纯代码开发\r\n\r\n  1. 删除 `NSExtensionMainStoryboard` 键值对，并移除默认生成的 `MainInterface.storyboard` 文件\r\n  2. 添加 `NSExtensionPrincipalClass` 键，将值设为主控制器类名（如 `TodayViewController`）\r\n\r\n### 开发工作\r\n\r\n在配置完成之后，进入开发阶段。`Widget` 开发不复杂，遵循文档即可开发出美观实用的 `Widget`，但需要留意一些版本差异和细节问题。\r\n\r\n#### 兼容适配\r\n\r\n##### iOS8\r\n\r\n- 没有折叠和展开功能\r\n- 默认 Widget 高度由 `self.preferredContentSize` 控制\r\n\r\n   ```objc\r\n   self.preferredContentSize = CGSizeMake(kScreenW, 100);\r\n   ```\r\n\r\n- 组件布局默认向右偏移 30 单位，可以通过 `widgetMarginInsetsForProposedMarginInsets` 方法进行调整\r\n\r\n   ```objc\r\n  - (UIEdgeInsets)widgetMarginInsetsForProposedMarginInsets:(UIEdgeInsets)defaultMarginInsets {\r\n      return UIEdgeInsetsMake(0, 0, 0, 0);\r\n  }\r\n  ```\r\n\r\n##### iOS 10 及之后\r\n  \r\n- `Widget` 支持了两种显示模式\r\n\r\n  - NCWidgetDisplayModeCompact\r\n\r\n      高度固定，最低高度为 `110`\r\n\r\n  - NCWidgetDisplayModeExpanded\r\n\r\n       高度可变\r\n\r\n- 设置显示模式\r\n\r\n  **需要在设定 `Size` 前设定这个属性**\r\n\r\n  ```objc\r\n  - (void)viewDidLoad {\r\n      [super viewDidLoad];\r\n      if ([[UIDevice currentDevice] systemVersion].intValue >= 10) {\r\n          self.extensionContext.widgetLargestAvailableDisplayMode = NCWidgetDisplayModeCompact; // 或 NCWidgetDisplayModeExpanded\r\n      }\r\n      self.preferredContentSize = CGSizeMake(kScreenW, 100);\r\n      [self setupUI];\r\n  }\r\n  ```\r\n\r\n- 监听显示模式变化\r\n\r\n  当显示模式设置为 `NCWidgetDisplayModeExpanded` 时，点击折叠和打开时，会触发下面这个方法，在这个方法中可以修改对应状态的高度。修改完毕后，更新视图即可看到最新的布局。\r\n\r\n  ```objc\r\n  - (void)widgetActiveDisplayModeDidChange:(NCWidgetDisplayMode)activeDisplayMode withMaximumSize:(CGSize)maxSize {\r\n      if (activeDisplayMode == NCWidgetDisplayModeCompact) {\r\n          self.preferredContentSize = CGSizeMake(maxSize.width, 110);\r\n      } else {\r\n          self.preferredContentSize = CGSizeMake(maxSize.width, 200);\r\n      }\r\n   }\r\n\r\n   //在下面的方法中更新视图\r\n   -(void)widgetPerformUpdateWithCompletionHandler:(void (^)(NCUpdateResult))completionHandler {\r\n   //    NCUpdateResultNewData   新的内容需要重新绘制视图\r\n   //    NCUpdateResultNoData    部件不需要更新\r\n   //    NCUpdateResultFailed    更新过程中发生错误\r\n     completionHandler(NCUpdateResultNoData);\r\n   }\r\n  ```\r\n\r\n#### 代码共享\r\n\r\n常用的四种代码共享方法：\r\n\r\n1. 将代码打包成 `Framework`，然后 `link` 到主 `App`和 `Widget` 中 **（推荐）**\r\n2. 不怕安装包变大的话，可以考虑将需要的第三方库在主 `App` 和 `Widget` 中分别复制一份 **（推荐）**\r\n3. 将需要共享的文件按图中进行勾选配置\r\n\r\n   ![image](https://file.onnttf.site/2017/09/07/4.jpeg)\r\n\r\n4. 通过 `Pods` 导入，不太建议通过 `Pods` 分别向两个 `Target` 中导入第三方库，因为很容易发生一些不好处理的问题\r\n\r\n#### 数据共享\r\n\r\n常用的两种数据共享方法：\r\n\r\n1. NSUserDefaults\r\n\r\n    和我们常用的方法一样，不过在创建 `NSUserDefaults` 时，需要填写我们之前的 `GroupID`。通过 `GroupID`，我们就可以进行主 `App` 和 `Widget` 之间的数据共享了。\r\n\r\n    ```objc\r\n    // 写入数据\r\n    NSString *groupID = @\"group.com.aaa.bbb\";\r\n    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:groupID];[ud setObject:@\"我是测试的数据\" forKey:@\"test\"];\r\n    [ud synchronize];\r\n\r\n    // 读取数据\r\n    NSString *groupID = @\"group.com.aaa.bbb\";\r\n    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:groupID];\r\n    NSString *value = [ud objectForKey:@\"test\"];\r\n    ```\r\n\r\n2. NSFileManager\r\n\r\n    ```objc\r\n    // 写入数据\r\n    NSString *groupID = @\"group.com.aaa.bbb\";\r\n    NSError *err = nil;\r\n    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:groupID];\r\n    containerURL = [containerURL URLByAppendingPathComponent:@\"Library/Caches/test\"];\r\n    NSString *value = @\"我是测试的数据\";\r\n    BOOL result = [value writeToURL:containerURL atomically:YES encoding:NSUTF8StringEncoding error:&err];\r\n    if(result){\r\n        NSLog(@\"写入成功\");\r\n    }\r\n\r\n    // 读取数据\r\n    NSString *groupID = @\"group.com.aaa.bbb\";\r\n    NSError *err = nil;\r\n    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:groupID];\r\n    containerURL = [containerURL URLByAppendingPathComponent:@\"Library/Caches/test\"];\r\n    NSString *value = [NSString stringWithContentsOfURL:containerURL encoding:NSUTF8StringEncoding error:&err];\r\n    ```\r\n\r\n#### 数据刷新\r\n\r\n- `Widget` 从屏幕上消失 2s 左右后，再次出现在屏幕中时，会执行 `viewDidLoad` 方法\r\n- `Widget` 在短时间内频繁地消失显示，会执行 `viewWillAppear` 方法\r\n\r\n如果需要刷新数据，可以根据需求在不同的方法中获取最新数据。\r\n\r\n#### 打开 App\r\n\r\n1. 设置 `App` 的 `URLSchemes`，打开 `APP` 主要通过 `URLScheme` 打开和传递参数值。设置 `URLSchemes` 时，要独特一些，避免与其他 `App` 重复\r\n   ![image](https://file.onnttf.site/2017/09/07/5.jpeg)\r\n2. 在 `Widget` 中添加点击事件，用于触发打开 `App` 的操作和传递参数\r\n\r\n   ```objc\r\n   NSString *schemeString = @\"test_scheme://actionName?paramName=paramValue\";\r\n   [self.extensionContext openURL:[NSURL URLWithString:schemeString] completionHandler:^(BOOL success) {\r\n\r\n   }];\r\n   ```\r\n\r\n3. `Appdelegate` 的代理方法中，截取 `URL`，做响应处理：\r\n\r\n   ```objc\r\n    // 所有版本的都可以使用\r\n    - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {\r\n        [self appCallbackWithOpenUrl:url];\r\n        return YES;\r\n    }\r\n\r\n    // iOS 8 以后\r\n    - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {\r\n        [self appCallbackWithOpenUrl:url];\r\n        return YES;\r\n    }\r\n\r\n    // iOS 7\r\n    - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {\r\n        [self appCallbackWithOpenUrl:url];\r\n        return YES;\r\n    }\r\n\r\n    - (void)appCallbackWithOpenUrl:(NSURL *)url{\r\n        NSLog(@\"url: %@\", url.host);\r\n        // 针对 url 进行不同的操作\r\n    }\r\n   ```\r\n\r\n## 最后\r\n\r\n随着 `iOS` 生态的持续发展，`Widget` 不仅扩展了应用的功能，还为用户提供了更加直观和便捷的互动方式。\r\n\r\n通过合理利用 `Widget`，开发者能够提升应用的用户体验，使用户能够快速访问重要信息，并通过互动更加流畅地与应用进行连接。\r\n",
+    "number": 3,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-08-29T08:00:00Z",
+    "updatedAt": "2024-11-26T17:04:02Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/3",
+    "jsonFilePath": "discussions/3-D_kwDONRxYmM4AcsW4.json",
+    "markdownFilePath": "2024/11/3-D_kwDONRxYmM4AcsW4.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AcsZE",
+    "title": "如何解决 iOS 系统中 double 转 NSString 精度丢失问题",
+    "body": "在日常开发中，后台经常返回带小数的数字，我们通常使用 `float` 或 `double` 类型来接收这些数据。然而，当我们将这些数字展示给用户时，可能会因为精度丢失而导致显示错误。\r\n\r\n## 问题描述\r\n\r\n假设后台返回的数据如下：\r\n\r\n```json\r\n{\r\n    \"double\": 79.04,\r\n}\r\n```\r\n\r\n当我们将该数据解析为字典并转换为字符串时，可能会遇到精度丢失的问题。例如：\r\n\r\n```objc\r\nNSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];\r\nNSString *result = [NSString stringWithFormat:@\"%@\", dic[@\"double\"]];\r\n\r\n//期望结果：\"79.04\"\r\n//实际结果：\"79.04000000000001\"\r\n```\r\n\r\n在这个例子中，后台返回的数字是 `79.04`，当我们将其转换为字符串时，期望的结果是 \"79.04\"，但实际结果却是 \"79.04000000000001\"。这就是精度丢失的表现。\r\n\r\n## 原因分析\r\n\r\n这种问题通常发生在直接使用 `double` 类型进行字符串转换时。由于 `double` 类型用于表示浮动小数，而它的二进制表示可能会产生精度误差，导致转化为字符串时出现不准确的结果。\r\n\r\n## 解决办法\r\n\r\n虽然可以通过控制小数位数来规避精度异常，但这种方法并不总是有效，因为我们无法预知后台返回的数字格式。\r\n\r\n为了解决这一问题，可以使用 `NSDecimalNumber` 类，这是苹果提供的用于处理精确小数的类，它能有效避免精度丢失。\r\n\r\n```objc\r\ndouble d = [dic[@\"double\"] doubleValue];\r\nNSString *dStr = [NSString stringWithFormat:@\"%f\", d];\r\nNSDecimalNumber *dn = [NSDecimalNumber decimalNumberWithString:dStr];\r\nNSString *result = [NSString stringWithFormat:@\"%@\", dn.stringValue];\r\n\r\n//期望结果：\"79.04\"\r\n//实际结果：\"79.04\"\r\n```\r\n\r\n可以看到，通过 `NSDecimalNumber` 转换后，精度问题得到了有效解决，结果与预期一致。\r\n\r\n## 最后\r\n\r\n在处理浮动小数时，尽量避免直接使用 `double` 类型进行字符串转换。使用 `NSDecimalNumber` 不仅能避免精度丢失问题，还能确保数据转换的精确性。\r\n\r\n希望本篇文章能帮助你解决类似的精度问题，提升代码的稳定性和可靠性。\r\n",
+    "number": 4,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-09-08T08:00:00Z",
+    "updatedAt": "2024-11-26T17:03:32Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/4",
+    "jsonFilePath": "discussions/4-D_kwDONRxYmM4AcsZE.json",
+    "markdownFilePath": "2024/11/4-D_kwDONRxYmM4AcsZE.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4AcqtZ",
+    "title": "如何在 iOS 系统中读取带加密印章的 PDF 文件",
+    "body": "在与电子签章公司合作时，我们收到了一份带有加密印章的 `PDF` 文件。在测试过程中，无论通过 `UIWebView` 还是 `WKWebView` 打开，文件中的加密印章都无法成功展示。\r\n\r\n经过不断地调研与实践，我们成功解决了这一问题。现在将解决方案分享给大家。\r\n\r\n## 实现步骤\r\n\r\n### 准备工作\r\n\r\n首先，我们定义几个常用的宏，以便在后续代码中使用，提升代码的可读性和简洁性：\r\n\r\n```objc\r\n#define kScreenW [UIScreen mainScreen].bounds.size.width\r\n#define kScreenH [UIScreen mainScreen].bounds.size.height\r\n\r\n#define DOCUMENTS_DIRECTORY [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject]\r\n```\r\n\r\n### 添加 WKWebView\r\n\r\n我们使用 `WKWebView` 来加载和展示 `PDF` 文件。\r\n\r\n```objc\r\n#import <WebKit/WebKit.h>\r\n\r\nWKWebViewConfiguration *config = [[WKWebViewConfiguration alloc] init];\r\n\r\nWKUserContentController *wkUController = [[WKUserContentController alloc]init];\r\n\r\nconfig.userContentController = wkUController;\r\n\r\n// 注入 JS 对象，名称为 AppModel\r\n// 当 JS 通过 AppModel 来调用时，我们可以在 WKScriptMessageHandler 代理中接收到 \r\n// 此处是为了得到PDF加载完成或失败的反馈 \r\n[config.userContentController addScriptMessageHandler:self name:@\"AppModel\"];\r\n\r\n// 改变页面内容宽度，适配屏幕大小 \r\nNSString *js = @\"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);\";\r\n\r\nWKUserScript *wkUserScript = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]; \r\n[wkUController addUserScript:wkUserScript];\r\n\r\nWKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH - 64) configuration:config];\r\nwebView.backgroundColor = [UIColor whiteColor];\r\nwebView.UIDelegate = self;\r\nwebView.navigationDelegate = self;\r\n[self.view addSubview:webView];\r\n```\r\n\r\n### 下载 PDF 文件\r\n\r\n```objc\r\nNSString *urlStr = @\"\";\r\n\r\nNSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlStr]];\r\nNSURLSession *session = [NSURLSession sharedSession];\r\n\r\nNSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {\r\n    NSLog(@\"从服务器获取到 pdf 数据\");\r\n    //对从服务器获取到的数据 data 进行相应的处理：\r\n    dispatch_async(dispatch_get_main_queue(), ^{\r\n        NSString *path = [DOCUMENTS_DIRECTORY stringByAppendingPathComponent:@\"contract.pdf\"];\r\n        NSFileManager *fm = [NSFileManager defaultManager];\r\n        if ([fm fileExistsAtPath:path]) {\r\n            [fm removeItemAtPath:path error:nil];\r\n        }\r\n        BOOL success =  [data writeToFile:path atomically:YES];\r\n        if (success) {\r\n            NSLog(@\"保存成功\");\r\n            NSURL *baseURL = [NSURL fileURLWithPath:[self getHtmlBasePath]];\r\n            NSString *path = [self getHtmlPath];\r\n            NSString *htmlStr = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];\r\n            \r\n            [self.webView loadHTMLString:htmlStr baseURL:baseURL];\r\n        }\r\n    });\r\n}];\r\n[sessionDataTask resume];\r\n```\r\n\r\n### 加载 `PDF` 文件\r\n\r\n```objc\r\n- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {\r\n    [self loadPDF];\r\n}\r\n\r\n- (void)loadPDF {\r\n    NSString *path = [DOCUMENTS_DIRECTORY stringByAppendingPathComponent:@\"contract.pdf\"];\r\n    NSData *data = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedAlways error:nil];\r\n    \r\n    NSString *paraStr = [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];\r\n    NSString *js = [NSString stringWithFormat:@\"loadMyJS('%@')\",paraStr];\r\n    \r\n    [self.webView evaluateJavaScript:js completionHandler:^(id _Nullable response, NSError * _Nullable error) {\r\n        if (error) {\r\n            NSLog(@\"%@\", error);\r\n            NSLog(@\"当前手机系统版本较低，不支持查看，请升级系统或者到 PC 端查看。\");\r\n        }\r\n    }];\r\n}\r\n```\r\n\r\n### 与 js 进行交互\r\n\r\n与 `js` 的交互主要是为了在控制器中获取 `PDF` 文件的加载状态。通过这种交互，我们能够实时感知 `PDF` 文件是否加载完成，或者在加载失败时处理错误提示。\r\n\r\n在 `js` 代码中，当 `PDF` 文件加载完成或失败时，调用已注册的接口将状态传递给原生代码。\r\n\r\n示例代码如下：\r\n\r\n```js\r\nfunction handlePages(page) {\r\n    //create new canvas\r\n    var viewport = page.getViewport(1);\r\n    var canvas = document.createElement(\"canvas\");\r\n    canvas.style.display = \"block\";\r\n\r\n    var context = canvas.getContext(\"2d\");\r\n    canvas.height = viewport.height;\r\n    canvas.width = viewport.width;\r\n\r\n    //render page\r\n    page.render({ canvasContext: context, viewport: viewport });\r\n\r\n    //add canvas to body\r\n    document.body.appendChild(canvas);\r\n\r\n    //render new page\r\n    pageNum++;\r\n    if (pdfDoc != null && pageNum <= numPages) {\r\n        pdfDoc.getPage(pageNum).then(handlePages);\r\n        // PDF 加载失败\r\n    } else {\r\n        console.log(\"pdf load complete\");\r\n        // PDF 加载完毕，body的内容可以根据具体的业务需求进行修改\r\n        window.webkit.messageHandlers.AppModel.postMessage({\r\n        code: \"00000\",\r\n        msg: \"pdf load complete\",\r\n        }); //和wkWebView交互\r\n    }\r\n}\r\n```\r\n\r\n在原生代码中，通过实现 `WKScriptMessageHandler` 协议的方法接收 `js` 传递的消息并处理：\r\n\r\n```objc\r\n- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {\r\n    if ([message.name isEqualToString:@\"AppModel\"]) {\r\n        // 和 customview.js 文件交互，js 调 oc 的代码\r\n        // 打印所传过来的参数，只支持 NSNumber, NSString, NSDate, NSArray, NSDictionary, and NSNull 类型\r\n        if ([message.body[@\"code\"] isEqualToString:@\"00000\"]) {\r\n            NSLog(@\"%@\", message.body[@\"msg\"]);\r\n        }\r\n    }\r\n}\r\n```\r\n\r\n## 兼容 iOS8\r\n\r\n到此为止，我们已经成功在 `iOS9` 及以上的系统中打开带有加密印章的 `PDF` 文件。\r\n\r\n然而，在 `iOS8` 中，由于系统限制，`PDF` 文件无法正常加载。接下来，我们将详细说明原因并提供解决方案。\r\n\r\n### 原因分析\r\n\r\n在 `iOS9` 及以上版本，`WKWebView` 默认支持从 `NSBundle` 加载 `HTML`、`JS` 和其他静态资源。而在 `iOS8` 中，这些资源必须位于 `tmp` 目录或沙盒的其他可写路径中才能被访问。\r\n\r\n### 兼容方案\r\n\r\n为了解决上述问题，我们需要根据系统版本决定 `HTML` 和 `JS` 文件的存储位置。如果运行在 `iOS8` 上，我们将资源复制到 `tmp` 目录下；否则，直接从 `NSBundle` 加载。\r\n\r\n以下是完整的兼容方案代码：\r\n\r\n```objc\r\n- (NSString*)getHtmlBasePath {\r\n    NSString *basePath = @\"\";\r\n    if ([[[UIDevice currentDevice]systemVersion]floatValue]<9.0) {\r\n        basePath = NSTemporaryDirectory();\r\n    }else{\r\n        basePath = [[NSBundle mainBundle] bundlePath];\r\n    }\r\n    return basePath;\r\n}\r\n\r\n- (NSString*)getHtmlPath{\r\n    NSString *path = @\"\";\r\n    if ([[[UIDevice currentDevice]systemVersion] floatValue] < 9.0) {\r\n        path = [self copyHtmlToTemp];\r\n    } else {\r\n        path = [[NSBundle mainBundle] pathForResource:@\"index\" ofType:@\".html\"];\r\n    }\r\n    return path;\r\n}\r\n\r\n//在 iOS8 上，html 及 js 文件要放到 tmp 目录下才能正常访问，iOS9 及以上不用\r\n- (NSString*)copyHtmlToTemp {\r\n    NSString* htmlPath = [[NSBundle mainBundle] pathForResource:@\"index\" ofType:@\".html\"];\r\n    NSString *compatibilityJSPath = [[NSBundle mainBundle] pathForResource:@\"compatibility\" ofType:@\".js\"];\r\n    NSString *customviewJSPath = [[NSBundle mainBundle] pathForResource:@\"customview\" ofType:@\".js\"];\r\n    NSString *minimalCSSPath = [[NSBundle mainBundle] pathForResource:@\"minimal\" ofType:@\".css\"];\r\n    NSString *pdfJSPath = [[NSBundle mainBundle] pathForResource:@\"pdf\" ofType:@\".js\"];\r\n    NSString *pdfWorkerJSPath = [[NSBundle mainBundle] pathForResource:@\"pdf.worker\" ofType:@\".js\"];\r\n\r\n    NSString *tempPath = NSTemporaryDirectory();\r\n\r\n    NSString *htmlTempPath = [tempPath stringByAppendingPathComponent:@\"index.html\"];\r\n    NSString *compatibilityJSTempPath = [tempPath stringByAppendingPathComponent:@\"compatibility.js\"];\r\n    NSString *customviewJSTempPath = [tempPath stringByAppendingPathComponent:@\"customview.js\"];\r\n    NSString *minimalCSSTempPath = [tempPath stringByAppendingPathComponent:@\"minimal.css\"];\r\n    NSString *pdfJSTempPath = [tempPath stringByAppendingPathComponent:@\"pdf.js\"];\r\n    NSString *pdfWorkerJSTempPath = [tempPath stringByAppendingPathComponent:@\"pdf.worker.js\"];\r\n\r\n    NSFileManager *fm = [NSFileManager defaultManager];\r\n\r\n    if (![fm fileExistsAtPath:htmlTempPath]) {\r\n        [fm copyItemAtPath:htmlPath toPath:htmlTempPath error:nil];\r\n    }\r\n    if (![fm fileExistsAtPath:compatibilityJSTempPath]) {\r\n        [fm copyItemAtPath:compatibilityJSPath toPath:compatibilityJSTempPath error:nil];\r\n    }\r\n    if (![fm fileExistsAtPath:customviewJSTempPath]) {\r\n        [fm copyItemAtPath:customviewJSPath toPath:customviewJSTempPath error:nil];\r\n    }\r\n    if (![fm fileExistsAtPath:minimalCSSTempPath]) {\r\n        [fm copyItemAtPath:minimalCSSPath toPath:minimalCSSTempPath error:nil];\r\n    }\r\n    if (![fm fileExistsAtPath:pdfJSTempPath]) {\r\n        [fm copyItemAtPath:pdfJSPath toPath:pdfJSTempPath error:nil];\r\n    }\r\n    if (![fm fileExistsAtPath:pdfWorkerJSTempPath]) {\r\n        [fm copyItemAtPath:pdfWorkerJSPath toPath:pdfWorkerJSTempPath error:nil];\r\n    }\r\n    return htmlTempPath;\r\n}\r\n```\r\n\r\n## 最后\r\n\r\n通过文中所述的方案，无论用户是在 `iOS8` 还是更新版本的系统中，都可以顺利打开带有加密印章的 `PDF` 文件了。\r\n",
+    "number": 2,
+    "labels": {
+      "nodes": [
+        {
+          "id": "LA_kwDONRxYmM8AAAABz3yyQw",
+          "name": "iOS",
+          "url": "https://github.com/onnttf/blog/labels/iOS"
+        }
+      ]
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-08-29T08:00:00Z",
+    "updatedAt": "2024-11-26T17:02:53Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/2",
+    "jsonFilePath": "discussions/2-D_kwDONRxYmM4AcqtZ.json",
+    "markdownFilePath": "2024/11/2-D_kwDONRxYmM4AcqtZ.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4ActLP",
+    "title": "从零开始搭建 Hexo 博客",
+    "body": "[Hexo](https://hexo.io) 是一款高效、简洁且强大的静态博客框架，广受开发者喜爱。本文将带你从零开始，完成 `Hexo` 博客的安装与部署，轻松创建属于你的个人博客！\r\n\r\n## 准备工作\r\n\r\n`Hexo` 需要下列程序的支持。请确保你已安装这些程序：\r\n\r\n- `Node.js`\r\n\r\n   (`Node.js` 版本需不低于 `10.13`，建议使用 `Node.js 12.0` 及以上版本)\r\n\r\n- `Git`\r\n\r\n如果您的电脑中已经安装了上述程序，您可以直接前往下一节。\r\n\r\n## 安装 `Hexo` 脚手架\r\n\r\n```bash\r\n~/Desktop/blog\r\n❯ npm install -g hexo-cli\r\n\r\nadded 54 packages, and audited 55 packages in 8s\r\n\r\n14 packages are looking for funding\r\n  run `npm fund` for details\r\n\r\nfound 0 vulnerabilities\r\n```\r\n\r\n安装完成后，通过 `hexo -v` 检查是否安装成功：\r\n\r\n```bash\r\n~/Desktop/blog\r\n❯ hexo -v\r\nhexo-cli: 4.3.2\r\nos: darwin 24.1.0 15.1.1\r\n\r\nnode: 16.20.2\r\nv8: 9.4.146.26-node.26\r\nuv: 1.49.2\r\nzlib: 1.2.12\r\nbrotli: 1.1.0\r\nares: 1.34.2\r\nmodules: 93\r\nnghttp2: 1.64.0\r\nnapi: 8\r\nllhttp: 6.0.11\r\nopenssl: 3.4.0\r\ncldr: 46.0\r\nicu: 76.1\r\ntz: 2024b\r\nunicode: 16.0\r\n```\r\n\r\n## 初始化 `Hexo` 博客\r\n\r\n通过终端进入您想要创建博客的文件夹，执行初始化命令：\r\n\r\n```bash\r\n~/Desktop/blog\r\n❯ hexo init\r\nINFO  Cloning hexo-starter https://github.com/hexojs/hexo-starter.git\r\nwarning hexo > warehouse > cuid@2.1.8: Cuid and other k-sortable and non-cryptographic ids (Ulid, ObjectId, KSUID, all UUIDs) are all insecure. Use @paralleldrive/cuid2 instead.\r\nwarning hexo-renderer-marked > jsdom > abab@2.0.6: Use your platform's native atob() and btoa() methods instead\r\nwarning hexo-renderer-marked > jsdom > data-urls > abab@2.0.6: Use your platform's native atob() and btoa() methods instead\r\nwarning hexo-renderer-marked > jsdom > domexception@4.0.0: Use your platform's native DOMException instead\r\nwarning hexo-renderer-stylus > stylus > glob@7.2.3: Glob versions prior to v9 are no longer supported\r\nwarning hexo-renderer-stylus > stylus > glob > inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.\r\nINFO  Start blogging with Hexo!\r\n```\r\n\r\n初始化完成后，文件夹结构如下：\r\n\r\n```bash\r\n~/Desktop/blog\r\n❯ tree -L 1\r\n.\r\n├── _config.landscape.yml\r\n├── _config.yml\r\n├── node_modules\r\n├── package.json\r\n├── scaffolds\r\n├── source\r\n├── themes\r\n└── yarn.lock\r\n\r\n5 directories, 4 files\r\n```\r\n\r\n- _config.yml\r\n\r\n   网站的配置文件。您可以在此配置大部分的参数，如网站标题、网站的关键词等。\r\n\r\n- package.json\r\n\r\n   应用程序的依赖信息。\r\n   包括 `EJS`、`Stylus` 和 `Markdown` 渲染引擎，这些已默认安装。如果不需要，您可以根据需求自由移除它们。\r\n\r\n- scaffolds\r\n\r\n   模版文件夹。当您新建文章时，`Hexo` 会根据 `scaffold` 来创建文件。\r\n\r\n- source\r\n\r\n   资源文件夹。用于存放用户资源。除了 `_posts` 文件夹之外，所有以 `_`（下划线）开头的文件/文件夹以及隐藏文件将被忽略。Markdown 和 HTML 文件会被解析并放到 `public` 文件夹，而其他文件会被拷贝过去。\r\n\r\n- themes\r\n\r\n   主题文件夹。`Hexo` 会根据主题来生成静态页面。\r\n\r\n## 预览博客\r\n\r\n在终端中，执行 `hexo server` 启动服务器，即可看到你的博客初始界面！\r\n\r\n默认情况下，访问网址为：<http://localhost:4000/>。\r\n\r\n```bash\r\n❯ hexo server\r\nINFO  Validating config\r\nINFO  Start processing\r\nINFO  Hexo is running at http://localhost:4000/ . Press Ctrl+C to stop.\r\n```\r\n\r\n## 部署博客到 GitHub Pages\r\n\r\n使用 `GitHub Actions` 将博客部署到 `GitHub Pages`。\r\n\r\n**请注意**：在以下步骤中，所有涉及到 GitHub 用户名的地方，请将 `username` 替换为你的 `GitHub` 用户名。\r\n\r\n1. 在 `GitHub` 中，创建一个名为 `username.github.io` 的仓库\r\n2. 前往仓库的设置页面，进入 `Settings > Pages`，将 `Source` 中的选项更改为 `GitHub Actions`，然后保存设置\r\n3. 创建 `.github/workflows/pages.yml` 文件，并填入以下内容：\r\n\r\n   ```text\r\n   name: Pages\r\n\r\n   on:\r\n      push:\r\n         branches:\r\n            - main # default branch\r\n\r\n   jobs:\r\n      build:\r\n         runs-on: ubuntu-latest\r\n         steps:\r\n            - uses: actions/checkout@v4\r\n            with:\r\n               token: ${{ secrets.GITHUB_TOKEN }}\r\n               # If your repository depends on submodule, please see: https://github.com/actions/checkout\r\n               submodules: recursive\r\n            - name: Use Node.js 20\r\n            uses: actions/setup-node@v4\r\n            - name: Cache NPM dependencies\r\n            uses: actions/cache@v4\r\n            with:\r\n               path: node_modules\r\n               key: ${{ runner.OS }}-npm-cache\r\n               restore-keys: |\r\n                  ${{ runner.OS }}-npm-cache\r\n            - name: Install Dependencies\r\n            run: npm install\r\n            - name: Build\r\n            run: npm run build\r\n            - name: Upload Pages artifact\r\n            uses: actions/upload-pages-artifact@v3\r\n            with:\r\n               path: ./public\r\n      deploy:\r\n         needs: build\r\n         permissions:\r\n            pages: write\r\n            id-token: write\r\n         environment:\r\n            name: github-pages\r\n            url: ${{ steps.deployment.outputs.page_url }}\r\n         runs-on: ubuntu-latest\r\n         steps:\r\n            - name: Deploy to GitHub Pages\r\n            id: deployment\r\n            uses: actions/deploy-pages@v4\r\n   ```\r\n\r\n4. 将博客文件夹中的文件推送到该仓库\r\n5. 当 action 运行完成后，前往 <https://username.github.io> 查看已部署的博客\r\n\r\n### 一键部署\r\n\r\n为了方便快捷地将本地博客发布到 `GitHub Pages`，我们可以安装 [hexo-deployer-git](https://github.com/hexojs/hexo-deployer-git) 部署工具。通过该工具，可以直接将博客发布到 `GitHub Pages`，实现快速部署。\r\n\r\n1. 在博客的根目录下执行以下命令来安装 `hexo-deployer-git` 插件\r\n\r\n   ```bash\r\n   ~/Desktop/blog\r\n   ❯ npm install hexo-deployer-git --save\r\n   (node:15001) ExperimentalWarning: CommonJS module /usr/local/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /usr/local/lib/node_modules/npm/node_modules/supports-color/index.js using require().\r\n   Support for loading ES Module in require() is an experimental feature and might change at any time\r\n   (Use `node --trace-warnings ...` to show where the warning was created)\r\n\r\n   added 9 packages, and audited 232 packages in 5s\r\n\r\n   29 packages are looking for funding\r\n   run `npm fund` for details\r\n\r\n   found 0 vulnerabilities\r\n   ```\r\n\r\n2. 修改 `_config.yml` 文件，添加以下配置\r\n\r\n   ```text\r\n   deploy:\r\n      type: git\r\n      repo: https://github.com/<username>/<project>\r\n      # example, https://github.com/onnttf/onnttf.github.io\r\n      branch: gh-pages\r\n   ```\r\n\r\n3. 执行 `hexo clean && hexo deploy` 即可\r\n\r\n## 日常更新博客\r\n\r\n当你写了新的博客文章，或是修改了博客的主题后，只需要通过终端进入本地博客的根目录，执行以下命令来更新并部署博客：\r\n\r\n```bash\r\nhexo clean && hexo deploy\r\n```\r\n\r\n执行完命令后，所有在本地的修改都会部署到 `GitHub Pages`，你的博客将会自动更新。\r\n\r\n## 最后\r\n\r\n让我们持续更新博客内容，分享我们的所思所想！\r\n",
+    "number": 5,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4Ckajb",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-11-26T08:00:00Z",
+    "updatedAt": "2024-11-26T17:02:25Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/5",
+    "jsonFilePath": "discussions/5-D_kwDONRxYmM4ActLP.json",
+    "markdownFilePath": "2024/11/5-D_kwDONRxYmM4ActLP.md"
+  },
+  {
+    "id": "D_kwDONRxYmM4Acqi8",
+    "title": "Welcome to blog Discussions!",
+    "body": "<!--\r\n    ✏️ Optional: Customize the content below to let your community know what you intend to use Discussions for.\r\n-->\r\n## 👋 Welcome!\r\n  We’re using Discussions as a place to connect with other members of our community. We hope that you:\r\n  * Ask questions you’re wondering about.\r\n  * Share ideas.\r\n  * Engage with other community members.\r\n  * Welcome others and are open-minded. Remember that this is a community we\r\n  build together 💪.\r\n\r\n  To get started, comment below with an introduction of yourself and tell us about what you do with this community.\r\n\r\n<!--\r\n  For the maintainers, here are some tips 💡 for getting started with Discussions. We'll leave these in Markdown comments for now, but feel free to take out the comments for all maintainers to see.\r\n\r\n  📢 **Announce to your community** that Discussions is available! Go ahead and send that tweet, post, or link it from the website to drive traffic here.\r\n\r\n  🔗 If you use issue templates, **link any relevant issue templates** such as questions and community conversations to Discussions. Declutter your issues by driving community content to where they belong in Discussions. If you need help, here's a [link to the documentation](https://docs.github.com/github/building-a-strong-community/configuring-issue-templates-for-your-repository#configuring-the-template-chooser).\r\n\r\n  ➡️ You can **convert issues to discussions** either individually or bulk by labels. Looking at you, issues labeled “question” or “discussion”.\r\n-->\r\n",
+    "number": 1,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONRxYmM4CkajX",
+      "name": "Announcements",
+      "slug": "announcements",
+      "emoji": ":mega:",
+      "emojiHTML": "<div>📣</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2017-07-19T16:32:59Z",
+    "updatedAt": "2024-11-19T16:32:59Z",
+    "repository": {
+      "id": "R_kgDONRxYmA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/1",
+    "jsonFilePath": "discussions/1-D_kwDONRxYmM4Acqi8.json",
+    "markdownFilePath": "announcements/1-D_kwDONRxYmM4Acqi8.md"
+  }
+]
