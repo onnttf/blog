@@ -34,8 +34,14 @@ jobs:
 
       - name: Process Discussions from File
         run: |
+          # List the files recursively
+          ls -R
+
           echo "Processing discussions from $DISCUSSION_FILE"
           jq -c '.[] | .id, .markdownFilePath' < "$DISCUSSION_FILE" | paste - - | while read -r id markdownFilePath; do
+
+            markdownFilePath=$(echo "$markdownFilePath" | sed 's/^"\(.*\)"$/\1/')
+
             if [ ! -f "$markdownFilePath" ]; then
               echo "Warning: Markdown file not found: $markdownFilePath"
               continue
