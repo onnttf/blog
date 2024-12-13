@@ -94,4 +94,4 @@ rm ~/Library/Caches/CocoaPods/search_index.json
 - 在 Stack Overflow 等技术社区寻求帮助
 - 通过 GitHub Issues 反馈问题
 
-希望本文能帮助你更顺利地使用 CocoaPods 进行 iOS 开发工作。如有任何补充或建议，也欢迎交流讨论。
+希望本文能帮助你更顺利地使用 CocoaPods 进行 iOS 开发工作。如有任何补充或建议，也欢迎交流讨论。

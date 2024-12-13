@@ -6,13 +6,13 @@
 
 - 系统臃肿问题
 
-    随着使用时间增长，我们不可避免地会安装大量软件、插件和环境配置。虽然这些累积可能不会导致系统变慢，但对于追求"干净"系统的用户来说却是一种困扰。
+  随着使用时间增长，我们不可避免地会安装大量软件、插件和环境配置。虽然这些累积可能不会导致系统变慢，但对于追求"干净"系统的用户来说却是一种困扰。
 
-    这种情况下，重装系统不失为一个彻底解决问题的方案。
+  这种情况下，重装系统不失为一个彻底解决问题的方案。
 
 - `Beta` 版本的烦恼
 
-    对于喜欢尝鲜的用户来说，升级到最新的 `Beta` 版系统往往充满诱惑。然而 `Beta` 版本可能存在诸多问题，此时你面临两个选择：
+  对于喜欢尝鲜的用户来说，升级到最新的 `Beta` 版系统往往充满诱惑。然而 `Beta` 版本可能存在诸多问题，此时你面临两个选择：
 
   - 等待更稳定的新版本发布
   - 降级回稳定版本（需要完整备份数据）
@@ -53,15 +53,15 @@
 1. 下载系统镜像
 2. 制作启动盘
 
-```bash
-sudo /Applications/Install\ macOS\ High\ Sierra.app/Contents/Resources/createinstallmedia --volume /Volumes/MyVolume --applicationpath /Applications/Install\ macOS\ High\ Sierra.app
-```
+   ```bash
+   sudo /Applications/Install\ macOS\ High\ Sierra.app/Contents/Resources/createinstallmedia --volume /Volumes/MyVolume --applicationpath /Applications/Install\ macOS\ High\ Sierra.app
+   ```
 
 3. 通过 U 盘启动并安装系统
 
-    1. 将 U 盘插到电脑上
-    2. 进入恢复模式，将启动磁盘改为我们制作的启动盘，启动盘的修改可以参考附件
-    3. 从"实用工具"窗口中选择"安装 macOS"（或"安装 OS X"），然后点按"继续"，按照屏幕上的说明进行操作
+   1. 将 U 盘插到电脑上
+   2. 进入恢复模式，将启动磁盘改为我们制作的启动盘，启动盘的修改可以参考附件
+   3. 从"实用工具"窗口中选择"安装 macOS"（或"安装 OS X"），然后点按"继续"，按照屏幕上的说明进行操作
 
 ## 最后
 
@@ -71,4 +71,4 @@ sudo /Applications/Install\ macOS\ High\ Sierra.app/Contents/Resources/createins
 2. 记录已安装的软件列表，方便重装后恢复
 3. 确保有足够的磁盘空间和稳定的网络环境
 
-重装系统虽然需要花费一些时间，但能够帮助我们获得一个全新、干净的使用环境。如果你遇到无法解决的系统问题，或是想彻底清理系统，不妨尝试重装一次。
+重装系统虽然需要花费一些时间，但能够帮助我们获得一个全新、干净的使用环境。如果你遇到无法解决的系统问题，或是想彻底清理系统，不妨尝试重装一次。

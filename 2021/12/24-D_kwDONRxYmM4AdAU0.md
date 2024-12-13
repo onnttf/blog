@@ -11,24 +11,24 @@
 1. 打开「终端」应用程序
 2. 执行密码策略清除命令，该命令将移除系统预设的密码复杂度要求
 
-    ```bash
-    pwpolicy -clearaccountpolicies
-    ```
+   ```bash
+   pwpolicy -clearaccountpolicies
+   ```
 
 3. 验证身份
 
-    - 系统会要求输入当前用户的管理员密码
-    - 输入过程中屏幕不会显示任何字符
-    - 输入完成后按回车键确认
+   - 系统会要求输入当前用户的管理员密码
+   - 输入过程中屏幕不会显示任何字符
+   - 输入完成后按回车键确认
 
-    ![image](https://file.onnttf.site/2021/12/01/2.png)
+   ![image](https://file.onnttf.site/2021/12/01/2.png)
 
 4. 确认操作成功
 
-    - 若显示 `Clearing global account policies` 信息，表示密码策略已成功清除
-    - 此时您可以开始设置新的简化密码
+   - 若显示 `Clearing global account policies` 信息，表示密码策略已成功清除
+   - 此时您可以开始设置新的简化密码
 
-    ![image](https://file.onnttf.site/2021/12/01/3.png)
+   ![image](https://file.onnttf.site/2021/12/01/3.png)
 
 ## 设置新密码
 
@@ -44,7 +44,7 @@
    - 在"验证"栏再次输入新密码以确认
    - 如有需要，可以在"密码提示"栏添加提示信息，以防遗忘
 
-    ![image](https://file.onnttf.site/2021/12/01/4.png)
+   ![image](https://file.onnttf.site/2021/12/01/4.png)
 
 5. 点击"更改密码"完成设置
 
@@ -54,4 +54,4 @@
 
 - 使用包含字母、数字和特殊符号的组合
 - 避免使用易被猜测的个人信息
-- 定期更换密码
+- 定期更换密码

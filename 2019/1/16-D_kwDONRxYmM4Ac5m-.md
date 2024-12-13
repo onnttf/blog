@@ -24,7 +24,7 @@
 
    进入 `Charles` 菜单：`Help -> SSL Proxying -> Install Charles Root Certificate`
 
-   系统会提示选择证书存储位置,请根据实际需求选择合适的钥匙串：
+   系统会提示选择证书存储位置，请根据实际需求选择合适的钥匙串：
 
    ![image](https://file.onnttf.site/2019/01/02/2.jpg)
 
@@ -33,7 +33,7 @@
    - 打开系统的"钥匙串访问"
    - 在搜索框中输入 `Charles` 定位证书
    - 双击 `Charles Proxy CA` 证书
-   - 展开"信任"选项,将证书信任级别设置为"始终信任"
+   - 展开"信任"选项，将证书信任级别设置为"始终信任"
 
    ![image](https://file.onnttf.site/2019/01/02/3.jpg)
 
@@ -63,7 +63,7 @@
 
    - 确保移动设备与运行 `Charles` 的电脑处于同一网络
    - 在移动设备的 `WiFi` 设置中配置代理服务器
-   - 输入 `Charles` 显示的代理地址: `xxx.xx.xxx.xxx:xxxx`
+   - 输入 `Charles` 显示的代理地址：`xxx.xx.xxx.xxx:xxxx`
    - 使用移动设备浏览器访问 [chls.pro/ssl](https://github.com/onnttf/blog/tree/322c1a6adda8dd6be880c9622823871046e6654b/mac/chls.pro/ssl/README.md) 下载安装证书
 
 2. **信任证书**
@@ -72,4 +72,4 @@
 
    找到并启用 `Charles` 证书的信任选项：
 
-   ![image](https://file.onnttf.site/2019/01/02/7.jpg)
+   ![image](https://file.onnttf.site/2019/01/02/7.jpg)

@@ -89,37 +89,37 @@ Docker 提供了三种主流的构建镜像方式：
 
 - 带文件系统的镜像：通过 [docker export](https://docs.docker.com/engine/reference/commandline/export/) 导出，需使用 [docker import](https://docs.docker.com/engine/reference/commandline/import/) 导入
 
-    ```bash
-    ❯ docker import --help
+  ```bash
+  ❯ docker import --help
 
-    Usage:  docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
+  Usage:  docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
 
-    Import the contents from a tarball to create a filesystem image
+  Import the contents from a tarball to create a filesystem image
 
-    Aliases:
-    docker image import, docker import
+  Aliases:
+  docker image import, docker import
 
-    Options:
-    -c, --change list       Apply Dockerfile instruction to the created image
-    -m, --message string    Set commit message for imported image
-        --platform string   Set platform if server is multi-platform capable
-    ```
+  Options:
+  -c, --change list       Apply Dockerfile instruction to the created image
+  -m, --message string    Set commit message for imported image
+      --platform string   Set platform if server is multi-platform capable
+  ```
 
 - 普通镜像：通过 [docker save](https://docs.docker.com/engine/reference/commandline/save/) 导出，需使用 [docker load](https://docs.docker.com/engine/reference/commandline/load/) 导入
 
-    ```bash
-    ❯ docker save --help
+  ```bash
+  ❯ docker save --help
 
-    Usage:  docker save [OPTIONS] IMAGE [IMAGE...]
+  Usage:  docker save [OPTIONS] IMAGE [IMAGE...]
 
-    Save one or more images to a tar archive (streamed to STDOUT by default)
+  Save one or more images to a tar archive (streamed to STDOUT by default)
 
-    Aliases:
-    docker image save, docker save
+  Aliases:
+  docker image save, docker save
 
-    Options:
-    -o, --output string   Write to a file, instead of STDOUT
-    ```
+  Options:
+  -o, --output string   Write to a file, instead of STDOUT
+  ```
 
 ### 基于容器构建镜像
 
@@ -157,4 +157,4 @@ Options:
 - 可重复使用
 - 适合自动化构建
 
-建议你从编写简单的 `Dockerfile` 开始，逐步掌握 Docker 镜像的构建技巧。
+建议你从编写简单的 `Dockerfile` 开始，逐步掌握 Docker 镜像的构建技巧。

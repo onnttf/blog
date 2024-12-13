@@ -31,14 +31,14 @@ WKUserContentController *wkUController = [[WKUserContentController alloc]init];
 config.userContentController = wkUController;
 
 // 注入 JS 对象，名称为 AppModel
-// 当 JS 通过 AppModel 来调用时，我们可以在 WKScriptMessageHandler 代理中接收到 
-// 此处是为了得到PDF加载完成或失败的反馈 
+// 当 JS 通过 AppModel 来调用时，我们可以在 WKScriptMessageHandler 代理中接收到
+// 此处是为了得到PDF加载完成或失败的反馈
 [config.userContentController addScriptMessageHandler:self name:@"AppModel"];
 
-// 改变页面内容宽度，适配屏幕大小 
+// 改变页面内容宽度，适配屏幕大小
 NSString *js = @"var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
 
-WKUserScript *wkUserScript = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES]; 
+WKUserScript *wkUserScript = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
 [wkUController addUserScript:wkUserScript];
 
 WKWebView *webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH - 64) configuration:config];
@@ -71,7 +71,7 @@ NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request com
             NSURL *baseURL = [NSURL fileURLWithPath:[self getHtmlBasePath]];
             NSString *path = [self getHtmlPath];
             NSString *htmlStr = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-            
+
             [self.webView loadHTMLString:htmlStr baseURL:baseURL];
         }
     });
@@ -89,10 +89,10 @@ NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request com
 - (void)loadPDF {
     NSString *path = [DOCUMENTS_DIRECTORY stringByAppendingPathComponent:@"contract.pdf"];
     NSData *data = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedAlways error:nil];
-    
+
     NSString *paraStr = [data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithCarriageReturn];
     NSString *js = [NSString stringWithFormat:@"loadMyJS('%@')",paraStr];
-    
+
     [self.webView evaluateJavaScript:js completionHandler:^(id _Nullable response, NSError * _Nullable error) {
         if (error) {
             NSLog(@"%@", error);
@@ -112,34 +112,34 @@ NSURLSessionDataTask *sessionDataTask = [session dataTaskWithRequest:request com
 
 ```js
 function handlePages(page) {
-    //create new canvas
-    var viewport = page.getViewport(1);
-    var canvas = document.createElement("canvas");
-    canvas.style.display = "block";
+  //create new canvas
+  var viewport = page.getViewport(1);
+  var canvas = document.createElement("canvas");
+  canvas.style.display = "block";
 
-    var context = canvas.getContext("2d");
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
+  var context = canvas.getContext("2d");
+  canvas.height = viewport.height;
+  canvas.width = viewport.width;
 
-    //render page
-    page.render({ canvasContext: context, viewport: viewport });
+  //render page
+  page.render({ canvasContext: context, viewport: viewport });
 
-    //add canvas to body
-    document.body.appendChild(canvas);
+  //add canvas to body
+  document.body.appendChild(canvas);
 
-    //render new page
-    pageNum++;
-    if (pdfDoc != null && pageNum <= numPages) {
-        pdfDoc.getPage(pageNum).then(handlePages);
-        // PDF 加载失败
-    } else {
-        console.log("pdf load complete");
-        // PDF 加载完毕，body的内容可以根据具体的业务需求进行修改
-        window.webkit.messageHandlers.AppModel.postMessage({
-        code: "00000",
-        msg: "pdf load complete",
-        }); //和wkWebView交互
-    }
+  //render new page
+  pageNum++;
+  if (pdfDoc != null && pageNum <= numPages) {
+    pdfDoc.getPage(pageNum).then(handlePages);
+    // PDF 加载失败
+  } else {
+    console.log("pdf load complete");
+    // PDF 加载完毕，body 的内容可以根据具体的业务需求进行修改
+    window.webkit.messageHandlers.AppModel.postMessage({
+      code: "00000",
+      msg: "pdf load complete",
+    }); //和 wkWebView 交互
+  }
 }
 ```
 
@@ -238,4 +238,4 @@ function handlePages(page) {
 
 ## 最后
 
-通过文中所述的方案，无论用户是在 `iOS8` 还是更新版本的系统中，都可以顺利打开带有加密印章的 `PDF` 文件了。
+通过文中所述的方案，无论用户是在 `iOS8` 还是更新版本的系统中，都可以顺利打开带有加密印章的 `PDF` 文件了。

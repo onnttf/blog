@@ -14,13 +14,13 @@
 
    - **`Description`**
 
-      填写这个 `App Group` 的描述。示例：`Shared Resources for MyApp Widget`
+     填写这个 `App Group` 的描述。示例：`Shared Resources for MyApp Widget`
 
    - **`ID`**
 
-      填写这个 `App Group` 的标识，建议以 `com.{aaa}.{bbb}` 命名，填写完毕时，会默认在前面加上 `group`。示例：`com.mycompany.myapp`
+     填写这个 `App Group` 的标识，建议以 `com.{aaa}.{bbb}` 命名，填写完毕时，会默认在前面加上 `group`。示例：`com.mycompany.myapp`
 
-完成创建后，如图:
+完成创建后，如图：
 
 ![image](https://file.onnttf.site/2017/08/29/2.jpeg)
 
@@ -68,11 +68,11 @@
 
 1. 在主项目中创建一个新的 `Target`，选择 `Today Extension`
 
-    ![image](https://file.onnttf.site/2017/09/07/1.jpeg)
+   ![image](https://file.onnttf.site/2017/09/07/1.jpeg)
 
 2. 完成后会自动生成如下文件
 
-    ![image](https://file.onnttf.site/2017/09/07/2.jpeg)
+   ![image](https://file.onnttf.site/2017/09/07/2.jpeg)
 
 ### 修改 Widget Target 配置
 
@@ -98,29 +98,29 @@
 - 没有折叠和展开功能
 - 默认 Widget 高度由 `self.preferredContentSize` 控制
 
-   ```objc
-   self.preferredContentSize = CGSizeMake(kScreenW, 100);
-   ```
+  ```objc
+  self.preferredContentSize = CGSizeMake(kScreenW, 100);
+  ```
 
 - 组件布局默认向右偏移 30 单位，可以通过 `widgetMarginInsetsForProposedMarginInsets` 方法进行调整
 
-   ```objc
+  ```objc
   - (UIEdgeInsets)widgetMarginInsetsForProposedMarginInsets:(UIEdgeInsets)defaultMarginInsets {
-      return UIEdgeInsetsMake(0, 0, 0, 0);
+     return UIEdgeInsetsMake(0, 0, 0, 0);
   }
   ```
 
 ##### iOS 10 及之后
-  
+
 - `Widget` 支持了两种显示模式
 
   - NCWidgetDisplayModeCompact
 
-      高度固定，最低高度为 `110`
+    高度固定，最低高度为 `110`
 
   - NCWidgetDisplayModeExpanded
 
-       高度可变
+    高度可变
 
 - 设置显示模式
 
@@ -177,41 +177,41 @@
 
 1. NSUserDefaults
 
-    和我们常用的方法一样，不过在创建 `NSUserDefaults` 时，需要填写我们之前的 `GroupID`。通过 `GroupID`，我们就可以进行主 `App` 和 `Widget` 之间的数据共享了。
+   和我们常用的方法一样，不过在创建 `NSUserDefaults` 时，需要填写我们之前的 `GroupID`。通过 `GroupID`，我们就可以进行主 `App` 和 `Widget` 之间的数据共享了。
 
-    ```objc
-    // 写入数据
-    NSString *groupID = @"group.com.aaa.bbb";
-    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:groupID];[ud setObject:@"我是测试的数据" forKey:@"test"];
-    [ud synchronize];
+   ```objc
+   // 写入数据
+   NSString *groupID = @"group.com.aaa.bbb";
+   NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:groupID];[ud setObject:@"我是测试的数据" forKey:@"test"];
+   [ud synchronize];
 
-    // 读取数据
-    NSString *groupID = @"group.com.aaa.bbb";
-    NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:groupID];
-    NSString *value = [ud objectForKey:@"test"];
-    ```
+   // 读取数据
+   NSString *groupID = @"group.com.aaa.bbb";
+   NSUserDefaults *ud = [[NSUserDefaults alloc] initWithSuiteName:groupID];
+   NSString *value = [ud objectForKey:@"test"];
+   ```
 
 2. NSFileManager
 
-    ```objc
-    // 写入数据
-    NSString *groupID = @"group.com.aaa.bbb";
-    NSError *err = nil;
-    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:groupID];
-    containerURL = [containerURL URLByAppendingPathComponent:@"Library/Caches/test"];
-    NSString *value = @"我是测试的数据";
-    BOOL result = [value writeToURL:containerURL atomically:YES encoding:NSUTF8StringEncoding error:&err];
-    if(result){
-        NSLog(@"写入成功");
-    }
+   ```objc
+   // 写入数据
+   NSString *groupID = @"group.com.aaa.bbb";
+   NSError *err = nil;
+   NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:groupID];
+   containerURL = [containerURL URLByAppendingPathComponent:@"Library/Caches/test"];
+   NSString *value = @"我是测试的数据";
+   BOOL result = [value writeToURL:containerURL atomically:YES encoding:NSUTF8StringEncoding error:&err];
+   if(result){
+       NSLog(@"写入成功");
+   }
 
-    // 读取数据
-    NSString *groupID = @"group.com.aaa.bbb";
-    NSError *err = nil;
-    NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:groupID];
-    containerURL = [containerURL URLByAppendingPathComponent:@"Library/Caches/test"];
-    NSString *value = [NSString stringWithContentsOfURL:containerURL encoding:NSUTF8StringEncoding error:&err];
-    ```
+   // 读取数据
+   NSString *groupID = @"group.com.aaa.bbb";
+   NSError *err = nil;
+   NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:groupID];
+   containerURL = [containerURL URLByAppendingPathComponent:@"Library/Caches/test"];
+   NSString *value = [NSString stringWithContentsOfURL:containerURL encoding:NSUTF8StringEncoding error:&err];
+   ```
 
 #### 数据刷新
 
@@ -264,4 +264,4 @@
 
 随着 `iOS` 生态的持续发展，`Widget` 不仅扩展了应用的功能，还为用户提供了更加直观和便捷的互动方式。
 
-通过合理利用 `Widget`，开发者能够提升应用的用户体验，使用户能够快速访问重要信息，并通过互动更加流畅地与应用进行连接。
+通过合理利用 `Widget`，开发者能够提升应用的用户体验，使用户能够快速访问重要信息，并通过互动更加流畅地与应用进行连接。

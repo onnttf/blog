@@ -8,7 +8,7 @@
 
 ```json
 {
-    "double": 79.04,
+  "double": 79.04
 }
 ```
 
@@ -50,4 +50,4 @@ NSString *result = [NSString stringWithFormat:@"%@", dn.stringValue];
 
 在处理浮动小数时，尽量避免直接使用 `double` 类型进行字符串转换。使用 `NSDecimalNumber` 不仅能避免精度丢失问题，还能确保数据转换的精确性。
 
-希望本篇文章能帮助你解决类似的精度问题，提升代码的稳定性和可靠性。
+希望本篇文章能帮助你解决类似的精度问题，提升代码的稳定性和可靠性。

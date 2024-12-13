@@ -125,4 +125,4 @@ END:VCALENDAR
 
 ## 最后
 
-2024 年油价调整时间表已创建完成并上传至[此仓库](https://github.com/onnttf/calendar)。该时间表将持续更新，您可通过订阅 <https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics> 获取最新的调整信息。
+2024 年油价调整时间表已创建完成并上传至[此仓库](https://github.com/onnttf/calendar)。该时间表将持续更新，您可通过订阅 <https://raw.githubusercontent.com/onnttf/calendar/main/oil_price_adjustment.ics> 获取最新的调整信息。

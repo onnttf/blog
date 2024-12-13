@@ -1,7 +1,5 @@
 # WKWebView 的基本使用到高级技巧
 
-# WKWebView 的基本使用到高级技巧
-
 `WKWebView` 是苹果提供的现代化网页浏览控件，用于在 `iOS` 应用中展示网页内容。它从 `iOS 8` 开始支持使用。
 
 ## 为什么选择 `WKWebView`
@@ -27,7 +25,7 @@
 #import <WebKit/WebKit.h>
 ```
 
-### 创建和配置WKWebView
+### 创建和配置 WKWebView
 
 ```objc
 // 创建 WKUserContentController 用于 JS 交互
@@ -261,7 +259,7 @@ completionHandler:(void (^)(NSString * _Nullable result))completionHandler {
 `JavaScript` 调用示例：
 
 ```javascript
-window.webkit.messageHandlers.test1.postMessage({data: "Hello"});
+window.webkit.messageHandlers.test1.postMessage({ data: "Hello" });
 ```
 
 ### URL Schema 方式
@@ -288,33 +286,33 @@ window.webkit.messageHandlers.test1.postMessage({data: "Hello"});
 
 1. `JavaScript` 侧：通过注入脚本设置
 
-    ```objc
-    NSString *js = @"document.cookie='key=value'";
-    WKUserScript *script = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
-    [userContentController addUserScript:script];
-    ```
+   ```objc
+   NSString *js = @"document.cookie='key=value'";
+   WKUserScript *script = [[WKUserScript alloc] initWithSource:js injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
+   [userContentController addUserScript:script];
+   ```
 
 2. `Native` 请求：添加 `Cookie` 头
 
-    ```objc
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    [request setValue:@"key=value" forHTTPHeaderField:@"Cookie"];
-    [webView loadRequest:request];
-    ```
+   ```objc
+   NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+   [request setValue:@"key=value" forHTTPHeaderField:@"Cookie"];
+   [webView loadRequest:request];
+   ```
 
 需要注意 `Cookie` 注入的两种方式有不同的作用范围：
 
 1. `JavaScript` 注入的 `Cookie`:
 
-- 可以通过 `document.cookie` 在 `JavaScript` 中读取
-- 在浏览器开发者工具中可以看到
-- 服务端代码(如 `PHP`)无法直接读取
+   - 可以通过 `document.cookie` 在 `JavaScript` 中读取
+   - 在浏览器开发者工具中可以看到
+   - 服务端代码 (如 `PHP`) 无法直接读取
 
 2. `NSMutableURLRequest` 注入的 `Cookie`:
 
-- 可以被服务端代码(如 `PHP` 的 `$_COOKIE`)直接读取
-- `JavaScript` 无法通过 `document.cookie` 访问
-- 在浏览器开发者工具中不可见
+   - 可以被服务端代码 (如 `PHP` 的 `$_COOKIE`) 直接读取
+   - `JavaScript` 无法通过 `document.cookie` 访问
+   - 在浏览器开发者工具中不可见
 
 因此在实际开发中，需要根据具体使用场景选择合适的注入方式。如果需要同时支持前端和后端访问，则需要同时使用这两种方式注入 `Cookie`。
 
@@ -324,23 +322,23 @@ window.webkit.messageHandlers.test1.postMessage({data: "Hello"});
 
 1. 创建弱引用代理类：
 
-    ```objc
-    @interface WeakScriptMessageDelegate : NSObject
-    @property (nonatomic, weak) id<WKScriptMessageHandler> scriptDelegate;
-    @end
-    ```
+   ```objc
+   @interface WeakScriptMessageDelegate : NSObject
+   @property (nonatomic, weak) id<WKScriptMessageHandler> scriptDelegate;
+   @end
+   ```
 
 2. 使用弱引用代理注册消息处理：
 
-    ```objc
-    [config.userContentController addScriptMessageHandler:[[WeakScriptMessageDelegate alloc] initWithDelegate:self] name:scriptMessage];
-    ```
+   ```objc
+   [config.userContentController addScriptMessageHandler:[[WeakScriptMessageDelegate alloc] initWithDelegate:self] name:scriptMessage];
+   ```
 
 3. 在 dealloc 中移除消息处理：
 
-    ```objc
-    [self.config.userContentController removeScriptMessageHandlerForName:scriptMessage];
-    ```
+   ```objc
+   [self.config.userContentController removeScriptMessageHandlerForName:scriptMessage];
+   ```
 
 ## 最后
 
@@ -352,4 +350,4 @@ window.webkit.messageHandlers.test1.postMessage({data: "Hello"});
 4. `Cookie` 处理的注意事项
 5. 内存管理的最佳实践
 
-`WKWebView` 作为 `iOS` 现代化的 `Web` 容器，具有性能优越、功能丰富的特点。合理使用其提供的各项功能，可以帮助我们构建高质量的 `Web` 混合应用。
+`WKWebView` 作为 `iOS` 现代化的 `Web` 容器，具有性能优越、功能丰富的特点。合理使用其提供的各项功能，可以帮助我们构建高质量的 `Web` 混合应用。

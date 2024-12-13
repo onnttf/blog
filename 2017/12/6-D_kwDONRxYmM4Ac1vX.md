@@ -8,7 +8,7 @@
 
 本文源于一个实际项目需求 - 开发类似支付宝红包的二维码分享功能。
 
-具体要求包括:
+具体要求包括：
 
 1. 生成高清的二维码，确保稳定的识别效果
 2. 在二维码中央嵌入品牌 `logo`，提升品牌辨识度
@@ -19,10 +19,10 @@
 
 ## 核心功能实现
 
-在开始编码之前，我们先了解几个关键概念:
+在开始编码之前，我们先了解几个关键概念：
 
 - **CIQRCodeGenerator**: `CoreImage` 框架提供的原生二维码生成器
-- **纠错级别**: 二维码的容错能力，分为L(7%)、M(15%)、Q(25%)、H(30%)四个等级
+- **纠错级别**: 二维码的容错能力，分为 L(7%)、M(15%)、Q(25%)、H(30%) 四个等级
 - **清晰度处理**: 原生生成的二维码可能模糊，需要进行优化
 
 ### 生成二维码
@@ -33,32 +33,32 @@
 
 1. 导入 `Core Image` 框架
 
-    ```objc
-    #import <CoreImage/CoreImage.h>
-    ```
+   ```objc
+   #import <CoreImage/CoreImage.h>
+   ```
 
 2. 利用 `CIFilter` 创建二维码
 
-    ```objc
-    // 创建 QR Code 生成器滤镜
-    CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
-    // 将 filter 所有属性设置为默认值
-    [filter setDefaults];
+   ```objc
+   // 创建 QR Code 生成器滤镜
+   CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
+   // 将 filter 所有属性设置为默认值
+   [filter setDefaults];
 
-    // 将待编码的字符串转换为 UTF-8 格式的数据
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    [filter setValue:data forKey:@"inputMessage"];
+   // 将待编码的字符串转换为 UTF-8 格式的数据
+   NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
+   [filter setValue:data forKey:@"inputMessage"];
 
-    // 设置二维码的纠错级别，纠错级别越高，二维码的抗损坏能力越强
-    // L (7%): 适用于环境较好的场景
-    // M (15%): 常规使用的推荐级别
-    // Q (25%): 适合复杂场景或需要添加 Logo
-    // H (30%): 对清晰度要求最高的场景
-    [filter setValue:@"H" forKey:@"inputCorrectionLevel"];
+   // 设置二维码的纠错级别，纠错级别越高，二维码的抗损坏能力越强
+   // L (7%): 适用于环境较好的场景
+   // M (15%): 常规使用的推荐级别
+   // Q (25%): 适合复杂场景或需要添加 Logo
+   // H (30%): 对清晰度要求最高的场景
+   [filter setValue:@"H" forKey:@"inputCorrectionLevel"];
 
-    // 获取生成的二维码图像
-    CIImage *outputImage = [filter outputImage];
-    ```
+   // 获取生成的二维码图像
+   CIImage *outputImage = [filter outputImage];
+   ```
 
 ### 清晰度优化
 
@@ -310,7 +310,7 @@
 
 我们还可以将二维码与其他图片灵活拼接，从而实现更丰富的视觉效果。
 
-下面的代码演示了如何将二维码与其他图片按照指定位置组合在一起:
+下面的代码演示了如何将二维码与其他图片按照指定位置组合在一起：
 
 ```objc
 /**
@@ -349,7 +349,7 @@
 
 通过这种灵活的组合方式，我们不仅保持了二维码的功能性，还大大提升了其视觉表现力和品牌辨识度。
 
-在实际应用中，你可以通过以下方式进一步优化拼接效果:
+在实际应用中，你可以通过以下方式进一步优化拼接效果：
 
 - 调整图片尺寸比例，确保视觉重点突出
 - 精心设计图片位置，打造合理的视觉层次
@@ -358,4 +358,4 @@
 
 ## 最后
 
-本文详细介绍了如何使用苹果原生框架实现二维码的生成和美化，希望这些内容对你的工作有所帮助。
+本文详细介绍了如何使用苹果原生框架实现二维码的生成和美化，希望这些内容对你的工作有所帮助。

@@ -18,39 +18,39 @@
 
 - macOS 系统
 
-    使用 `lsof` 命令可以快速查看端口占用情况：
+  使用 `lsof` 命令可以快速查看端口占用情况：
 
-    ```bash
-    $ lsof -i :8080
-    COMMAND  PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
-    main    6667 zhangpeng    7u  IPv6 0x645a94383c79337f      0t0  TCP *:http-alt (LISTEN)
-    ```
+  ```bash
+  $ lsof -i :8080
+  COMMAND  PID      USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+  main    6667 zhangpeng    7u  IPv6 0x645a94383c79337f      0t0  TCP *:http-alt (LISTEN)
+  ```
 
 - Linux 系统
 
-    Linux 下可使用功能强大的 `netstat` 命令：
+  Linux 下可使用功能强大的 `netstat` 命令：
 
-    ```bash
-    $ netstat -tunlp | grep "8080"
-    Proto Recv-Q Send-Q Local Address   Foreign Address   State    PID/Program name
-    tcp   0      0     0.0.0.0:8080    0.0.0.0:*        LISTEN   131/nginx: master p
-    ```
+  ```bash
+  $ netstat -tunlp | grep "8080"
+  Proto Recv-Q Send-Q Local Address   Foreign Address   State    PID/Program name
+  tcp   0      0     0.0.0.0:8080    0.0.0.0:*        LISTEN   131/nginx: master p
+  ```
 
 - Windows 系统
 
-    Windows 下查看端口占用需要以下步骤：
+  Windows 下查看端口占用需要以下步骤：
 
-    1. 使用快捷键 `Windows + R` 打开运行窗口
-    2. 输入 `cmd` 打开命令提示符
-    3. 执行 `netstat` 命令：
+  1. 使用快捷键 `Windows + R` 打开运行窗口
+  2. 输入 `cmd` 打开命令提示符
+  3. 执行 `netstat` 命令：
 
-        ```bash
-        $ netstat -ano | findstr "8080"
-        协议  本地地址          外部地址        状态           PID
-        TCP    0.0.0.0:8080     0.0.0.0:0      LISTENING      16248
-        TCP    [::]:8080        [::]:0         LISTENING      16248
-        TCP    [::1]:8080       [::1]:51273    ESTABLISHED    16248
-        ```
+     ```bash
+     $ netstat -ano | findstr "8080"
+     协议  本地地址          外部地址        状态           PID
+     TCP    0.0.0.0:8080     0.0.0.0:0      LISTENING      16248
+     TCP    [::]:8080        [::]:0         LISTENING      16248
+     TCP    [::1]:8080       [::1]:51273    ESTABLISHED    16248
+     ```
 
 ## 终止占用端口的进程
 
@@ -60,21 +60,21 @@
 
 - macOS/Linux 系统
 
-    使用 `kill` 命令终止进程：
+  使用 `kill` 命令终止进程：
 
-    ```bash
-    # 请将<PID>替换为实际的进程 ID
-    kill -9 <PID>  # 替换实际进程 ID
-    ```
+  ```bash
+  # 请将<PID>替换为实际的进程 ID
+  kill -9 <PID>  # 替换实际进程 ID
+  ```
 
 - Windows 系统
 
-    使用 `taskkill` 命令终止进程：
+  使用 `taskkill` 命令终止进程：
 
-    ```bash
-    # 请将<processid>替换为实际的进程 ID
-    taskkill /PID <processid> /F
-    ```
+  ```bash
+  # 请将<processid>替换为实际的进程 ID
+  taskkill /PID <processid> /F
+  ```
 
 ## 最后
 
@@ -84,4 +84,4 @@
 2. 对于重要的系统进程，建议更换端口而不是强制终止
 3. 养成良好习惯，服务使用完及时关闭释放端口
 
-通过本文的学习，相信你已经掌握了排查和解决端口占用问题的基本技能，希望这些内容对你有所帮助。
+通过本文的学习，相信你已经掌握了排查和解决端口占用问题的基本技能，希望这些内容对你有所帮助。

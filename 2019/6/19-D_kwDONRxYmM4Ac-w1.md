@@ -39,8 +39,8 @@ $ pod trunk me
 1. 在 `GitHub` 创建新仓库
 2. 记录重要信息
 
-    - 仓库主页：<https://github.com/{GitHub用户名}/{Pod名称}>
-    - Clone 地址：<https://github.com/{GitHub用户名}/{Pod名称}.git>
+   - 仓库主页：<<https://github.com/{GitHub> 用户名}/{Pod 名称}>
+   - Clone 地址：<<https://github.com/{GitHub> 用户名}/{Pod 名称}.git>
 
 ### 使用 pod 脚手架创建 pod 库
 
@@ -99,19 +99,19 @@ Integrating client project
 
 ```ruby
 Pod::Spec.new do |s|
-  s.name             = '{Pod名称}'              # Pod 名称
+  s.name             = '{Pod 名称}'              # Pod 名称
   s.version          = '0.1.0'                # 版本号
   s.summary          = '一句话描述你的 Pod'      # 简短描述
   s.description      = <<-DESC                # 详细描述
                        详细描述你的 Pod 能做什么，
                        有什么特点和优势。
                        DESC
-  s.homepage         = 'https://github.com/{GitHub用户名}/{Pod名称}'
+  s.homepage         = 'https://github.com/{GitHub 用户名}/{Pod 名称}'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { '{作者}' => '{邮箱}' }
   s.source           = { :git => '你的仓库地址.git', :tag => s.version.to_s }
   s.ios.deployment_target = '8.0'
-  s.source_files = '{Pod名称}/Classes/**/*'
+  s.source_files = '{Pod 名称}/Classes/**/*'
 end
 ```
 
@@ -119,51 +119,51 @@ end
 
 1. 验证配置
 
-    ```bash
-    pod lib lint
-    ```
+   ```bash
+   pod lib lint
+   ```
 
 2. 提交代码
 
-    ```bash
-    git add .
-    git commit -m "初始化 Pod 库"
-    git push
-    ```
+   ```bash
+   git add .
+   git commit -m "初始化 Pod 库"
+   git push
+   ```
 
 3. 创建发布版本
 
-    ```bash
-    git tag -a 0.1.0 -m '第一个版本'
-    git push origin --tags
-    ```
+   ```bash
+   git tag -a 0.1.0 -m '第一个版本'
+   git push origin --tags
+   ```
 
 4. 发布到 `CocoaPods`
 
-    ```bash
-    $ pod trunk push
+   ```bash
+   $ pod trunk push
 
-    [!] Found podspec `YOURPODNAME.podspec`
-    Updating spec repo `master`
-    Validating podspec
-    -> YOURPODNAME (0.1.0)
-        - NOTE  | xcodebuild:  note: Using new build system
-        - NOTE  | [iOS] xcodebuild:  note: Planning build
-        - NOTE  | [iOS] xcodebuild:  note: Constructing build description
-        - NOTE  | xcodebuild:  note: Execution policy exception registration failed and was skipped: Error Domain=NSPOSIXErrorDomain Code=1 "Operation not permitted"
-        - NOTE  | [iOS] xcodebuild:  warning: Skipping code signing because the target does not have an Info.plist file and one is not being generated automatically.
+   [!] Found podspec `YOURPODNAME.podspec`
+   Updating spec repo `master`
+   Validating podspec
+   -> YOURPODNAME (0.1.0)
+       - NOTE  | xcodebuild:  note: Using new build system
+       - NOTE  | [iOS] xcodebuild:  note: Planning build
+       - NOTE  | [iOS] xcodebuild:  note: Constructing build description
+       - NOTE  | xcodebuild:  note: Execution policy exception registration failed and was skipped: Error Domain=NSPOSIXErrorDomain Code=1 "Operation not permitted"
+       - NOTE  | [iOS] xcodebuild:  warning: Skipping code signing because the target does not have an Info.plist file and one is not being generated automatically.
 
-    Updating spec repo `master`
+   Updating spec repo `master`
 
-    --------------------------------------------------------------------------------
-    🎉  Congrats
+   --------------------------------------------------------------------------------
+   🎉  Congrats
 
-    🚀  YOURPODNAME (0.1.0) successfully published
-    📅  June 18th, 10:30
-    🌎  https://cocoapods.org/pods/YOURPODNAME
-    👍  Tell your friends!
-    --------------------------------------------------------------------------------
-    ```
+   🚀  YOURPODNAME (0.1.0) successfully published
+   📅  June 18th, 10:30
+   🌎  https://cocoapods.org/pods/YOURPODNAME
+   👍  Tell your friends!
+   --------------------------------------------------------------------------------
+   ```
 
 ## 如何在项目中集成你的 Pod
 
@@ -171,29 +171,29 @@ end
 
 1. 在项目的 `Podfile` 中添加依赖
 
-    ```ruby
-    # 使用最新版本
-    pod '{你的Pod名称}'
+   ```ruby
+   # 使用最新版本
+   pod '{你的 Pod 名称}'
 
-    # 或指定版本
-    pod '{你的Pod名称}', '~> 0.1.0'
-    ```
+   # 或指定版本
+   pod '{你的 Pod 名称}', '~> 0.1.0'
+   ```
 
 2. 执行安装命令
 
-    ```bash
-    pod install
-    ```
+   ```bash
+   pod install
+   ```
 
 3. 在代码中导入并使用
 
-    ```objc
-    // Objective-C
-    #import <你的Pod名称/头文件名称.h>
+   ```objc
+   // Objective-C
+   #import <你的 Pod 名称/头文件名称.h>
 
-    // Swift
-    import 你的Pod名称
-    ```
+   // Swift
+   import 你的 Pod 名称
+   ```
 
 ## 最后
 
@@ -204,4 +204,4 @@ end
 - 及时处理用户反馈和 `issue`
 - 定期发布新版本修复问题和增加功能
 
-希望你能在开源社区收获成长，让更多开发者受益于你的代码！
+希望你能在开源社区收获成长，让更多开发者受益于你的代码！

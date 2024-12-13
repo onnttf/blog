@@ -30,4 +30,4 @@ To change your password, click on the Apple logo in the top left corner of the s
 
 You can find that there are no password requirements during this process.
 
-By following these steps, users can bypass the enforced password restrictions and use short passwords, such as `space`.
+By following these steps, users can bypass the enforced password restrictions and use short passwords, such as `space`.

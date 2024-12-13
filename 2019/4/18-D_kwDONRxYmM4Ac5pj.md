@@ -90,23 +90,23 @@ collation-server=utf8mb4_unicode_ci
 
 1. 编辑配置文件
 
-    ```bash
-    sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
-    # 注释掉 bind-address = 127.0.0.1
-    ```
+   ```bash
+   sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+   # 注释掉 bind-address = 127.0.0.1
+   ```
 
 2. 授权远程访问
 
-    ```bash
-    mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '密码' WITH GRANT OPTION;
-    mysql> FLUSH PRIVILEGES;
-    ```
+   ```bash
+   mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '密码' WITH GRANT OPTION;
+   mysql> FLUSH PRIVILEGES;
+   ```
 
 3. 重启 `MySQL`：
 
-    ```bash
-    sudo systemctl restart mysql
-    ```
+   ```bash
+   sudo systemctl restart mysql
+   ```
 
 ## 常见问题排查
 
@@ -124,4 +124,4 @@ collation-server=utf8mb4_unicode_ci
 ## 参考资料
 
 1. [MySQL 官方文档](https://dev.mysql.com/doc/)
-2. [Ubuntu MySQL 安装指南](https://ubuntu.com/server/docs/databases-mysql)
+2. [Ubuntu MySQL 安装指南](https://ubuntu.com/server/docs/databases-mysql)

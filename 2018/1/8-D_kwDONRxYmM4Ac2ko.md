@@ -29,7 +29,7 @@
 
 ## UIScrollView 停止滚动事件的场景分析
 
-基于大量用户交互数据分析，停止滚动事件主要可以归纳为以下三种情况:
+基于大量用户交互数据分析，停止滚动事件主要可以归纳为以下三种情况：
 
 1. 快速滑动后的惯性停止
 
@@ -83,7 +83,7 @@
 
 ### 监听停止滚动事件的核心逻辑
 
-通过组合 `tracking`、`dragging` 和 `decelerating` 这三个状态，我们可以准确识别 `UIScrollView` 停止滚动事件的时机。具体判断逻辑如下:
+通过组合 `tracking`、`dragging` 和 `decelerating` 这三个状态，我们可以准确识别 `UIScrollView` 停止滚动事件的时机。具体判断逻辑如下：
 
 ```objc
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -113,169 +113,169 @@
 
 1. 封装健壮的 `Hook` 工具方法
 
-    ```objc
-    static void Hook_Method(Class originalClass, SEL originalSel,
-                          Class replacedClass, SEL replacedSel, SEL noneSel) {
-        // 获取原始方法
-        Method originalMethod = class_getInstanceMethod(originalClass, originalSel);
-        Method replacedMethod = class_getInstanceMethod(replacedClass, replacedSel);
+   ```objc
+   static void Hook_Method(Class originalClass, SEL originalSel,
+                         Class replacedClass, SEL replacedSel, SEL noneSel) {
+       // 获取原始方法
+       Method originalMethod = class_getInstanceMethod(originalClass, originalSel);
+       Method replacedMethod = class_getInstanceMethod(replacedClass, replacedSel);
 
-        // 处理原始方法不存在的情况
-        if (!originalMethod) {
-            Method noneMethod = class_getInstanceMethod(replacedClass, noneSel);
-            class_addMethod(originalClass, originalSel,
-                          method_getImplementation(noneMethod),
-                          method_getTypeEncoding(noneMethod));
-            return;
-        }
+       // 处理原始方法不存在的情况
+       if (!originalMethod) {
+           Method noneMethod = class_getInstanceMethod(replacedClass, noneSel);
+           class_addMethod(originalClass, originalSel,
+                         method_getImplementation(noneMethod),
+                         method_getTypeEncoding(noneMethod));
+           return;
+       }
 
-        // 添加替换方法
-        BOOL addMethod = class_addMethod(originalClass, replacedSel,
-                                       method_getImplementation(replacedMethod),
-                                       method_getTypeEncoding(replacedMethod));
+       // 添加替换方法
+       BOOL addMethod = class_addMethod(originalClass, replacedSel,
+                                      method_getImplementation(replacedMethod),
+                                      method_getTypeEncoding(replacedMethod));
 
-        // 交换方法实现
-        if (addMethod) {
-            Method newMethod = class_getInstanceMethod(originalClass, replacedSel);
-            method_exchangeImplementations(originalMethod, newMethod);
-        }
-    }
-    ```
+       // 交换方法实现
+       if (addMethod) {
+           Method newMethod = class_getInstanceMethod(originalClass, replacedSel);
+           method_exchangeImplementations(originalMethod, newMethod);
+       }
+   }
+   ```
 
 2. 对 `UIScrollView` 的代理方法进行替换
 
-    ```objc
-    + (void)load {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            // 确保方法替换只执行一次
-            Method originalMethod = class_getInstanceMethod([UIScrollView class], @selector(setDelegate:));
-            Method replaceMethod = class_getInstanceMethod([UIScrollView class], @selector(hook_setDelegate:));
-            method_exchangeImplementations(originalMethod, replaceMethod);
-        });
-    }
+   ```objc
+   + (void)load {
+       static dispatch_once_t onceToken;
+       dispatch_once(&onceToken, ^{
+           // 确保方法替换只执行一次
+           Method originalMethod = class_getInstanceMethod([UIScrollView class], @selector(setDelegate:));
+           Method replaceMethod = class_getInstanceMethod([UIScrollView class], @selector(hook_setDelegate:));
+           method_exchangeImplementations(originalMethod, replaceMethod);
+       });
+   }
 
-    // 替换 setDelegate 方法，注入自定义逻辑
-    - (void)hook_setDelegate:(id<UIScrollViewDelegate>)delegate {
-        // 调用原始 setDelegate 方法（通过方法交换实现）
-        [self hook_setDelegate:delegate];
+   // 替换 setDelegate 方法，注入自定义逻辑
+   - (void)hook_setDelegate:(id<UIScrollViewDelegate>)delegate {
+       // 调用原始 setDelegate 方法（通过方法交换实现）
+       [self hook_setDelegate:delegate];
 
-        // 仅对 UIScrollView 实例进行方法注入
-        if ([self isMemberOfClass:[UIScrollView class]]) {
-            NSLog(@"是 UIScrollView，注入自定义逻辑");
+       // 仅对 UIScrollView 实例进行方法注入
+       if ([self isMemberOfClass:[UIScrollView class]]) {
+           NSLog(@"是 UIScrollView，注入自定义逻辑");
 
-            // Hook scrollViewDidEndDecelerating: 方法
-            Hook_Method(
-                [delegate class],
-                @selector(scrollViewDidEndDecelerating:),
-                [self class],
-                @selector(p_scrollViewDidEndDecelerating:),
-                @selector(add_scrollViewDidEndDecelerating:)
-            );
+           // Hook scrollViewDidEndDecelerating: 方法
+           Hook_Method(
+               [delegate class],
+               @selector(scrollViewDidEndDecelerating:),
+               [self class],
+               @selector(p_scrollViewDidEndDecelerating:),
+               @selector(add_scrollViewDidEndDecelerating:)
+           );
 
-            // Hook scrollViewDidEndDragging:willDecelerate: 方法
-            Hook_Method(
-                [delegate class],
-                @selector(scrollViewDidEndDragging:willDecelerate:),
-                [self class],
-                @selector(p_scrollViewDidEndDragging:willDecelerate:),
-                @selector(add_scrollViewDidEndDragging:willDecelerate:)
-            );
-        } else {
-            NSLog(@"不是 UIScrollView，跳过注入逻辑");
-        }
-    }
+           // Hook scrollViewDidEndDragging:willDecelerate: 方法
+           Hook_Method(
+               [delegate class],
+               @selector(scrollViewDidEndDragging:willDecelerate:),
+               [self class],
+               @selector(p_scrollViewDidEndDragging:willDecelerate:),
+               @selector(add_scrollViewDidEndDragging:willDecelerate:)
+           );
+       } else {
+           NSLog(@"不是 UIScrollView，跳过注入逻辑");
+       }
+   }
 
-    #pragma mark - Replace Method
+   #pragma mark - Replace Method
 
-    // 替换 scrollViewDidEndDecelerating: 方法
-    - (void)p_scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-        NSLog(@"%s", __func__);
+   // 替换 scrollViewDidEndDecelerating: 方法
+   - (void)p_scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+       NSLog(@"%s", __func__);
 
-        // 调用原始方法
-        [self p_scrollViewDidEndDecelerating:scrollView];
+       // 调用原始方法
+       [self p_scrollViewDidEndDecelerating:scrollView];
 
-        // 判断减速停止：手指未触摸 + 未拖拽 + 未减速
-        BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
-        if (scrollToScrollStop) {
-            [self stopScroll:scrollView];
-        }
-    }
+       // 判断减速停止：手指未触摸 + 未拖拽 + 未减速
+       BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
+       if (scrollToScrollStop) {
+           [self stopScroll:scrollView];
+       }
+   }
 
-    // 替换 scrollViewDidEndDragging:willDecelerate: 方法
-    - (void)p_scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-        NSLog(@"%s", __func__);
+   // 替换 scrollViewDidEndDragging:willDecelerate: 方法
+   - (void)p_scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+       NSLog(@"%s", __func__);
 
-        // 调用原始方法
-        [self p_scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+       // 调用原始方法
+       [self p_scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
 
-        if (!decelerate) {
-            // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速
-            BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
-            if (dragToDragStop) {
-                [self stopScroll:scrollView];
-            }
-        }
-    }
+       if (!decelerate) {
+           // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速
+           BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
+           if (dragToDragStop) {
+               [self stopScroll:scrollView];
+           }
+       }
+   }
 
-    #pragma mark - Add Method
+   #pragma mark - Add Method
 
-    // 实现 scrollViewDidEndDecelerating: 方法
-    - (void)add_scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-        NSLog(@"%s", __func__);
+   // 实现 scrollViewDidEndDecelerating: 方法
+   - (void)add_scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+       NSLog(@"%s", __func__);
 
-        // 判断减速停止：手指未触摸 + 未拖拽 + 未减速
-        BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
-        if (scrollToScrollStop) {
-            [self stopScroll:scrollView];
-        }
-    }
+       // 判断减速停止：手指未触摸 + 未拖拽 + 未减速
+       BOOL scrollToScrollStop = !scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
+       if (scrollToScrollStop) {
+           [self stopScroll:scrollView];
+       }
+   }
 
-    // 实现 scrollViewDidEndDragging:willDecelerate: 方法
-    - (void)add_scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-        NSLog(@"%s", __func__);
+   // 实现 scrollViewDidEndDragging:willDecelerate: 方法
+   - (void)add_scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+       NSLog(@"%s", __func__);
 
-        if (!decelerate) {
-            // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速
-            BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
-            if (dragToDragStop) {
-                [self stopScroll:scrollView];
-            }
-        }
-    }
+       if (!decelerate) {
+           // 判断拖拽停止：手指触摸 + 未拖拽 + 未减速
+           BOOL dragToDragStop = scrollView.tracking && !scrollView.dragging && !scrollView.decelerating;
+           if (dragToDragStop) {
+               [self stopScroll:scrollView];
+           }
+       }
+   }
 
-    #pragma mark - 停止滚动事件的处理逻辑
+   #pragma mark - 停止滚动事件的处理逻辑
 
-    // 停止滚动时执行的统一处理逻辑
-    - (void)stopScroll:(UIScrollView *)scrollView {
-        NSLog(@"滚动停止事件触发，执行自定义逻辑");
-        // 在此添加停止滚动时的处理代码，例如通知或回调
-    }
-    ```
+   // 停止滚动时执行的统一处理逻辑
+   - (void)stopScroll:(UIScrollView *)scrollView {
+       NSLog(@"滚动停止事件触发，执行自定义逻辑");
+       // 在此添加停止滚动时的处理代码，例如通知或回调
+   }
+   ```
 
 3. 添加停止滚动事件的回调
 
-    ```objc
-    // 定义回调 block 类型
-    typedef void(^ScrollStopBlock)(UIScrollView *scrollView);
+   ```objc
+   // 定义回调 block 类型
+   typedef void(^ScrollStopBlock)(UIScrollView *scrollView);
 
-    // 定义回调属性
-    @property (nonatomic, copy, nullable) ScrollStopBlock stopScrollBlock;
+   // 定义回调属性
+   @property (nonatomic, copy, nullable) ScrollStopBlock stopScrollBlock;
 
-    // 统一的停止回调方法
-    - (void)stopScroll:(UIScrollView *)scrollView {
-        if (self.stopScrollBlock) {
-            // 确保回调在主线程执行
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.stopScrollBlock(scrollView);
-            });
-        }
-    }
-    ```
+   // 统一的停止回调方法
+   - (void)stopScroll:(UIScrollView *)scrollView {
+       if (self.stopScrollBlock) {
+           // 确保回调在主线程执行
+           dispatch_async(dispatch_get_main_queue(), ^{
+               self.stopScrollBlock(scrollView);
+           });
+       }
+   }
+   ```
 
 ### 使用方式
 
-经过上述封装，我们现在可以通过一种简洁的方式来监听滚动停止事件。下面通过一个完整而实用的示例来展示具体用法:
+经过上述封装，我们现在可以通过一种简洁的方式来监听滚动停止事件。下面通过一个完整而实用的示例来展示具体用法：
 
 ```objc
 // 1. 创建并配置 ScrollView
@@ -298,7 +298,7 @@ scrollView.stopScrollBlock = ^(UIScrollView *scrollView) {
 };
 ```
 
-通过以上简洁的配置，我们就实现了一个功能完备的滚动停止事件监听方案。这种实现方式具有以下显著优势:
+通过以上简洁的配置，我们就实现了一个功能完备的滚动停止事件监听方案。这种实现方式具有以下显著优势：
 
 1. **使用便捷**: 仅需设置一个 block 回调即可完成所有功能
 2. **功能全面**: 自动处理拖拽停止、减速停止等多种滚动场景
@@ -317,4 +317,4 @@ scrollView.stopScrollBlock = ^(UIScrollView *scrollView) {
 - 性能影响小，运行时开销可控
 - 扩展性强，易于添加新功能
 
-你在实际开发中是否遇到过类似的需求？欢迎在评论区分享你的经验和解决方案？
+你在实际开发中是否遇到过类似的需求？欢迎在评论区分享你的经验和解决方案？

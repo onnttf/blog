@@ -48,38 +48,38 @@ Go Modules 的核心优势：
 
 1. 创建并初始化模块
 
-    ```bash
-    # 创建并进入项目目录
-    $ mkdir greetings && cd greetings
+   ```bash
+   # 创建并进入项目目录
+   $ mkdir greetings && cd greetings
 
-    # 初始化 Go 模块
-    $ go mod init github.com/onnttf/greetings
-    go: creating new go.mod: module github.com/onnttf/greetings
+   # 初始化 Go 模块
+   $ go mod init github.com/onnttf/greetings
+   go: creating new go.mod: module github.com/onnttf/greetings
 
-    # 查看生成的 go.mod 文件
-    $ cat go.mod
-    module github.com/onnttf/greetings
+   # 查看生成的 go.mod 文件
+   $ cat go.mod
+   module github.com/onnttf/greetings
 
-    go 1.22.6
-    ```
+   go 1.22.6
+   ```
 
-    **说明**: `go mod init` 命令会生成 `go.mod` 文件，其中包含模块名称和 Go 版本信息，用于管理依赖关系。
+   **说明**: `go mod init` 命令会生成 `go.mod` 文件，其中包含模块名称和 Go 版本信息，用于管理依赖关系。
 
 2. 编写功能代码
 
-    创建 `greetings.go` 文件并添加以下代码：
+   创建 `greetings.go` 文件并添加以下代码：
 
-    ```go
-    package greetings
+   ```go
+   package greetings
 
-    import "fmt"
+   import "fmt"
 
-    // Hello returns a greeting for the named person.
-    func Hello(name string) string {
-        message := fmt.Sprintf("Hi, %v. Welcome!", name)
-        return message
-    }
-    ```
+   // Hello returns a greeting for the named person.
+   func Hello(name string) string {
+       message := fmt.Sprintf("Hi, %v. Welcome!", name)
+       return message
+   }
+   ```
 
 ### 创建主项目
 
@@ -87,62 +87,62 @@ Go Modules 的核心优势：
 
 1. 初始化项目结构
 
-    ```bash
-    $ cd ..
-    # 创建并进入项目目录
-    $ mkdir hello && cd hello
-    # 初始化新模块
-    $ go mod init github.com/onnttf/hello
-    go: creating new go.mod: module github.com/onnttf/hello
-    ```
+   ```bash
+   $ cd ..
+   # 创建并进入项目目录
+   $ mkdir hello && cd hello
+   # 初始化新模块
+   $ go mod init github.com/onnttf/hello
+   go: creating new go.mod: module github.com/onnttf/hello
+   ```
 
 2. 创建主程序
 
-    编写 `hello.go` 文件：
+   编写 `hello.go` 文件：
 
-    ```go
-    package main
+   ```go
+   package main
 
-    import (
-        "fmt"
-        "github.com/onnttf/greetings"  // 导入我们的 greetings 模块
-    )
+   import (
+       "fmt"
+       "github.com/onnttf/greetings"  // 导入我们的 greetings 模块
+   )
 
-    func main() {
-        message := greetings.Hello("Mike")
-        fmt.Println(message)
-    }
-    ```
+   func main() {
+       message := greetings.Hello("Mike")
+       fmt.Println(message)
+   }
+   ```
 
 3. 配置本地依赖
 
-    由于 greetings 模块还未发布，我们需要先配置本地依赖：
+   由于 greetings 模块还未发布，我们需要先配置本地依赖：
 
-    ```bash
-    # 将模块指向本地路径
-    $ go mod edit -replace github.com/onnttf/greetings=../greetings
+   ```bash
+   # 将模块指向本地路径
+   $ go mod edit -replace github.com/onnttf/greetings=../greetings
 
-    # 更新依赖关系
-    $ go mod tidy
-    ```
+   # 更新依赖关系
+   $ go mod tidy
+   ```
 
-    此时 `go.mod` 文件应该包含：
+   此时 `go.mod` 文件应该包含：
 
-    ```go
-    module github.com/onnttf/hello
+   ```go
+   module github.com/onnttf/hello
 
-    go 1.22.6
+   go 1.22.6
 
-    replace github.com/onnttf/greetings => ../greetings
-    require github.com/onnttf/greetings v0.0.0-00010101000000-000000000000
-    ```
+   replace github.com/onnttf/greetings => ../greetings
+   require github.com/onnttf/greetings v0.0.0-00010101000000-000000000000
+   ```
 
 4. 运行程序
 
-    ```bash
-    $ go run hello.go
-    Hi, Mike. Welcome!
-    ```
+   ```bash
+   $ go run hello.go
+   Hi, Mike. Welcome!
+   ```
 
 ### 发布模块
 
@@ -150,31 +150,31 @@ Go Modules 的核心优势：
 
 1. 初始化 Git 仓库
 
-    ```bash
-    cd ../greetings/
-    git init
-    git add .
-    git commit -m "feat: 初始化 greetings 模块"
-    ```
+   ```bash
+   cd ../greetings/
+   git init
+   git add .
+   git commit -m "feat: 初始化 greetings 模块"
+   ```
 
 2. 推送到远程仓库
 
-    ```bash
-    git branch -M main
-    git remote add origin git@github.com:onnttf/greetings.git
-    git push -u origin main
-    ```
+   ```bash
+   git branch -M main
+   git remote add origin git@github.com:onnttf/greetings.git
+   git push -u origin main
+   ```
 
 3. 创建发布版本
 
-    ```bash
-    # 创建并推送标签
-    git tag v0.1.0
-    git push origin v0.1.0
+   ```bash
+   # 创建并推送标签
+   git tag v0.1.0
+   git push origin v0.1.0
 
-    # 更新模块索引
-    $ GOPROXY=proxy.golang.org go list -m github.com/onnttf/greetings@v0.1.0
-    ```
+   # 更新模块索引
+   $ GOPROXY=proxy.golang.org go list -m github.com/onnttf/greetings@v0.1.0
+   ```
 
 完成发布！现在其他开发者可以通过 `go get github.com/onnttf/greetings` 来使用这个模块了，模块信息也可以在 [pkg.go.dev](https://pkg.go.dev/) 上查看。
 
@@ -258,19 +258,19 @@ go env -w GOPROXY=https://mirrors.aliyun.com/goproxy/,direct
 
 1. 配置 GOPRIVATE 环境变量跳过公共代理
 
-```bash
-# 单个域名
-go env -w GOPRIVATE=git.company.com
+   ```bash
+   # 单个域名
+   go env -w GOPRIVATE=git.company.com
 
-# 多个域名
-go env -w GOPRIVATE=*.company.com,*.corp.example.com
-```
+   # 多个域名
+   go env -w GOPRIVATE=*.company.com,*.corp.example.com
+   ```
 
 2. 配置 git 认证（如果需要）
 
-```bash
-git config --global url."git@git.company.com:".insteadOf "https://git.company.com/"
-```
+   ```bash
+   git config --global url."git@git.company.com:".insteadOf "https://git.company.com/"
+   ```
 
 这样设置后：
 
@@ -280,4 +280,4 @@ git config --global url."git@git.company.com:".insteadOf "https://git.company.co
 
 ## 最后
 
-Go Modules 作为 Go 语言官方推出的依赖管理方案。它通过智能化的版本管理、清晰的依赖追踪以及灵活的项目结构，让依赖管理变得轻松自如。
+Go Modules 作为 Go 语言官方推出的依赖管理方案。它通过智能化的版本管理、清晰的依赖追踪以及灵活的项目结构，让依赖管理变得轻松自如。
