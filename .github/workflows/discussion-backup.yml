@@ -8,7 +8,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backup:
+  backup_discussions_job:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -22,8 +22,8 @@ jobs:
       # Set repository owner and name as environment variables
       - name: Set Repository Info
         run: |
-          OWNER=$(echo "${{ github.repository }}" | cut -d'/' -f1)
-          REPO=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          OWNER=${{ github.repository_owner }}
+          REPO=${{ github.event.repository.name }}
           echo "OWNER=$OWNER" >> $GITHUB_ENV
           echo "REPO=$REPO" >> $GITHUB_ENV
 
@@ -76,14 +76,7 @@ jobs:
       - name: Merge discussions with local data
         run: |
           if [ -f "$DISCUSSION_FILE" ]; then
-            local_discussions=$(jq '.' "$DISCUSSION_FILE")
-            createdAtMap=$(jq 'reduce .[] as $item ({};
-              if $item.id and $item.createdAt then
-                .[$item.id] = $item.createdAt
-              else
-                .
-              end
-            )' <<< "$local_discussions")
+            createdAtMap=$(jq 'reduce .[] as $item ({}; .[$item.id] = $item.createdAt)' "$DISCUSSION_FILE")
 
             discussions=$(jq --argjson createdAtMap "$createdAtMap" '
               map(if $createdAtMap[.id] then .createdAt = $createdAtMap[.id] end)

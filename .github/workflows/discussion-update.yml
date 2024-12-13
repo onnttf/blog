@@ -1,0 +1,101 @@
+name: Update Discussions
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update_discussions_job:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DISCUSSION_FILE: discussion.json
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set Repository Info
+        run: |
+          OWNER=${{ github.repository_owner }}
+          REPO=${{ github.event.repository.name }}
+          echo "OWNER=$OWNER" >> $GITHUB_ENV
+          echo "REPO=$REPO" >> $GITHUB_ENV
+
+      - name: Verify Discussion File
+        run: |
+          if [ ! -f "$DISCUSSION_FILE" ]; then
+            echo "Error: Discussion file $DISCUSSION_FILE not found"
+            exit 1
+          fi
+
+      - name: Process Discussions from File
+        run: |
+          echo "Processing discussions from $DISCUSSION_FILE"
+          jq -c '.[] | .id, .markdownFilePath' < "$DISCUSSION_FILE" | paste - - | while read -r id markdownFilePath; do
+            if [ ! -f "$markdownFilePath" ]; then
+              echo "Warning: Markdown file not found: $markdownFilePath"
+              continue
+            fi
+
+            echo "Processing discussion ID: $id from $markdownFilePath"
+
+            output=$(awk '
+              BEGIN {
+                inside_body = 0
+                title = ""
+                body = ""
+              }
+
+              /^# / {
+                if (!title) {
+                  title = substr($0, 3)
+                  inside_body = 1
+                  next
+                }
+              }
+
+              inside_body == 1 {
+                body = body $0 "\n"
+              }
+
+              END {
+                if (!title) {
+                  print "Error: No title found"
+                  exit 1
+                }
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", title)
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", body)
+                body = body "\r\n"
+
+                print title
+                print body
+              }
+            ' "$markdownFilePath")
+
+            if [ $? -ne 0 ]; then
+              echo "Error processing markdown file: $markdownFilePath"
+              continue
+            fi
+
+            title=$(echo "$output" | head -n 1)
+            body=$(echo "$output" | tail -n +2)
+
+            echo "Updating discussion - ID: $id"
+
+            if ! gh api graphql -f query='mutation UpdateDiscussion($discussionId: ID!, $body: String!, $title: String!) {
+                updateDiscussion(input: { discussionId: $discussionId, body: $body, title: $title }) {
+                    discussion {
+                        id
+                    }
+                }
+            }' -F discussionId="$id" -F body="$body" -F title="$title"; then
+              echo "Error updating discussion ID: $id"
+              exit 1
+            fi
+
+            echo "Successfully updated discussion ID: $id"
+          done
