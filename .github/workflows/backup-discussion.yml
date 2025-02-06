@@ -1,0 +1,16 @@
+name: Backup Discussion
+
+on:
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            discussion.json
+          sparse-checkout-cone-mode: false
+
+      - run: ls
