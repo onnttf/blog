@@ -151,9 +151,9 @@ jobs:
             markdown_file_paths+=("$markdownFilePath")
           done
 
-          # Randomly output one of the written markdown files for verification
-          echo "Randomly selecting a markdown file for verification..."
-          random_markdown_file="${markdown_file_paths[$RANDOM % ${#markdown_file_paths[@]}]}"
+          # Randomly select one of the markdown file paths using shuf
+          random_markdown_file=$(echo "${markdown_file_paths[@]}" | tr ' ' '\n' | shuf -n 1)
+
           echo "Displaying content of: $random_markdown_file"
           cat "$random_markdown_file"
 
