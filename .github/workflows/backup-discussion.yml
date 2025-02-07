@@ -15,7 +15,7 @@ jobs:
       REPO: ${{ github.event.repository.name }}
 
     steps:
-      # Step 1: Checkout repository with discussion.json
+      # Step 1: Checkout discussion.json
       - name: Checkout discussion.json
         uses: actions/checkout@v4
         with:
@@ -23,11 +23,12 @@ jobs:
             discussion.json
           sparse-checkout-cone-mode: false
 
-      # Step 2: Fetch discussions from GitHub API
-      - name: Fetch discussions
+      # Step 2: Fetch, process and save discussions
+      - name: Fetch, process, and save discussions
         run: |
           echo "Fetching discussions from GitHub API..."
 
+          # Fetch discussions from GitHub API
           discussions=$(gh api graphql --paginate --slurp -f query='
             query($owner: String!, $repo: String!, $endCursor: String) {
               repository(owner: $owner, name: $repo) {
@@ -66,9 +67,7 @@ jobs:
             exit 1
           fi
 
-      # Step 3: Merge with existing data
-      - name: Merge with existing data
-        run: |
+          # Merge with existing data if discussion.json exists
           if [ -f "discussion.json" ]; then
             echo "Merging fetched discussions with existing data..."
 
@@ -87,9 +86,7 @@ jobs:
             echo "Updated discussions with existing data"
           fi
 
-      # Step 4: Add file paths to discussions
-      - name: Add file paths
-        run: |
+          # Add file paths to the discussions
           discussions=$(echo "$discussions" | jq '
             map(
               . + {
@@ -107,13 +104,11 @@ jobs:
             )
           ')
 
-      # Step 5: Save the merged discussions
-      - name: Save discussions
-        run: |
+          # Save the processed discussions to the file
           echo "$discussions" > discussion.json
           echo "Backup completed, saved discussions to discussion.json"
 
-      # Step 6: Verify the saved discussions
+      # Step 3: Verify saved discussions
       - name: Verify saved discussions
         run: |
           echo "Listing files and displaying content of discussion.json"
