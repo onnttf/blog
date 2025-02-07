@@ -133,6 +133,14 @@ jobs:
           find . -type d ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -rf
           echo "Cleanup completed."
 
+          # Write the README.md file first
+          echo "# blog" > README.md
+          echo "" >> README.md
+          echo "## Table of Contents" >> README.md
+          echo "" >> README.md
+          echo "| Title | Labels | Last Updated |" >> README.md
+          echo "| ----- | ------ | ------------ |" >> README.md
+
           # Traverse discussions and write to JSON and Markdown files
           echo "Writing discussions to individual files..."
           jq -c '.[]' <<< "$discussions" | while read -r discussion; do
@@ -153,17 +161,15 @@ jobs:
             printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
             echo "Written markdown to $markdownFilePath"
             
-            # 4. Collect TOC data and append to TOC rows
+            # 4. Collect TOC data and write each entry
             url=$(echo "$discussion" | jq -r '.url')
             labels=$(echo "$discussion" | jq -r '.labels.nodes | map(.name + " (" + .url + ")") | join(", ") // ""')
             updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
-            toc_row="| [$title]($url) | $labels | $updatedAt |\n"
-            toc_rows="$toc_rows$toc_row"
+            # Write TOC row directly into README.md
+            echo "| [$title]($url) | $labels | $updatedAt |" >> README.md
           done
-
-          # Write TOC to README.md
-          toc_content="$toc_title$toc_header$toc_rows"
-          echo "$toc_content" > README.md
+          
+          echo "" >> README.md
 
       - name: Commit and Push Changes
         run: |
