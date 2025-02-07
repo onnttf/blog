@@ -122,17 +122,22 @@ jobs:
 
           echo "discussion.json has changed"
 
+          # Initialize TOC content as a table
+          toc_title="# Table of Contents\n\n"
+          toc_header="| Title | Labels | Last Updated |\n| ----- | ------ | --------- |\n"
+          toc_rows=""
+
+
           # Clean up all files except discussion.json
           echo "Cleaning up all files except discussion.json..."
-          find . -type f ! -name "README.md" ! -name "discussion.json" ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -f
+          find . -type f ! -name "discussion.json" ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -f
           find . -type d ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -rf
           echo "Cleanup completed."
 
-          # 1. Traverse discussions and write to JSON and Markdown files
+          # Traverse discussions and write to JSON and Markdown files
           echo "Writing discussions to individual files..."
           jq -c '.[]' <<< "$discussions" | while read -r discussion; do
-            # Extract variables
-            # number=$(echo "$discussion" | jq -r '.number')
+            # 1. Extract variables
             jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
             markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
             title=$(echo "$discussion" | jq -r '.title')
@@ -146,15 +151,17 @@ jobs:
             # 3. Write Markdown content to the respective Markdown file
             mkdir -p $(dirname "$markdownFilePath")
 
-            # Use printf to write markdown content more reliably
-            printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
-            echo "Written markdown to $markdownFilePath"
-            # If .number is odd (i.e., number % 2 == 1), print the markdown file content
-            # if [ $((number % 2)) -eq 1 ]; then
-            #   echo "Displaying content of: $markdownFilePath"
-            #   cat "$markdownFilePath"  # Print the content of the markdown file
-            # fi
+            # 4. Collect TOC data and append to TOC rows
+            url=$(echo "$discussion" | jq -r '.url')
+            labels=$(echo "$discussion" | jq -r '.labels.nodes | map(.name + " (" + .url + ")") | join(", ") // "No labels"')
+            updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
+            toc_row="| [$title]($url) | $labels | $updatedAt |\n"
+            toc_rows="$toc_rows$toc_row"
           done
+
+          # Write TOC to README.md
+          toc_content="$toc_title$toc_header$toc_rows"
+          echo "$toc_content" > README.md
 
       - name: Commit and Push Changes
         run: |
