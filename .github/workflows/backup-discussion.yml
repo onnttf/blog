@@ -151,6 +151,10 @@ jobs:
             markdown_file_paths+=("$markdownFilePath")
           done
 
+          echo "Markdown file paths array: ${markdown_file_paths[@]}"
+          echo "Number of markdown files: ${#markdown_file_paths[@]}"
+
+
           # Randomly select one of the markdown file paths using shuf
           random_markdown_file=$(echo "${markdown_file_paths[@]}" | tr ' ' '\n' | shuf -n 1)
 
