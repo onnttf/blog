@@ -127,7 +127,6 @@ jobs:
           toc_header="| Title | Labels | Last Updated |\n| ----- | ------ | --------- |\n"
           toc_rows=""
 
-
           # Clean up all files except discussion.json
           echo "Cleaning up all files except discussion.json..."
           find . -type f ! -name "discussion.json" ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -f
@@ -150,10 +149,13 @@ jobs:
 
             # 3. Write Markdown content to the respective Markdown file
             mkdir -p $(dirname "$markdownFilePath")
-
+            # Use printf to write markdown content more reliably
+            printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
+            echo "Written markdown to $markdownFilePath"
+            
             # 4. Collect TOC data and append to TOC rows
             url=$(echo "$discussion" | jq -r '.url')
-            labels=$(echo "$discussion" | jq -r '.labels.nodes | map(.name + " (" + .url + ")") | join(", ") // "No labels"')
+            labels=$(echo "$discussion" | jq -r '.labels.nodes | map(.name + " (" + .url + ")") | join(", ") // ""')
             updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
             toc_row="| [$title]($url) | $labels | $updatedAt |\n"
             toc_rows="$toc_rows$toc_row"
