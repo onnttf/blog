@@ -3,14 +3,119 @@ name: Backup Discussion
 on:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   backup:
     runs-on: ubuntu-latest
+    env:
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+
     steps:
-      - uses: actions/checkout@v4
+      # Step 1: Checkout repository with discussion.json
+      - name: Checkout discussion.json
+        uses: actions/checkout@v4
         with:
           sparse-checkout: |
             discussion.json
           sparse-checkout-cone-mode: false
 
-      - run: ls
+      # Step 2: Fetch discussions from GitHub API
+      - name: Fetch discussions
+        run: |
+          echo "Fetching discussions from GitHub API..."
+
+          discussions=$(gh api graphql --paginate --slurp -f query='
+            query($owner: String!, $repo: String!, $endCursor: String) {
+              repository(owner: $owner, name: $repo) {
+                discussions(first: 100, after: $endCursor) {
+                  nodes {
+                    id
+                    title
+                    body
+                    number
+                    labels(first: 10) { nodes { id name url } }
+                    category { id name slug emoji emojiHTML }
+                    author { login }
+                    authorAssociation
+                    createdAt
+                    updatedAt
+                    repository { id url }
+                    url
+                  }
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }
+                }
+              }
+            }' -F owner=$OWNER -F repo=$REPO | jq '
+            .data.repository.discussions.nodes
+            | map(select(.authorAssociation == "OWNER"))
+            | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
+            | sort_by(.updatedAt) | reverse
+            | unique_by(.id)
+            // []'
+          )
+
+          if [ "$(echo "$discussions" | jq 'length')" -eq 0 ]; then
+            echo "No discussions found"
+            exit 1
+          fi
+
+      # Step 3: Merge with existing data
+      - name: Merge with existing data
+        run: |
+          if [ -f "discussion.json" ]; then
+            echo "Merging fetched discussions with existing data..."
+
+            createdAtMap=$(jq 'map({(.id): .createdAt}) | add' "discussion.json")
+
+            discussions=$(jq --argjson createdAtMap "$createdAtMap" '
+              map(
+                if $createdAtMap[.id] then
+                  .createdAt = $createdAtMap[.id]
+                else
+                  .
+                end
+              )
+            ' <<< "$discussions")
+
+            echo "Updated discussions with existing data"
+          fi
+
+      # Step 4: Add file paths to discussions
+      - name: Add file paths
+        run: |
+          discussions=$(echo "$discussions" | jq '
+            map(
+              . + {
+                jsonFilePath: ("discussions/" + (.number | tostring) + "-" + (.id | tostring) + ".json"),
+                markdownFilePath: (
+                  if .category.slug == "announcements" then
+                    "announcements/" + (.number | tostring) + "-" + (.id | tostring) + ".md"
+                  else
+                    (.createdAt | fromdate | strftime("%Y")) + "/" +
+                    ((.createdAt | fromdate | strftime("%m") | tonumber) | tostring) + "/" +
+                    (.number | tostring) + "-" + (.id | tostring) + ".md"
+                  end
+                )
+              }
+            )
+          ')
+
+      # Step 5: Save the merged discussions
+      - name: Save discussions
+        run: |
+          echo "$discussions" > discussion.json
+          echo "Backup completed, saved discussions to discussion.json"
+
+      # Step 6: Verify the saved discussions
+      - name: Verify saved discussions
+        run: |
+          echo "Listing files and displaying content of discussion.json"
+          ls
+          cat discussion.json
