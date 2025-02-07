@@ -128,9 +128,9 @@ jobs:
 
           # 1. Traverse discussions and write to JSON and Markdown files
           echo "Writing discussions to individual files..."
-          markdown_file_paths=() # Array to hold paths of markdown files for later use
           jq -c '.[]' <<< "$discussions" | while read -r discussion; do
             # Extract variables
+            number=$(echo "$discussion" | jq -r '.number')
             jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
             markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
             title=$(echo "$discussion" | jq -r '.title')
@@ -147,15 +147,12 @@ jobs:
             # Use printf to write markdown content more reliably
             printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
             echo "Written markdown to $markdownFilePath"
-            # Add markdown file path to array for later use
-            markdown_file_paths+=("$markdownFilePath")
+            # If .number is odd (i.e., number % 2 == 1), print the markdown file content
+            if [ $((number % 2)) -eq 1 ]; then
+              echo "Displaying content of: $markdownFilePath"
+              cat "$markdownFilePath"  # Print the content of the markdown file
+            fi
           done
-
-          # Randomly select one of the markdown file paths using shuf
-          random_markdown_file=$(printf "%s\n" "${markdown_file_paths[@]}" | shuf -n 1)
-
-          echo "Displaying content of: $random_markdown_file"
-          cat "$random_markdown_file"
 
       - name: Verify saved discussions
         run: |
