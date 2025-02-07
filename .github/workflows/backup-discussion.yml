@@ -16,7 +16,6 @@ jobs:
       REPO: ${{ github.event.repository.name }}
 
     steps:
-      # Step 1: Checkout discussion.json
       - name: Checkout discussion.json
         uses: actions/checkout@v4
         with:
@@ -24,12 +23,10 @@ jobs:
             discussion.json
           sparse-checkout-cone-mode: false
 
-      # Step 2: Fetch, process and save discussions
       - name: Fetch, process, and save discussions
         run: |
           echo "Fetching discussions from GitHub API..."
 
-          # Fetch discussions from GitHub API
           discussions=$(gh api graphql --paginate --slurp -f query='
             query($owner: String!, $repo: String!, $endCursor: String) {
               repository(owner: $owner, name: $repo) {
@@ -63,22 +60,19 @@ jobs:
             // []'
           )
 
-          echo "Discussions fetched: $(echo "$discussions" | jq length)"
-          
-          # Debug: Print the discussions to ensure it's populated correctly
-          echo "$discussions" | jq .
+          num_discussions=$(echo "$discussions" | jq length)
+          echo "Fetched $num_discussions discussions"
 
-          if [ "$(echo "$discussions" | jq 'length')" -eq 0 ]; then
-            echo "No discussions found"
+          if [ "$num_discussions" -eq 0 ]; then
+            echo "No discussions found, exiting..."
             exit 1
           fi
 
           # Merge with existing data if discussion.json exists
           if [ -f "discussion.json" ]; then
-            echo "Merging fetched discussions with existing data..."
+            echo "Merging with existing discussions..."
 
             createdAtMap=$(jq 'map({(.id): .createdAt}) | add' "discussion.json")
-
             discussions=$(jq --argjson createdAtMap "$createdAtMap" '
               map(
                 if $createdAtMap[.id] then
@@ -89,10 +83,10 @@ jobs:
               )
             ' <<< "$discussions")
 
-            echo "Updated discussions with existing data"
+            echo "Merged existing data"
           fi
 
-          # Add file paths to the discussions
+          # Add file paths to discussions
           discussions=$(echo "$discussions" | jq '
             map(
               . + {
@@ -110,16 +104,68 @@ jobs:
             )
           ')
 
-          # Debug: Print the processed discussions to check the final result
-          echo "Processed discussions: $(echo "$discussions" | jq length)"
-          
+          # Calculate the MD5 hash of the original discussion.json (before processing)
+          if [ -f "discussion.json" ]; then
+            original_md5=$(md5sum discussion.json | awk '{ print $1 }')
+          else
+            original_md5=""
+          fi
+
           # Save the processed discussions to the file
           echo "$discussions" > discussion.json
           echo "Backup completed, saved discussions to discussion.json"
 
-      # Step 3: Verify saved discussions
+          # Calculate the MD5 hash after processing and saving the new content
+          new_md5=$(md5sum discussion.json | awk '{ print $1 }')
+
+          # Compare the original and new MD5 hashes to check if the file changed
+          if [ "$original_md5" == "$new_md5" ]; then
+            echo "discussion.json has not changed. Exiting job."
+            exit 0
+          else
+            echo "discussion.json has changed"
+          fi
+
+          # 1. Traverse discussions and write to JSON and Markdown files
+          echo "Writing discussions to individual files..."
+          markdown_file_paths=() # Array to hold paths of markdown files for later use
+          echo "$discussions" | jq -c '.[]' | while read discussion; do
+            # Extract variables
+            jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
+            markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
+            title=$(echo "$discussion" | jq -r '.title')
+            body=$(echo "$discussion" | jq -r '.body')
+
+            # 2. Write discussion data to individual JSON file
+            mkdir -p $(dirname "$jsonFilePath")
+            echo "$discussion" > "$jsonFilePath"
+            echo "Written discussion to $jsonFilePath"
+
+            # 3. Write Markdown content to the respective Markdown file
+            mkdir -p $(dirname "$markdownFilePath")
+
+            # Write the title as a Markdown header, followed by the body content
+            {
+              # Write title as a Markdown header
+              echo "# $title"
+              
+              # Preserve body content as is, including newlines
+              echo ""
+              echo "$body"
+            } > "$markdownFilePath"
+
+            echo "Written markdown to $markdownFilePath"
+            # Add markdown file path to array for later use
+            markdown_file_paths+=("$markdownFilePath")
+          done
+
+          # Randomly output one of the written markdown files for verification
+          echo "Randomly selecting a markdown file for verification..."
+          random_markdown_file="${markdown_file_paths[$RANDOM % ${#markdown_file_paths[@]}]}"
+          echo "Displaying content of: $random_markdown_file"
+          cat "$random_markdown_file"
+
       - name: Verify saved discussions
         run: |
-          echo "Listing files and displaying content of discussion.json"
-          ls
-          cat discussion.json
+          echo "Displaying contents of discussion.json:"
+          # cat discussion.json
