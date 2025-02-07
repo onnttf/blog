@@ -176,7 +176,7 @@ jobs:
 
           # Add the necessary files to the staging area
           echo "Staging changes for commit..."
-          git add discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
+          git add README.md discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
 
           # Check if there are changes to commit
           if git diff --cached --quiet; then
