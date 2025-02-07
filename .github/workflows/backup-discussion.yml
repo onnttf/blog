@@ -124,6 +124,7 @@ jobs:
             exit 0
           fi
 
+          echo "$discussions" | jq .
           echo "discussion.json has changed"
 
           # Clean up all files except discussion.json
@@ -132,7 +133,6 @@ jobs:
           find . -type d ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -rf
           echo "Cleanup completed."
           
-
           # 1. Traverse discussions and write to JSON and Markdown files
           echo "Writing discussions to individual files..."
           jq -c '.[]' <<< "$discussions" | while read -r discussion; do
@@ -165,28 +165,28 @@ jobs:
         run: |
           echo "Starting the commit and push process..."
       
-          # Configure Git user for commit
-          echo "Configuring Git user for commit..."
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # # Configure Git user for commit
+          # echo "Configuring Git user for commit..."
+          # git config user.name "github-actions[bot]"
+          # git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       
-          # Add the necessary files to the staging area
-          echo "Staging changes for commit..."
-          git add discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
+          # # Add the necessary files to the staging area
+          # echo "Staging changes for commit..."
+          # git add discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
       
-          # Check if there are changes to commit
-          if git diff --cached --quiet; then
-            echo "No changes to commit. Skipping commit and push."
-            exit 0
-          fi
+          # # Check if there are changes to commit
+          # if git diff --cached --quiet; then
+          #   echo "No changes to commit. Skipping commit and push."
+          #   exit 0
+          # fi
       
-          # Commit the changes
-          echo "Committing changes to the repository..."
-          git commit -m "chore: back up discussions"
+          # # Commit the changes
+          # echo "Committing changes to the repository..."
+          # git commit -m "chore: back up discussions"
       
-          # Push the changes to the remote repository
-          echo "Pushing changes to the remote repository..."
-          git push
+          # # Push the changes to the remote repository
+          # echo "Pushing changes to the remote repository..."
+          # git push
       
-          echo "Changes committed and pushed successfully."
-        
+          # echo "Changes committed and pushed successfully."
+          
