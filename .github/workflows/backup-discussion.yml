@@ -51,8 +51,9 @@ jobs:
             [.[].data.repository.discussions.nodes[]]
             | map(select(.authorAssociation == "OWNER"))
             | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
+            | group_by(.id)
+            | map(max_by(.updatedAt))
             | sort_by(.updatedAt) | reverse
-            | unique_by(.id)
             // []'
           )
 
@@ -165,7 +166,6 @@ jobs:
             url=$(echo "$discussion" | jq -r '.url')
             labels=$(echo "$discussion" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
             updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
-            echo "$updatedAt"
             # Write TOC row directly into README.md
             echo "| [$title]($url) | $labels | $updatedAt |" >> README.md
           done
