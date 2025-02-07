@@ -144,16 +144,8 @@ jobs:
             # 3. Write Markdown content to the respective Markdown file
             mkdir -p $(dirname "$markdownFilePath")
 
-            # Write the title as a Markdown header, followed by the body content
-            {
-              # Write title as a Markdown header
-              echo "# $title"
-              
-              # Preserve body content as is, including newlines
-              echo ""
-              echo "$body"
-            } > "$markdownFilePath"
-
+            # Use printf to write markdown content more reliably
+            printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
             echo "Written markdown to $markdownFilePath"
             # Add markdown file path to array for later use
             markdown_file_paths+=("$markdownFilePath")
