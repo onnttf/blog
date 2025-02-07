@@ -6,8 +6,12 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
+  format:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,7 +27,7 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v19
         with:
           fix: true
-          globs: '**/*.md'
+          globs: "**/*.md"
         continue-on-error: true
 
       - name: Commit and Push Changes
@@ -37,7 +41,7 @@ jobs:
 
           # Add the necessary files to the staging area
           echo "Staging changes for commit..."
-          git add discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
+          git add $(find . -type f -name "*.md")
 
           # Check if there are changes to commit
           if git diff --cached --quiet; then
