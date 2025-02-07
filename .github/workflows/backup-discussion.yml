@@ -51,7 +51,12 @@ jobs:
             [.[].data.repository.discussions.nodes[]]
             | map(select(.authorAssociation == "OWNER"))
             | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
-            | sort_by(.updatedAt) | reverse
+            | map(
+                . + {
+                  updatedAtTimestamp: (.updatedAt | fromdate)
+                }
+              ) 
+            | sort_by(.updatedAtTimestamp) | reverse
             | unique_by(.id)
             // []'
           )
