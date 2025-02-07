@@ -122,15 +122,22 @@ jobs:
           if [ "$original_md5" == "$new_md5" ]; then
             echo "discussion.json has not changed. Exiting job."
             exit 0
-          else
-            echo "discussion.json has changed"
           fi
+
+          echo "discussion.json has changed"
+
+          # Clean up all files except discussion.json
+          echo "Cleaning up all files except discussion.json..."
+          find . -type f ! -name "discussion.json" ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -f
+          find . -type d ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -rf
+          echo "Cleanup completed."
+          
 
           # 1. Traverse discussions and write to JSON and Markdown files
           echo "Writing discussions to individual files..."
           jq -c '.[]' <<< "$discussions" | while read -r discussion; do
             # Extract variables
-            number=$(echo "$discussion" | jq -r '.number')
+            # number=$(echo "$discussion" | jq -r '.number')
             jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
             markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
             title=$(echo "$discussion" | jq -r '.title')
@@ -148,14 +155,38 @@ jobs:
             printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
             echo "Written markdown to $markdownFilePath"
             # If .number is odd (i.e., number % 2 == 1), print the markdown file content
-            if [ $((number % 2)) -eq 1 ]; then
-              echo "Displaying content of: $markdownFilePath"
-              cat "$markdownFilePath"  # Print the content of the markdown file
-            fi
+            # if [ $((number % 2)) -eq 1 ]; then
+            #   echo "Displaying content of: $markdownFilePath"
+            #   cat "$markdownFilePath"  # Print the content of the markdown file
+            # fi
           done
 
-      - name: Verify saved discussions
+      - name: Commit and Push Changes
         run: |
-          echo "Displaying contents of discussion.json:"
-          ls -R
-          # cat discussion.json
+          echo "Starting the commit and push process..."
+      
+          # Configure Git user for commit
+          echo "Configuring Git user for commit..."
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      
+          # Add the necessary files to the staging area
+          echo "Staging changes for commit..."
+          git add discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
+      
+          # Check if there are changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Skipping commit and push."
+            exit 0
+          fi
+      
+          # Commit the changes
+          echo "Committing changes to the repository..."
+          git commit -m "chore: back up discussions"
+      
+          # Push the changes to the remote repository
+          echo "Pushing changes to the remote repository..."
+          git push
+      
+          echo "Changes committed and pushed successfully."
+        
