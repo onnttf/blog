@@ -1,5 +1,7 @@
 # Welcome to blog Discussions
 
+# Welcome to blog Discussions
+
 <!--
     ✏️ Optional: Customize the content below to let your community know what you intend to use Discussions for.
 -->
