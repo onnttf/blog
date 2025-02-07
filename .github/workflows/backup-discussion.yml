@@ -55,7 +55,7 @@ jobs:
                 }
               }
             }' -F owner=$OWNER -F repo=$REPO | jq '
-            .data.repository.discussions.nodes
+            [.[].data.repository.discussions.nodes[]]
             | map(select(.authorAssociation == "OWNER"))
             | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
             | sort_by(.updatedAt) | reverse
