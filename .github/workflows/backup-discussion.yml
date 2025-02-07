@@ -129,7 +129,7 @@ jobs:
           # 1. Traverse discussions and write to JSON and Markdown files
           echo "Writing discussions to individual files..."
           markdown_file_paths=() # Array to hold paths of markdown files for later use
-          echo "$discussions" | jq -c '.[]' | while read discussion; do
+          jq -c '.[]' <<< "$discussions" | while read -r discussion; do
             # Extract variables
             jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
             markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
@@ -160,4 +160,5 @@ jobs:
       - name: Verify saved discussions
         run: |
           echo "Displaying contents of discussion.json:"
+          ls -R
           # cat discussion.json
