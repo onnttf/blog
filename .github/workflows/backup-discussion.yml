@@ -163,13 +163,11 @@ jobs:
             
             # 4. Collect TOC data and write each entry
             url=$(echo "$discussion" | jq -r '.url')
-            labels=$(echo "$discussion" | jq -r '.labels.nodes | map(.name + " (" + .url + ")") | join(", ") // ""')
+            labels=$(echo "$discussion" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
             updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
             # Write TOC row directly into README.md
             echo "| [$title]($url) | $labels | $updatedAt |" >> README.md
           done
-          
-          echo "" >> README.md
 
       - name: Commit and Push Changes
         run: |
