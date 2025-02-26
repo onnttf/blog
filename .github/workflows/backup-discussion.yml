@@ -173,7 +173,8 @@ jobs:
       - name: Commit and Push Changes
         run: |
           echo "Starting the commit and push process..."
-          ls -a
+          ls -R
+          
           # # Configure Git user for commit
           # echo "Configuring Git user for commit..."
           # git config user.name "github-actions[bot]"
