@@ -93,7 +93,7 @@ jobs:
                     "announcements/" + (.number | tostring) + "-" + (.id | tostring) + ".md"
                   else
                     (.createdAt | fromdate | strftime("%Y")) + "/" +
-                    ((.createdAt | fromdate | strftime("%m") | tonumber) | tostring) + "/" +
+                    (.createdAt | fromdate | strftime("%m")) + "/" +
                     (.number | tostring) + "-" + (.id | tostring) + ".md"
                   end
                 )
