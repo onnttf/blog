@@ -1,5 +1,34 @@
 [
   {
+    "id": "D_kwDONzrbkM4Aevrh",
+    "title": "高效的文件匹配工具：Glob 模式",
+    "body": "在日常工作中，文件匹配是一项常见的任务，例如：\r\n\r\n1. 在构建系统中筛选特定类型的源代码文件（如 `*.go` 或 `*.py`）\r\n2. 在日志管理中查找特定时间范围的日志文件（如 `access_log_2024-03-*.log`）\r\n\r\n虽然可以通过正则表达式或脚本来完成这些任务，但它们的语法较为复杂且维护成本较高。相比之下，Glob 模式以其简洁直观的语法，在文件筛选与查找中提供了一种更高效、易用的解决方案，广泛应用于各类场景中。\r\n\r\n## 什么是 Glob 模式\r\n\r\nGlob 模式是一种轻量级的文件路径匹配语法，常用于 `Unix-like` 系统以及多种编程语言中。它通过特定的通配符来匹配文件和目录路径，使用户能够快速查找符合条件的文件。\r\n\r\n### 常见的 Glob 语法规则\r\n\r\n| 通配符    | 功能描述                                       | 示例             | 匹配案例                              | 不匹配案例                                      |\r\n| --------- | ---------------------------------------------- | ---------------- | ------------------------------------- | ----------------------------------------------- |\r\n| `*`       | 匹配零个或多个任意字符（不跨越路径分隔符 `/`） | `src/*.js`       | `src/index.js`、`src/app.js`          | `src/utils/date.js`、`src/components/button.js` |\r\n| `?`       | 匹配单个任意字符                               | `image-??.png`   | `image-01.png`、`image-ab.png`        | `image-1.png`、`image-123.png`                  |\r\n| `[...]`   | 匹配括号内任一单个字符                         | `file[123].txt`  | `file1.txt`、`file2.txt`、`file3.txt` | `file4.txt`、`file12.txt`                       |\r\n| `[a-z]`   | 匹配指定字符范围内的任一字符                   | `log_[0-9].txt`  | `log_2.txt`、`log_7.txt`              | `log_a.txt`、`log_10.txt`                       |\r\n| `[!...]`  | 匹配不在括号内的任一字符                       | `file[!abc].txt` | `filed.txt`、`file1.txt`              | `filea.txt`、`fileb.txt`                        |\r\n| `**`      | 递归匹配任意目录层级（需环境支持）             | `docs/**/*.md`   | `docs/readme.md`、`docs/api/auth.md`  | 在不支持递归匹配的环境中无法匹配子目录          |\r\n| `{a,b,c}` | 扩展匹配：匹配大括号内任一逗号分隔选项         | `*.{js,ts}`      | `app.js`、`config.ts`                 | `app.py`、`index.html`                          |\r\n| `\\`       | 转义字符，用于匹配特殊字符本身                 | `\\*.txt`         | 实际文件名为 `*.txt`                  | `a.txt`、`b.txt`                                |\r\n\r\n**提示：** 与正则表达式相比，Glob 模式的语法更简单，特别适用于日常文件匹配任务。\r\n\r\n## Glob 模式的实际应用\r\n\r\nGlob 模式作为一种强大的文件匹配工具，在开发工作流程中扮演着不可或缺的角色。它能够帮助我们高效地筛选文件，大幅提升工作效率。以下是几个常见的实际应用场景：\r\n\r\n### 命令行操作\r\n\r\n在命令行中，Glob 模式可以简化文件查找、复制和删除等操作。例如：\r\n\r\n```bash\r\n# 删除 /tmp 目录下所有扩展名为 .tmp 的临时文件\r\nrm -f /tmp/*.tmp\r\n\r\n# 查找 src 目录中所有 JavaScript 文件\r\nfind src -name \"*.js\"\r\n\r\n# 在所有配置文件中搜索包含 \"api_key\" 的行（支持 JSON、YAML 格式）\r\ngrep \"api_key\" config/*.{json,yaml,yml}\r\n\r\n# 将 docs 目录下所有 Markdown 和文本文件复制到 /backup/docs 目录\r\ncp docs/*.{md,txt} /backup/docs/\r\n```\r\n\r\n### 版本控制系统中的应用\r\n\r\n在 Git 等版本控制系统中，Glob 模式常用于 .gitignore 文件中，帮助指定应忽略的文件或目录，从而保持代码仓库的整洁。例如：\r\n\r\n```plaintext\r\n# 忽略所有 .log 文件\r\n*.log\r\n\r\n# 忽略 node_modules 目录\r\nnode_modules/\r\n\r\n# 忽略 build 目录中的所有文件，但保留目录本身\r\nbuild/*\r\n!build/.gitkeep\r\n\r\n# 忽略所有以 .env 开头的文件，但保留 .env.example\r\n.env*\r\n!.env.example\r\n```\r\n\r\n### 构建工具配置\r\n\r\n在 Webpack、Rollup 或 Gulp 等构建工具中，Glob 模式用于动态匹配源文件、资源文件等，从而实现编译、打包或测试任务。例如，在 Webpack 配置中：\r\n\r\n```js\r\n// Webpack 配置示例\r\nconst glob = require('glob');\r\n\r\nmodule.exports = {\r\n   entry: './src/index.js',\r\n   module: {\r\n      rules: [\r\n         {\r\n            test: /\\.css$/,\r\n            include: glob.sync('./src/**/*.css'),\r\n            use: ['style-loader', 'css-loader']\r\n         }\r\n      ]\r\n   }\r\n};\r\n```\r\n\r\n## 最后\r\n\r\nGlob 模式以其简洁直观的语法，为文件匹配任务提供了高效而灵活的解决方案。虽然它不具备正则表达式的所有功能，但 Glob 模式已足够满足大多数需求。通过掌握常用的通配符及其应用场景，你可以大幅提升文件筛选的效率。\r\n\r\n如果你有任何问题或更好的使用经验，欢迎在下方留言分享！\r\n",
+    "number": 39,
+    "labels": {
+      "nodes": []
+    },
+    "category": {
+      "id": "DIC_kwDONzrbkM4Cmnbf",
+      "name": "Show and tell",
+      "slug": "show-and-tell",
+      "emoji": ":raised_hands:",
+      "emojiHTML": "<div>🙌</div>"
+    },
+    "author": {
+      "login": "onnttf"
+    },
+    "authorAssociation": "OWNER",
+    "createdAt": "2025-03-10T08:37:11Z",
+    "updatedAt": "2025-03-13T02:56:26Z",
+    "repository": {
+      "id": "R_kgDONzrbkA",
+      "url": "https://github.com/onnttf/blog"
+    },
+    "url": "https://github.com/onnttf/blog/discussions/39",
+    "jsonFilePath": "discussions/39-D_kwDONzrbkM4Aevrh.json",
+    "markdownFilePath": "2025/03/39-D_kwDONzrbkM4Aevrh.md"
+  },
+  {
     "id": "D_kwDONzrbkM4AeLbu",
     "title": "Welcome to blog Discussions",
     "body": "<!--\r\n    ✏️ Optional: Customize the content below to let your community know what you intend to use Discussions for.\r\n-->\r\n## 👋 Welcome\r\n\r\n  We’re using Discussions as a place to connect with other members of our community. We hope that you:\r\n\r\n* Ask questions you’re wondering about.\r\n* Share ideas.\r\n* Engage with other community members.\r\n* Welcome others and are open-minded. Remember that this is a community we\r\n  build together 💪.\r\n\r\n  To get started, comment below with an introduction of yourself and tell us about what you do with this community.\r\n\r\n<!--\r\n  For the maintainers, here are some tips 💡 for getting started with Discussions. We'll leave these in Markdown comments for now, but feel free to take out the comments for all maintainers to see.\r\n\r\n  📢 **Announce to your community** that Discussions is available! Go ahead and send that tweet, post, or link it from the website to drive traffic here.\r\n\r\n  🔗 If you use issue templates, **link any relevant issue templates** such as questions and community conversations to Discussions. Declutter your issues by driving community content to where they belong in Discussions. If you need help, here's a [link to the documentation](https://docs.github.com/github/building-a-strong-community/configuring-issue-templates-for-your-repository#configuring-the-template-chooser).\r\n\r\n  ➡️ You can **convert issues to discussions** either individually or bulk by labels. Looking at you, issues labeled “question” or “discussion”.\r\n-->\r\n",
@@ -27,35 +56,6 @@
     "url": "https://github.com/onnttf/blog/discussions/1",
     "jsonFilePath": "discussions/1-D_kwDONzrbkM4AeLbu.json",
     "markdownFilePath": "announcements/1-D_kwDONzrbkM4AeLbu.md"
-  },
-  {
-    "id": "D_kwDONzrbkM4Aevrh",
-    "title": "高效的文件匹配工具：Glob 模式",
-    "body": "# 高效的文件匹配工具：Glob 模式\r\n\r\n在日常工作中，文件匹配是一项常见的任务，例如：\r\n\r\n1. 在构建系统中筛选特定类型的源代码文件（如 `*.go` 或 `*.py`）\r\n2. 在日志管理中查找特定时间范围的日志文件（如 `access_log_2024-03-*.log`）\r\n\r\n虽然可以通过正则表达式或脚本来完成这些任务，但它们的语法较为复杂且维护成本较高。相比之下，Glob 模式以其简洁直观的语法，在文件筛选与查找中提供了一种更高效、易用的解决方案，广泛应用于各类场景中。\r\n\r\n## 什么是 Glob 模式\r\n\r\nGlob 模式是一种轻量级的文件路径匹配语法，常用于 `Unix-like` 系统以及多种编程语言中。它通过特定的通配符来匹配文件和目录路径，使用户能够快速查找符合条件的文件。\r\n\r\n### 常见的 Glob 语法规则\r\n\r\n| 通配符    | 功能描述                                       | 示例             | 匹配案例                              | 不匹配案例                                      |\r\n| --------- | ---------------------------------------------- | ---------------- | ------------------------------------- | ----------------------------------------------- |\r\n| `*`       | 匹配零个或多个任意字符（不跨越路径分隔符 `/`） | `src/*.js`       | `src/index.js`、`src/app.js`          | `src/utils/date.js`、`src/components/button.js` |\r\n| `?`       | 匹配单个任意字符                               | `image-??.png`   | `image-01.png`、`image-ab.png`        | `image-1.png`、`image-123.png`                  |\r\n| `[...]`   | 匹配括号内任一单个字符                         | `file[123].txt`  | `file1.txt`、`file2.txt`、`file3.txt` | `file4.txt`、`file12.txt`                       |\r\n| `[a-z]`   | 匹配指定字符范围内的任一字符                   | `log_[0-9].txt`  | `log_2.txt`、`log_7.txt`              | `log_a.txt`、`log_10.txt`                       |\r\n| `[!...]`  | 匹配不在括号内的任一字符                       | `file[!abc].txt` | `filed.txt`、`file1.txt`              | `filea.txt`、`fileb.txt`                        |\r\n| `**`      | 递归匹配任意目录层级（需环境支持）             | `docs/**/*.md`   | `docs/readme.md`、`docs/api/auth.md`  | 在不支持递归匹配的环境中无法匹配子目录          |\r\n| `{a,b,c}` | 扩展匹配：匹配大括号内任一逗号分隔选项         | `*.{js,ts}`      | `app.js`、`config.ts`                 | `app.py`、`index.html`                          |\r\n| `\\`       | 转义字符，用于匹配特殊字符本身                 | `\\*.txt`         | 实际文件名为 `*.txt`                  | `a.txt`、`b.txt`                                |\r\n\r\n**提示：** 与正则表达式相比，Glob 模式的语法更简单，特别适用于日常文件匹配任务。\r\n\r\n## Glob 模式的实际应用\r\n\r\nGlob 模式作为一种强大的文件匹配工具，在开发工作流程中扮演着不可或缺的角色。它能够帮助我们高效地筛选文件，大幅提升工作效率。以下是几个常见的实际应用场景：\r\n\r\n### 命令行操作\r\n\r\n在命令行中，Glob 模式可以简化文件查找、复制和删除等操作。例如：\r\n\r\n```bash\r\n# 删除 /tmp 目录下所有扩展名为 .tmp 的临时文件\r\nrm -f /tmp/*.tmp\r\n\r\n# 查找 src 目录中所有 JavaScript 文件\r\nfind src -name \"*.js\"\r\n\r\n# 在所有配置文件中搜索包含 \"api_key\" 的行（支持 JSON、YAML 格式）\r\ngrep \"api_key\" config/*.{json,yaml,yml}\r\n\r\n# 将 docs 目录下所有 Markdown 和文本文件复制到 /backup/docs 目录\r\ncp docs/*.{md,txt} /backup/docs/\r\n```\r\n\r\n### 版本控制系统中的应用\r\n\r\n在 Git 等版本控制系统中，Glob 模式常用于 .gitignore 文件中，帮助指定应忽略的文件或目录，从而保持代码仓库的整洁。例如：\r\n\r\n```plaintext\r\n# 忽略所有 .log 文件\r\n*.log\r\n\r\n# 忽略 node_modules 目录\r\nnode_modules/\r\n\r\n# 忽略 build 目录中的所有文件，但保留目录本身\r\nbuild/*\r\n!build/.gitkeep\r\n\r\n# 忽略所有以 .env 开头的文件，但保留 .env.example\r\n.env*\r\n!.env.example\r\n```\r\n\r\n### 构建工具配置\r\n\r\n在 Webpack、Rollup 或 Gulp 等构建工具中，Glob 模式用于动态匹配源文件、资源文件等，从而实现编译、打包或测试任务。例如，在 Webpack 配置中：\r\n\r\n```js\r\n// Webpack 配置示例\r\nconst glob = require('glob');\r\n\r\nmodule.exports = {\r\n   entry: './src/index.js',\r\n   module: {\r\n      rules: [\r\n         {\r\n            test: /\\.css$/,\r\n            include: glob.sync('./src/**/*.css'),\r\n            use: ['style-loader', 'css-loader']\r\n         }\r\n      ]\r\n   }\r\n};\r\n```\r\n\r\n## 最后\r\n\r\nGlob 模式以其简洁直观的语法，为文件匹配任务提供了高效而灵活的解决方案。虽然它不具备正则表达式的所有功能，但 Glob 模式已足够满足大多数需求。通过掌握常用的通配符及其应用场景，你可以大幅提升文件筛选的效率。\r\n\r\n如果你有任何问题或更好的使用经验，欢迎在下方留言分享！\r\n",
-    "number": 39,
-    "labels": {
-      "nodes": []
-    },
-    "category": {
-      "id": "DIC_kwDONzrbkM4Cmnbf",
-      "name": "Show and tell",
-      "slug": "show-and-tell",
-      "emoji": ":raised_hands:",
-      "emojiHTML": "<div>🙌</div>"
-    },
-    "author": {
-      "login": "onnttf"
-    },
-    "authorAssociation": "OWNER",
-    "createdAt": "2025-03-10T08:37:11Z",
-    "updatedAt": "2025-03-10T08:45:00Z",
-    "repository": {
-      "id": "R_kgDONzrbkA",
-      "url": "https://github.com/onnttf/blog"
-    },
-    "url": "https://github.com/onnttf/blog/discussions/39",
-    "jsonFilePath": "discussions/39-D_kwDONzrbkM4Aevrh.json",
-    "markdownFilePath": "2025/03/39-D_kwDONzrbkM4Aevrh.md"
   },
   {
     "id": "D_kwDONzrbkM4AeNcT",
