@@ -13,6 +13,8 @@ concurrency:
 jobs:
   format:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout code
@@ -32,6 +34,7 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
+          set -eo pipefail
           echo "Starting the commit and push process..."
 
           # Configure Git user for commit
@@ -41,7 +44,7 @@ jobs:
 
           # Add the necessary files to the staging area
           echo "Staging changes for commit..."
-          git add $(find . -type f -name "*.md")
+          git add '*.md'
 
           # Check if there are changes to commit
           if git diff --cached --quiet; then

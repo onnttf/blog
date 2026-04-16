@@ -1,0 +1,355 @@
+name: Publish to Discussions
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OWNER: ${{ github.repository_owner }}
+      REPO: ${{ github.event.repository.name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Sync markdown to GitHub Discussions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          set -eo pipefail
+
+          created=0
+          updated=0
+          skipped=0
+          total=0
+
+          # Load existing discussion data (may not exist yet)
+          if [ -f "discussion.json" ]; then
+            echo "Loaded existing discussion.json"
+          else
+            echo "[]" > discussion.json
+          fi
+
+          # Collect all markdown files that need to be published
+          md_files=()
+          for dir in announcements/ 2[0-9][0-9][0-9]/{01,02,03,04,05,06,07,08,09,10,11,12}/; do
+            if [ -d "$dir" ]; then
+              for f in "$dir"*.md; do
+                [ -f "$f" ] && md_files+=("$f")
+              done
+            fi
+          done
+
+          if [ ${#md_files[@]} -eq 0 ]; then
+            echo "No markdown files found to publish"
+            exit 0
+          fi
+
+          total=${#md_files[@]}
+          echo "Found $total markdown files"
+
+          for md_file in "${md_files[@]}"; do
+            # Parse title (first line: "# Title") and body (everything after)
+            title=$(sed -n '1s/^# *//p' "$md_file")
+            body=$(sed '1d' "$md_file" | sed '/^$/d' | head -c -1)
+
+            if [ -z "$title" ]; then
+              echo "WARNING: No title in $md_file, skipping"
+              skipped=$((skipped + 1))
+              continue
+            fi
+
+            # Determine category from file path
+            if [[ "$md_file" == announcements/* ]]; then
+              category_slug="announcements"
+            else
+              category_slug="show-and-tell"
+            fi
+
+            # Find matching entry in discussion.json
+            matching_id=$(jq -r --arg path "$md_file" '.[] | select(.markdownFilePath == $path) | .id // empty' discussion.json)
+
+            if [ -z "$matching_id" ]; then
+              # No matching entry — create new discussion
+              echo "--- Creating new discussion: $title (from: $md_file) ---"
+
+              # Get category ID from slug
+              category_id=$(gh api graphql -f query='
+                query($owner: String!, $repo: String!) {
+                  repository(owner: $owner, name: $repo) {
+                    discussionCategories(first: 20) {
+                      nodes { id name slug }
+                    }
+                  }
+                }
+              ' -F owner="$REPO_OWNER" -F repo="$REPO_NAME" --jq "
+                [.. | select(type == \"object\")]
+                | map(select(.slug == \"$category_slug\"))
+                | first.id // empty
+              ")
+
+              if [ -z "$category_id" ]; then
+                echo "ERROR: Category '$category_slug' not found, skipping"
+                skipped=$((skipped + 1))
+                continue
+              fi
+
+              result=$(gh api graphql -f query='
+                mutation CreateDiscussion($input: CreateDiscussionInput!) {
+                  createDiscussion(input: $input) {
+                    discussion {
+                      id
+                      number
+                      url
+                      updatedAt
+                    }
+                  }
+                }
+              ' -F repositoryId="$(gh api repos/$REPO_OWNER/$REPO_NAME --jq '.node_id')" \
+                 -F categoryId="$category_id" \
+                 -F title="$title" \
+                 -F body="$body" --jq '.data.createDiscussion.discussion')
+
+              new_id=$(echo "$result" | jq -r '.id')
+              new_number=$(echo "$result" | jq -r '.number')
+              new_url=$(echo "$result" | jq -r '.url')
+              new_updated=$(echo "$result" | jq -r '.updatedAt')
+
+              if [ -z "$new_id" ] || [ "$new_id" = "null" ]; then
+                echo "ERROR: Failed to create discussion: $result"
+                skipped=$((skipped + 1))
+                continue
+              fi
+
+              echo "Created discussion: $new_url"
+
+              # Append new entry to discussion.json
+              jq --arg title "$title" --arg number "$new_number" \
+                 --arg id "$new_id" --arg url "$new_url" \
+                 --arg updatedAt "$new_updated" --arg category_slug "$category_slug" \
+                 --arg mdPath "$md_file" --arg body "$body" \
+                 '. += [{
+                   id: $id,
+                   number: ($number | tonumber),
+                   title: $title,
+                   body: $body,
+                   url: $url,
+                   updatedAt: $updatedAt,
+                   category: { slug: $category_slug },
+                   markdownFilePath: $mdPath,
+                   jsonFilePath: ("discussions/" + ($number) + "-" + $id + ".json")
+                 }]' discussion.json > discussion.json.tmp
+              mv discussion.json.tmp discussion.json
+
+              created=$((created + 1))
+              continue
+            fi
+
+            # Has existing ID — check if update needed
+            echo "--- Checking existing discussion: $title (id: $matching_id) ---"
+
+            remote_body=$(gh api graphql -f query='
+              query($id: ID!) {
+                node(id: $id) {
+                  ... on Discussion {
+                    body
+                  }
+                }
+              }
+            ' -F id="$matching_id" --jq '.data.node.body // empty')
+
+            local_md5=$(printf '%s' "$body" | md5sum | awk '{print $1}')
+            remote_md5=$(printf '%s' "$remote_body" | md5sum | awk '{print $1}')
+
+            if [ "$local_md5" = "$remote_md5" ]; then
+              echo "Body unchanged, skipping"
+              skipped=$((skipped + 1))
+            else
+              echo "Body changed, updating discussion..."
+
+              result=$(gh api graphql -f query='
+                mutation UpdateDiscussion($input: UpdateDiscussionInput!) {
+                  updateDiscussion(input: $input) {
+                    discussion {
+                      updatedAt
+                    }
+                  }
+                }
+              ' -F discussionId="$matching_id" \
+                 -F title="$title" \
+                 -F body="$body" --jq '.data.updateDiscussion.discussion')
+
+              new_updated=$(echo "$result" | jq -r '.updatedAt // empty')
+              if [ -n "$new_updated" ] && [ "$new_updated" != "null" ]; then
+                jq --arg id "$matching_id" --arg updatedAt "$new_updated" '
+                  map(if .id == $id then .updatedAt = $updatedAt else . end)
+                ' discussion.json > discussion.json.tmp
+                mv discussion.json.tmp discussion.json
+              fi
+
+              echo "Discussion updated successfully"
+              updated=$((updated + 1))
+            fi
+          done
+
+          echo ""
+          echo "=== Sync Summary ==="
+          echo "Total: $total"
+          echo "Created: $created"
+          echo "Updated: $updated"
+          echo "Skipped (unchanged): $skipped"
+
+      - name: Fetch latest discussions and regenerate files
+        run: |
+          set -eo pipefail
+          echo "Fetching discussions from GitHub API..."
+
+          discussions=$(gh api graphql --paginate --slurp -f query='
+            query($owner: String!, $repo: String!, $endCursor: String) {
+              repository(owner: $owner, name: $repo) {
+                discussions(first: 100, after: $endCursor) {
+                  nodes {
+                    id
+                    title
+                    body
+                    number
+                    labels(first: 10) { nodes { id name url } }
+                    category { id name slug emoji emojiHTML }
+                    author { login }
+                    authorAssociation
+                    createdAt
+                    updatedAt
+                    repository { id url }
+                    url
+                  }
+                  pageInfo {
+                    hasNextPage
+                    endCursor
+                  }
+                }
+              }
+            }' -F owner=$OWNER -F repo=$REPO | jq '
+            [.[].data.repository.discussions.nodes[]]
+            | map(select(.authorAssociation == "OWNER"))
+            | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
+            | group_by(.id)
+            | map(max_by(.updatedAt))
+            | sort_by(.updatedAt) | reverse
+            // []'
+          )
+
+          num_discussions=$(echo "$discussions" | jq length)
+          echo "Fetched $num_discussions discussions"
+
+          if [ "$num_discussions" -eq 0 ]; then
+            echo "No discussions found, exiting..."
+            exit 1
+          fi
+
+          # Merge with existing data if discussion.json exists
+          if [ -f "discussion.json" ]; then
+            echo "Merging with existing discussions..."
+
+            createdAtMap=$(jq 'map({(.id): .createdAt}) | add' "discussion.json")
+            discussions=$(jq --argjson createdAtMap "$createdAtMap" '
+              map(
+                if $createdAtMap[.id] then
+                  .createdAt = $createdAtMap[.id]
+                else
+                  .
+                end
+              )
+            ' <<< "$discussions")
+
+            echo "Merged existing data"
+          fi
+
+          # Add file paths to discussions
+          discussions=$(echo "$discussions" | jq '
+            map(
+              . + {
+                jsonFilePath: ("discussions/" + (.number | tostring) + "-" + (.id | tostring) + ".json"),
+                markdownFilePath: (
+                  if .category.slug == "announcements" then
+                    "announcements/" + (.number | tostring) + "-" + (.id | tostring) + ".md"
+                  else
+                    (.createdAt | fromdate | strftime("%Y")) + "/" +
+                    (.createdAt | fromdate | strftime("%m")) + "/" +
+                    (.number | tostring) + "-" + (.id | tostring) + ".md"
+                  end
+                )
+              }
+            )
+          ')
+
+          # Save the processed discussions to the file
+          echo "$discussions" > discussion.json
+          echo "Fetch completed, saved discussions to discussion.json"
+
+          # Clean up all files except discussion.json
+          echo "Cleaning up all files except discussion.json..."
+          find . -mindepth 1 -not -name 'discussion.json' -not -path '*/.*' -print0 | xargs -0 rm -rf
+          echo "Cleanup completed."
+
+          # Write the README.md file
+          echo "# blog" > README.md
+          echo "" >> README.md
+          echo "## Table of Contents" >> README.md
+          echo "" >> README.md
+          echo "| Title | Labels | Last Updated |" >> README.md
+          echo "| ----- | ------ | ------------ |" >> README.md
+
+          # Traverse discussions and write to JSON and Markdown files
+          echo "Writing discussions to individual files..."
+          jq -c '.[]' <<< "$discussions" | while read -r discussion; do
+            jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
+            markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
+            title=$(echo "$discussion" | jq -r '.title')
+            body=$(echo "$discussion" | jq -r '.body')
+
+            mkdir -p $(dirname "$jsonFilePath")
+            echo "$discussion" > "$jsonFilePath"
+            echo "Written discussion to $jsonFilePath"
+
+            mkdir -p $(dirname "$markdownFilePath")
+            printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
+            echo "Written markdown to $markdownFilePath"
+
+            url=$(echo "$discussion" | jq -r '.url')
+            labels=$(echo "$discussion" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
+            updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
+            echo "| [$title]($url) | $labels | $updatedAt |" >> README.md
+          done
+
+      - name: Commit and Push Changes
+        run: |
+          set -eo pipefail
+          echo "Starting the commit and push process..."
+
+          # Configure Git user for commit
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage all generated files
+          git add README.md discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Skipping commit and push."
+            exit 0
+          fi
+
+          git commit -m "chore: back up discussions after publish"
+          git push
+
+          echo "Changes committed and pushed successfully."

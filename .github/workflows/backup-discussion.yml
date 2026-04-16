@@ -10,6 +10,8 @@ concurrency:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       OWNER: ${{ github.repository_owner }}
@@ -21,6 +23,7 @@ jobs:
 
       - name: Fetch, process, and save discussions
         run: |
+          set -eo pipefail
           echo "Fetching discussions from GitHub API..."
 
           discussions=$(gh api graphql --paginate --slurp -f query='
@@ -130,8 +133,7 @@ jobs:
 
           # Clean up all files except discussion.json
           echo "Cleaning up all files except discussion.json..."
-          find . -type f ! -name "discussion.json" ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -f
-          find . -type d ! -path "*/.*" -mindepth 1 -print0 | xargs -0 rm -rf
+          find . -mindepth 1 -not -name 'discussion.json' -not -path '*/.*' -print0 | xargs -0 rm -rf
           echo "Cleanup completed."
 
           # Write the README.md file first
@@ -172,6 +174,7 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
+          set -eo pipefail
           echo "Starting the commit and push process..."
           
           ls -R
