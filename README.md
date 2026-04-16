@@ -4,7 +4,8 @@
 
 | Title | Labels | Last Updated |
 | ----- | ------ | ------------ |
-| [Git 分支管理指北：选择适合的分支策略](https://github.com/onnttf/blog/discussions/40) |  | 2025-08-19T23:20:52Z |
+| [食物营养成分表：读懂它，吃得更明白](https://github.com/onnttf/blog/discussions/41) |  | 2026-04-16T11:15:58Z |
+| [Git 分支管理指北：选择适合的分支策略](https://github.com/onnttf/blog/discussions/40) |  | 2025-08-19T23:24:43Z |
 | [高效的文件匹配工具：Glob 模式](https://github.com/onnttf/blog/discussions/39) |  | 2025-03-13T02:56:26Z |
 | [Welcome to blog Discussions](https://github.com/onnttf/blog/discussions/1) |  | 2025-03-12T02:52:57Z |
 | [Go 编程入门：从实践中学习核心概念](https://github.com/onnttf/blog/discussions/38) |  | 2025-02-05T11:58:05Z |
