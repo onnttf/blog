@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      discussions: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       REPO_OWNER: ${{ github.repository_owner }}
@@ -113,9 +114,21 @@ jobs:
                 continue
               fi
 
+              repositoryId=$(gh api repos/$REPO_OWNER/$REPO_NAME --jq '.node_id')
+
               result=$(gh api graphql -f query='
-                mutation CreateDiscussion($input: CreateDiscussionInput!) {
-                  createDiscussion(input: $input) {
+                mutation(
+                  $repositoryId: ID!,
+                  $categoryId: ID!,
+                  $title: String!,
+                  $body: String!
+                ) {
+                  createDiscussion(input: {
+                    repositoryId: $repositoryId,
+                    categoryId: $categoryId,
+                    title: $title,
+                    body: $body
+                  }) {
                     discussion {
                       id
                       number
@@ -131,7 +144,7 @@ jobs:
                     }
                   }
                 }
-              ' -F repositoryId="$(gh api repos/$REPO_OWNER/$REPO_NAME --jq '.node_id')" \
+              ' -F repositoryId="$repositoryId" \
                  -F categoryId="$category_id" \
                  -F title="$title" \
                  -F body="$body" --jq '.data.createDiscussion.discussion')
@@ -258,8 +271,16 @@ jobs:
               echo "Body changed, updating discussion..."
 
               result=$(gh api graphql -f query='
-                mutation UpdateDiscussion($input: UpdateDiscussionInput!) {
-                  updateDiscussion(input: $input) {
+                mutation(
+                  $discussionId: ID!,
+                  $title: String!,
+                  $body: String!
+                ) {
+                  updateDiscussion(input: {
+                    discussionId: $discussionId,
+                    title: $title,
+                    body: $body
+                  }) {
                     discussion {
                       updatedAt
                       body
