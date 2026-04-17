@@ -14,8 +14,8 @@ jobs:
       contents: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      OWNER: ${{ github.repository_owner }}
-      REPO: ${{ github.event.repository.name }}
+      REPO_OWNER: ${{ github.repository_owner }}
+      REPO_NAME: ${{ github.event.repository.name }}
 
     steps:
       - name: Checkout code
@@ -34,7 +34,7 @@ jobs:
           skipped=0
           total=0
 
-          # Load existing discussion data (may not exist yet)
+          # Load existing discussion data
           if [ -f "discussion.json" ]; then
             echo "Loaded existing discussion.json"
           else
@@ -58,6 +58,14 @@ jobs:
 
           total=${#md_files[@]}
           echo "Found $total markdown files"
+
+          # Initialize README.md
+          echo "# blog" > README.md
+          echo "" >> README.md
+          echo "## Table of Contents" >> README.md
+          echo "" >> README.md
+          echo "| Title | Labels | Last Updated |" >> README.md
+          echo "| ----- | ------ | ------------ |" >> README.md
 
           for md_file in "${md_files[@]}"; do
             # Parse title (first line: "# Title") and body (everything after)
@@ -112,7 +120,14 @@ jobs:
                       id
                       number
                       url
+                      createdAt
                       updatedAt
+                      body
+                      title
+                      category { id name slug }
+                      labels(first: 10) { nodes { id name url } }
+                      author { login }
+                      authorAssociation
                     }
                   }
                 }
@@ -124,7 +139,10 @@ jobs:
               new_id=$(echo "$result" | jq -r '.id')
               new_number=$(echo "$result" | jq -r '.number')
               new_url=$(echo "$result" | jq -r '.url')
+              new_created=$(echo "$result" | jq -r '.createdAt')
               new_updated=$(echo "$result" | jq -r '.updatedAt')
+              new_body=$(echo "$result" | jq -r '.body')
+              new_title=$(echo "$result" | jq -r '.title')
 
               if [ -z "$new_id" ] || [ "$new_id" = "null" ]; then
                 echo "ERROR: Failed to create discussion: $result"
@@ -134,23 +152,60 @@ jobs:
 
               echo "Created discussion: $new_url"
 
-              # Append new entry to discussion.json
-              jq --arg title "$title" --arg number "$new_number" \
-                 --arg id "$new_id" --arg url "$new_url" \
+              # Compute canonical markdown file path
+              if [ "$category_slug" = "announcements" ]; then
+                canonical_md_path="announcements/${new_number}-${new_id}.md"
+              else
+                canonical_md_path="$(date +%Y)/$(date +%m)/${new_number}-${new_id}.md"
+              fi
+              jsonFilePath="discussions/${new_number}-${new_id}.json"
+
+              # Append entry to discussion.json
+              jq --arg id "$new_id" --arg number "$new_number" \
+                 --arg url "$new_url" --arg createdAt "$new_created" \
                  --arg updatedAt "$new_updated" --arg category_slug "$category_slug" \
-                 --arg mdPath "$md_file" --arg body "$body" \
+                 --arg mdPath "$canonical_md_path" --arg jsonPath "$jsonFilePath" \
                  '. += [{
                    id: $id,
                    number: ($number | tonumber),
-                   title: $title,
-                   body: $body,
+                   title: $new_title,
+                   body: $new_body,
                    url: $url,
+                   createdAt: $createdAt,
                    updatedAt: $updatedAt,
                    category: { slug: $category_slug },
+                   labels: [],
                    markdownFilePath: $mdPath,
-                   jsonFilePath: ("discussions/" + ($number) + "-" + $id + ".json")
+                   jsonFilePath: $jsonPath
                  }]' discussion.json > discussion.json.tmp
               mv discussion.json.tmp discussion.json
+
+              # Write JSON file
+              mkdir -p $(dirname "$jsonFilePath")
+              echo "$result" | jq '{
+                id: .id,
+                number: .number,
+                url: .url,
+                createdAt: .createdAt,
+                updatedAt: .updatedAt,
+                title: .title,
+                body: .body,
+                category: .category,
+                labels: .labels,
+                author: .author,
+                authorAssociation: .authorAssociation,
+                markdownFilePath: $mdPath,
+                jsonFilePath: $jsonPath
+              }' --arg mdPath "$canonical_md_path" --arg jsonPath "$jsonFilePath" > "$jsonFilePath"
+
+              # Write Markdown file
+              mkdir -p $(dirname "$canonical_md_path")
+              printf "# %s\n\n%s\n" "$new_title" "$new_body" > "$canonical_md_path"
+              echo "Written files: $jsonFilePath, $canonical_md_path"
+
+              # Update README.md TOC
+              labels=$(echo "$result" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
+              echo "| [$new_title]($new_url) | $labels | $new_updated |" >> README.md
 
               created=$((created + 1))
               continue
@@ -164,16 +219,40 @@ jobs:
                 node(id: $id) {
                   ... on Discussion {
                     body
+                    updatedAt
+                    title
+                    url
+                    category { id name slug }
+                    labels(first: 10) { nodes { id name url } }
                   }
                 }
               }
-            ' -F id="$matching_id" --jq '.data.node.body // empty')
+            ' -F id="$matching_id" --jq '.data.node')
+
+            remote_body_text=$(echo "$remote_body" | jq -r '.body // empty')
 
             local_md5=$(printf '%s' "$body" | md5sum | awk '{print $1}')
-            remote_md5=$(printf '%s' "$remote_body" | md5sum | awk '{print $1}')
+            remote_md5=$(printf '%s' "$remote_body_text" | md5sum | awk '{print $1}')
 
             if [ "$local_md5" = "$remote_md5" ]; then
               echo "Body unchanged, skipping"
+              # Still write current data to files
+              entry=$(jq --arg id "$matching_id" '.[] | select(.id == $id)' discussion.json)
+              if [ -n "$entry" ] && [ "$entry" != "null" ]; then
+                mdPath=$(echo "$entry" | jq -r '.markdownFilePath')
+                jsonPath=$(echo "$entry" | jq -r '.jsonFilePath')
+                entryBody=$(echo "$entry" | jq -r '.body')
+                entryTitle=$(echo "$entry" | jq -r '.title')
+                entryUrl=$(echo "$entry" | jq -r '.url')
+                entryUpdatedAt=$(echo "$entry" | jq -r '.updatedAt')
+                entryLabels=$(echo "$entry" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
+
+                mkdir -p $(dirname "$jsonPath")
+                echo "$entry" > "$jsonPath"
+                mkdir -p $(dirname "$mdPath")
+                printf "# %s\n\n%s\n" "$entryTitle" "$entryBody" > "$mdPath"
+                echo "| [$entryTitle]($entryUrl) | $entryLabels | $entryUpdatedAt |" >> README.md
+              fi
               skipped=$((skipped + 1))
             else
               echo "Body changed, updating discussion..."
@@ -183,6 +262,11 @@ jobs:
                   updateDiscussion(input: $input) {
                     discussion {
                       updatedAt
+                      body
+                      title
+                      url
+                      category { id name slug }
+                      labels(first: 10) { nodes { id name url } }
                     }
                   }
                 }
@@ -191,12 +275,38 @@ jobs:
                  -F body="$body" --jq '.data.updateDiscussion.discussion')
 
               new_updated=$(echo "$result" | jq -r '.updatedAt // empty')
+              new_body=$(echo "$result" | jq -r '.body')
+              new_title=$(echo "$result" | jq -r '.title')
+              new_url=$(echo "$result" | jq -r '.url')
+
+              # Update discussion.json entry
               if [ -n "$new_updated" ] && [ "$new_updated" != "null" ]; then
-                jq --arg id "$matching_id" --arg updatedAt "$new_updated" '
-                  map(if .id == $id then .updatedAt = $updatedAt else . end)
+                jq --arg id "$matching_id" --arg updatedAt "$new_updated" \
+                   --arg title "$new_title" --arg body "$new_body" '
+                  map(if .id == $id then
+                    .updatedAt = $updatedAt |
+                    .title = $title |
+                    .body = $body
+                  else . end)
                 ' discussion.json > discussion.json.tmp
                 mv discussion.json.tmp discussion.json
+
+                # Update the markdown and json files
+                entry=$(jq --arg id "$matching_id" '.[] | select(.id == $id)' discussion.json)
+                if [ -n "$entry" ] && [ "$entry" != "null" ]; then
+                  mdPath=$(echo "$entry" | jq -r '.markdownFilePath')
+                  jsonPath=$(echo "$entry" | jq -r '.jsonFilePath')
+                  entryLabels=$(echo "$result" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
+
+                  mkdir -p $(dirname "$jsonPath")
+                  echo "$entry" > "$jsonPath"
+                  mkdir -p $(dirname "$mdPath")
+                  printf "# %s\n\n%s\n" "$new_title" "$new_body" > "$mdPath"
+                  echo "Updated files: $jsonPath, $mdPath"
+                fi
               fi
+
+              echo "| [$new_title]($new_url) | $(echo "$result" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""') | $new_updated |" >> README.md
 
               echo "Discussion updated successfully"
               updated=$((updated + 1))
@@ -210,138 +320,14 @@ jobs:
           echo "Updated: $updated"
           echo "Skipped (unchanged): $skipped"
 
-      - name: Fetch latest discussions and regenerate files
-        run: |
-          set -eo pipefail
-          echo "Fetching discussions from GitHub API..."
-
-          discussions=$(gh api graphql --paginate --slurp -f query='
-            query($owner: String!, $repo: String!, $endCursor: String) {
-              repository(owner: $owner, name: $repo) {
-                discussions(first: 100, after: $endCursor) {
-                  nodes {
-                    id
-                    title
-                    body
-                    number
-                    labels(first: 10) { nodes { id name url } }
-                    category { id name slug emoji emojiHTML }
-                    author { login }
-                    authorAssociation
-                    createdAt
-                    updatedAt
-                    repository { id url }
-                    url
-                  }
-                  pageInfo {
-                    hasNextPage
-                    endCursor
-                  }
-                }
-              }
-            }' -F owner=$OWNER -F repo=$REPO | jq '
-            [.[].data.repository.discussions.nodes[]]
-            | map(select(.authorAssociation == "OWNER"))
-            | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
-            | group_by(.id)
-            | map(max_by(.updatedAt))
-            | sort_by(.updatedAt) | reverse
-            // []'
-          )
-
-          num_discussions=$(echo "$discussions" | jq length)
-          echo "Fetched $num_discussions discussions"
-
-          if [ "$num_discussions" -eq 0 ]; then
-            echo "No discussions found, exiting..."
-            exit 1
-          fi
-
-          # Merge with existing data if discussion.json exists
-          if [ -f "discussion.json" ]; then
-            echo "Merging with existing discussions..."
-
-            createdAtMap=$(jq 'map({(.id): .createdAt}) | add' "discussion.json")
-            discussions=$(jq --argjson createdAtMap "$createdAtMap" '
-              map(
-                if $createdAtMap[.id] then
-                  .createdAt = $createdAtMap[.id]
-                else
-                  .
-                end
-              )
-            ' <<< "$discussions")
-
-            echo "Merged existing data"
-          fi
-
-          # Add file paths to discussions
-          discussions=$(echo "$discussions" | jq '
-            map(
-              . + {
-                jsonFilePath: ("discussions/" + (.number | tostring) + "-" + (.id | tostring) + ".json"),
-                markdownFilePath: (
-                  if .category.slug == "announcements" then
-                    "announcements/" + (.number | tostring) + "-" + (.id | tostring) + ".md"
-                  else
-                    (.createdAt | fromdate | strftime("%Y")) + "/" +
-                    (.createdAt | fromdate | strftime("%m")) + "/" +
-                    (.number | tostring) + "-" + (.id | tostring) + ".md"
-                  end
-                )
-              }
-            )
-          ')
-
-          # Save the processed discussions to the file
-          echo "$discussions" > discussion.json
-          echo "Fetch completed, saved discussions to discussion.json"
-
-          # Clean up all files except discussion.json
-          echo "Cleaning up all files except discussion.json..."
-          find . -mindepth 1 -not -name 'discussion.json' -not -path '*/.*' -print0 | xargs -0 rm -rf
-          echo "Cleanup completed."
-
-          # Write the README.md file
-          echo "# blog" > README.md
-          echo "" >> README.md
-          echo "## Table of Contents" >> README.md
-          echo "" >> README.md
-          echo "| Title | Labels | Last Updated |" >> README.md
-          echo "| ----- | ------ | ------------ |" >> README.md
-
-          # Traverse discussions and write to JSON and Markdown files
-          echo "Writing discussions to individual files..."
-          jq -c '.[]' <<< "$discussions" | while read -r discussion; do
-            jsonFilePath=$(echo "$discussion" | jq -r '.jsonFilePath')
-            markdownFilePath=$(echo "$discussion" | jq -r '.markdownFilePath')
-            title=$(echo "$discussion" | jq -r '.title')
-            body=$(echo "$discussion" | jq -r '.body')
-
-            mkdir -p $(dirname "$jsonFilePath")
-            echo "$discussion" > "$jsonFilePath"
-            echo "Written discussion to $jsonFilePath"
-
-            mkdir -p $(dirname "$markdownFilePath")
-            printf "# %s\n\n%s\n" "$title" "$body" > "$markdownFilePath"
-            echo "Written markdown to $markdownFilePath"
-
-            url=$(echo "$discussion" | jq -r '.url')
-            labels=$(echo "$discussion" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
-            updatedAt=$(echo "$discussion" | jq -r '.updatedAt')
-            echo "| [$title]($url) | $labels | $updatedAt |" >> README.md
-          done
-
       - name: Commit and Push Changes
         run: |
           set -eo pipefail
           echo "Starting the commit and push process..."
 
-          # Configure Git user for commit
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage all generated files
           git add README.md discussion.json discussions announcements $(find . -type d -regex './[0-9]+' -exec echo {} \;)
 
           if git diff --cached --quiet; then
@@ -349,7 +335,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: back up discussions after publish"
+          git commit -m "chore: sync discussions"
           git push
 
           echo "Changes committed and pushed successfully."
