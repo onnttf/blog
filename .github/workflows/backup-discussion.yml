@@ -112,7 +112,7 @@ jobs:
           fi
 
           # Save the processed discussions to the file
-          echo "$discussions" > discussion.json
+          echo "$discussions" | jq '.' > discussion.json
           echo "Backup completed, saved discussions to discussion.json"
 
           # Calculate the MD5 hash after processing and saving the new content

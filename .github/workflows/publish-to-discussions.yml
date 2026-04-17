@@ -218,6 +218,12 @@ jobs:
               labels=$(echo "$result" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
               echo "| [$new_title]($new_url) | $labels | $new_updated |" >> README.md
 
+              # Remove source file if it's not the canonical path (prevents duplicate creation)
+              if [ "$md_file" != "$canonical_md_path" ] && [ -f "$md_file" ]; then
+                rm "$md_file"
+                echo "Removed source file: $md_file (replaced by $canonical_md_path)"
+              fi
+
               created=$((created + 1))
               continue
             fi
