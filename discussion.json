@@ -2,7 +2,7 @@
   {
     "id": "D_kwDONzrbkM4Alwvc",
     "title": "Test Post - Hello World",
-    "body": "This is a test post to verify the publish-to-discussions workflow.\n## Features to Test\n- Creating a new discussion from a local markdown file\n- Correctly generating the file path with `number` and `id`\n- Updating the README.md table of contents\n- Committing all generated files back to the repo\n## Content\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n### Code Block\n```bash\necho \"If you see this in the discussion body, the publish worked!\"\n```\n> This is a blockquote to test markdown rendering.\n**Last updated**: 2026-04-17",
+    "body": "This is a test post to verify the publish-to-discussions workflow.\n## Features to Test\n- Creating a new discussion from a local markdown file\n- Correctly generating the file path with `number` and `id`\n- Updating the README.md table of contents\n- Committing all generated files back to the repo\n## Content\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n### Code Block\n```bash\necho \"If you see this in the discussion body, the publish worked!\"\n```\n> This is a blockquote to test markdown rendering.\n## Update\nThis is an update to verify that existing discussions can be updated correctly. The body should change from the original version.\n**Last updated**: 2026-04-17",
     "number": 43,
     "labels": {
       "nodes": []
@@ -19,7 +19,7 @@
     },
     "authorAssociation": "OWNER",
     "createdAt": "2026-04-17T05:13:45Z",
-    "updatedAt": "2026-04-17T05:13:45Z",
+    "updatedAt": "2026-04-17T05:27:51Z",
     "repository": {
       "id": "R_kgDONzrbkA",
       "url": "https://github.com/onnttf/blog"
@@ -1311,5 +1311,20 @@
     "url": "https://github.com/onnttf/blog/discussions/2",
     "jsonFilePath": "discussions/2-D_kwDONzrbkM4AeLb6.json",
     "markdownFilePath": "2017/08/2-D_kwDONzrbkM4AeLb6.md"
+  },
+  {
+    "id": "D_kwDONzrbkM4AlwwR",
+    "number": 44,
+    "title": "Another Test Post - Second Entry",
+    "body": "This is a second test post to verify multiple discussions can be published correctly.\n## Purpose\nVerify that the workflow handles multiple markdown files in a single run.\n- First file creates a new discussion\n- Second file also creates a new discussion\n- No duplicate creation on re-run\n## Footer\nPosted on 2026-04-17.",
+    "url": "https://github.com/onnttf/blog/discussions/44",
+    "createdAt": "2026-04-17T05:27:52Z",
+    "updatedAt": "2026-04-17T05:27:52Z",
+    "category": {
+      "slug": "show-and-tell"
+    },
+    "labels": [],
+    "markdownFilePath": "2026/04/44-D_kwDONzrbkM4AlwwR.md",
+    "jsonFilePath": "discussions/44-D_kwDONzrbkM4AlwwR.json"
   }
 ]

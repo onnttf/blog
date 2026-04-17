@@ -1,0 +1,23 @@
+{
+  "id": "D_kwDONzrbkM4AlwwR",
+  "number": 44,
+  "url": "https://github.com/onnttf/blog/discussions/44",
+  "createdAt": "2026-04-17T05:27:52Z",
+  "updatedAt": "2026-04-17T05:27:52Z",
+  "title": "Another Test Post - Second Entry",
+  "body": "This is a second test post to verify multiple discussions can be published correctly.\n## Purpose\nVerify that the workflow handles multiple markdown files in a single run.\n- First file creates a new discussion\n- Second file also creates a new discussion\n- No duplicate creation on re-run\n## Footer\nPosted on 2026-04-17.",
+  "category": {
+    "id": "DIC_kwDONzrbkM4Cmnbf",
+    "name": "Show and tell",
+    "slug": "show-and-tell"
+  },
+  "labels": {
+    "nodes": []
+  },
+  "author": {
+    "login": "onnttf"
+  },
+  "authorAssociation": "OWNER",
+  "markdownFilePath": "2026/04/44-D_kwDONzrbkM4AlwwR.md",
+  "jsonFilePath": "discussions/44-D_kwDONzrbkM4AlwwR.json"
+}
