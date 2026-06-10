@@ -17,7 +17,7 @@
 
 4. 在配置界面中选择 `MySQL 5.7` 版本，按 `OK` 确认
 
-   ![image](https://file.onnttf.site/2019/04/03/1.jpg)
+   ![image](https://assets.onnttf.site/2019/04/03/1.jpg)
 
 ### 安装 MySQL
 

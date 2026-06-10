@@ -1,6 +1,6 @@
 # 深入理解 URI、URL 和 URN
 
-![image](https://file.onnttf.site/2018/02/24/1.png)
+![image](https://assets.onnttf.site/2018/02/24/1.png)
 
 在软件开发和网络应用中，`URI`、`URL` 以及 `URN` 这三个重要概念虽然看似相似，但它们之间存在着本质的区别。本文将深入剖析这几个概念的差异与联系，帮助您更好地理解和使用它们。
 

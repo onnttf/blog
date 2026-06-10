@@ -8,7 +8,7 @@
 
 1. 在开发者账户中，进入 `App Groups` 配置页
 
-   ![image](https://file.onnttf.site/2017/08/29/1.jpeg)
+   ![image](https://assets.onnttf.site/2017/08/29/1.jpeg)
 
 2. 根据页面提示，按要求填写相关信息
 
@@ -22,14 +22,14 @@
 
 完成创建后，如图：
 
-![image](https://file.onnttf.site/2017/08/29/2.jpeg)
+![image](https://assets.onnttf.site/2017/08/29/2.jpeg)
 
 ### 将 `App Group` 添加到 `App ID` 中
 
 1. 打开你的 `App ID` 配置页面
 2. 找到 `App Groups` 选项，将之前创建的 `GroupID` 勾选启用
 
-![image](https://file.onnttf.site/2017/08/29/3.jpeg)
+![image](https://assets.onnttf.site/2017/08/29/3.jpeg)
 
 ### 重新激活 Provisioning Profile
 
@@ -46,7 +46,7 @@
 2. 找到 `App Groups` 选项
 3. 勾选之前创建的 `App Group`
 
-   ![image](https://file.onnttf.site/2017/08/29/5.jpeg)
+   ![image](https://assets.onnttf.site/2017/08/29/5.jpeg)
 
 ### Widget Target 配置
 
@@ -68,11 +68,11 @@
 
 1. 在主项目中创建一个新的 `Target`，选择 `Today Extension`
 
-   ![image](https://file.onnttf.site/2017/09/07/1.jpeg)
+   ![image](https://assets.onnttf.site/2017/09/07/1.jpeg)
 
 2. 完成后会自动生成如下文件
 
-   ![image](https://file.onnttf.site/2017/09/07/2.jpeg)
+   ![image](https://assets.onnttf.site/2017/09/07/2.jpeg)
 
 ### 修改 Widget Target 配置
 
@@ -167,7 +167,7 @@
 2. 不怕安装包变大的话，可以考虑将需要的第三方库在主 `App` 和 `Widget` 中分别复制一份 **（推荐）**
 3. 将需要共享的文件按图中进行勾选配置
 
-   ![image](https://file.onnttf.site/2017/09/07/4.jpeg)
+   ![image](https://assets.onnttf.site/2017/09/07/4.jpeg)
 
 4. 通过 `Pods` 导入，不太建议通过 `Pods` 分别向两个 `Target` 中导入第三方库，因为很容易发生一些不好处理的问题
 
@@ -223,7 +223,7 @@
 #### 打开 App
 
 1. 设置 `App` 的 `URLSchemes`，打开 `APP` 主要通过 `URLScheme` 打开和传递参数值。设置 `URLSchemes` 时，要独特一些，避免与其他 `App` 重复
-   ![image](https://file.onnttf.site/2017/09/07/5.jpeg)
+   ![image](https://assets.onnttf.site/2017/09/07/5.jpeg)
 2. 在 `Widget` 中添加点击事件，用于触发打开 `App` 的操作和传递参数
 
    ```objc

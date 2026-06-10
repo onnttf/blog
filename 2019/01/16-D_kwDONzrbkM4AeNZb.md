@@ -16,7 +16,7 @@
 
 要使用 Charles 的全部功能，我们需要先完成证书安装：
 
-![image](https://file.onnttf.site/2019/01/02/1.jpg)
+![image](https://assets.onnttf.site/2019/01/02/1.jpg)
 
 ### PC 端证书安装
 
@@ -26,7 +26,7 @@
 
    系统会提示选择证书存储位置，请根据实际需求选择合适的钥匙串：
 
-   ![image](https://file.onnttf.site/2019/01/02/2.jpg)
+   ![image](https://assets.onnttf.site/2019/01/02/2.jpg)
 
 2. **信任证书**
 
@@ -35,7 +35,7 @@
    - 双击 `Charles Proxy CA` 证书
    - 展开"信任"选项，将证书信任级别设置为"始终信任"
 
-   ![image](https://file.onnttf.site/2019/01/02/3.jpg)
+   ![image](https://assets.onnttf.site/2019/01/02/3.jpg)
 
 ### iOS 模拟器证书安装
 
@@ -49,7 +49,7 @@
 
    找到 `Charles` 证书并启用信任开关：
 
-   ![image](https://file.onnttf.site/2019/01/02/4.jpg)
+   ![image](https://assets.onnttf.site/2019/01/02/4.jpg)
 
 ### 移动设备证书安装
 
@@ -57,7 +57,7 @@
 
    在 `Charles` 中打开证书安装向导：`Help -> SSL Proxying -> Install Charles Root Certificate on a Mobile Device or Remote Browser`
 
-   ![image](https://file.onnttf.site/2019/01/02/5.jpg)
+   ![image](https://assets.onnttf.site/2019/01/02/5.jpg)
 
    安装步骤：
 
@@ -72,4 +72,4 @@
 
    找到并启用 `Charles` 证书的信任选项：
 
-   ![image](https://file.onnttf.site/2019/01/02/7.jpg)
+   ![image](https://assets.onnttf.site/2019/01/02/7.jpg)

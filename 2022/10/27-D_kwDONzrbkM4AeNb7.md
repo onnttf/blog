@@ -1,6 +1,6 @@
 # 一文了解 JWT
 
-![image](https://file.onnttf.site/2022/10/09/1.jpg)
+![image](https://assets.onnttf.site/2022/10/09/1.jpg)
 
 `JWT`（JSON Web Token）是一种在网络各方之间安全传输信息的令牌。它采用 `JSON` 对象格式存储信息，具有简洁、安全和易于使用的特点。
 

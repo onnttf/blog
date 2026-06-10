@@ -159,7 +159,7 @@
 
 下面这张图片展示了经过清晰度处理后的二维码，你可以发现每个像素点都清晰可见，扫描识别也更加稳定可靠。
 
-![image](https://file.onnttf.site/2017/12/15/1.jpeg)
+![image](https://assets.onnttf.site/2017/12/15/1.jpeg)
 
 经过优化后的图像质量完全可以满足大多数实际应用场景的需求。
 
@@ -246,7 +246,7 @@
 }
 ```
 
-![image](https://file.onnttf.site/2017/12/15/2.jpeg)
+![image](https://assets.onnttf.site/2017/12/15/2.jpeg)
 
 #### 添加 logo
 
@@ -345,7 +345,7 @@
 
 下图展示了二维码与图片素材拼接后的效果。
 
-![image](https://file.onnttf.site/2017/12/15/3.jpeg)
+![image](https://assets.onnttf.site/2017/12/15/3.jpeg)
 
 通过这种灵活的组合方式，我们不仅保持了二维码的功能性，还大大提升了其视觉表现力和品牌辨识度。
 

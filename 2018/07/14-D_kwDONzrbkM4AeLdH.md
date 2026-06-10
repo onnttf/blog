@@ -17,7 +17,7 @@
 需要将待替换的图标文件放在项目目录下（不能放在 `.xcassets` 中）。建议按如下格式命名图标文件：
 例如 `<xx20x20@2x.png>`、`<xx20x20@3x.png>` 等，这样在配置 `Info.plist` 时会更方便。
 
-![image](https://file.onnttf.site/2018/07/10/1.jpg)
+![image](https://assets.onnttf.site/2018/07/10/1.jpg)
 
 **提示**：理论上也可以只提供一套图标文件，命名为 `<xx@2x.png>`、`<xx@3x.png>` 等。但为了更好的显示效果，建议提供完整的尺寸系列。因为系统会对大尺寸图标进行压缩来适配小尺寸场景。
 
@@ -25,7 +25,7 @@
 
 要实现动态换图标功能，需要在 `Info.plist` 中进行必要的配置：
 
-![image](https://file.onnttf.site/2018/07/10/2.jpg)
+![image](https://assets.onnttf.site/2018/07/10/2.jpg)
 
 - CFBundleIcons
 

@@ -1,6 +1,6 @@
 # 如何在 macOS 系统中设置简单密码
 
-![image](https://file.onnttf.site/2021/12/01/1.png)
+![image](https://assets.onnttf.site/2021/12/01/1.png)
 
 自 `macOS Mojave 10.14` 版本开始，`Apple` 加强了账户安全性管理，要求用户必须设置至少 `4` 个字符的密码。然而，有些用户习惯使用简单的单字符密码（如空格键），因为这样更便捷易用。本文将详细介绍如何自定义密码策略，实现更灵活的密码设置。
 
@@ -21,14 +21,14 @@
    - 输入过程中屏幕不会显示任何字符
    - 输入完成后按回车键确认
 
-   ![image](https://file.onnttf.site/2021/12/01/2.png)
+   ![image](https://assets.onnttf.site/2021/12/01/2.png)
 
 4. 确认操作成功
 
    - 若显示 `Clearing global account policies` 信息，表示密码策略已成功清除
    - 此时您可以开始设置新的简化密码
 
-   ![image](https://file.onnttf.site/2021/12/01/3.png)
+   ![image](https://assets.onnttf.site/2021/12/01/3.png)
 
 ## 设置新密码
 
@@ -44,7 +44,7 @@
    - 在"验证"栏再次输入新密码以确认
    - 如有需要，可以在"密码提示"栏添加提示信息，以防遗忘
 
-   ![image](https://file.onnttf.site/2021/12/01/4.png)
+   ![image](https://assets.onnttf.site/2021/12/01/4.png)
 
 5. 点击"更改密码"完成设置
 

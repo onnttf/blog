@@ -1,6 +1,6 @@
 # Linux 文件权限详解
 
-![image](https://file.onnttf.site/2022/01/27/1.png)
+![image](https://assets.onnttf.site/2022/01/27/1.png)
 
 在 Linux 系统中，`permission denied` 是一个常见的错误提示，通常在执行脚本或读写文件时遇到。作为一个开发者，理解这个错误的原因以及掌握解决方法非常重要。本文将详细介绍 Linux 文件权限的相关知识，帮助你彻底理解和解决这个问题。
 
