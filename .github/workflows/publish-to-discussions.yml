@@ -185,7 +185,7 @@ jobs:
                    createdAt: $createdAt,
                    updatedAt: $updatedAt,
                    category: { slug: $category_slug },
-                   labels: [],
+                   labels: { nodes: [] },
                    markdownFilePath: $mdPath,
                    jsonFilePath: $jsonPath
                  }]' discussion.json > discussion.json.tmp
@@ -262,7 +262,7 @@ jobs:
                 entryTitle=$(echo "$entry" | jq -r '.title')
                 entryUrl=$(echo "$entry" | jq -r '.url')
                 entryUpdatedAt=$(echo "$entry" | jq -r '.updatedAt')
-                entryLabels=$(echo "$entry" | jq -r '.labels.nodes | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
+                entryLabels=$(echo "$entry" | jq -r '(.labels.nodes? // []) | map("[\(.name)](https://github.com/onnttf/blog/discussions?discussions_q=label%3A\(.name))") | join(", ") // ""')
 
                 mkdir -p $(dirname "$jsonPath")
                 echo "$entry" > "$jsonPath"
