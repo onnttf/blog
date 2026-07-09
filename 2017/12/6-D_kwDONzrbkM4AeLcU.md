@@ -1,6 +1,5 @@
 # 二维码生成与美化
 
-
 在移动互联网时代，二维码作为信息传递的重要载体，已深度融入我们的日常生活。从移动支付、社交分享到身份验证，二维码以其快速便捷的特点，成为现代移动应用不可或缺的标配功能。
 
 本文将系统讲解如何使用 [CIQRCodeGenerator](https://developer.apple.com/library/content/documentation/GraphicsImaging/Reference/CoreImageFilterReference/#//apple_ref/doc/filter/ci/CIQRCodeGenerator) 实现二维码的生成与美化。
