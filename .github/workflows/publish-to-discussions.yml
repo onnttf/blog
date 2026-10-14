@@ -2,6 +2,17 @@ name: Publish to Discussions
 
 on:
   workflow_dispatch:
+    inputs:
+      category:
+        description: Category for new articles outside announcements/
+        type: choice
+        default: tech
+        options:
+          - tech
+          - notes
+          - essays
+          - show-and-tell
+          - ideas
 
 concurrency:
   group: ${{ github.ref }}
@@ -16,6 +27,7 @@ jobs:
     env:
       REPO_OWNER: ${{ github.repository_owner }}
       REPO_NAME: ${{ github.event.repository.name }}
+      NEW_DISCUSSION_CATEGORY: ${{ inputs.category || 'tech' }}
 
     steps:
       - name: Checkout code
@@ -76,11 +88,12 @@ jobs:
               continue
             fi
 
-            # Determine category from file path
+            # Existing discussions retain their remote category.
+            # New articles use the selected category; announcements keep their own.
             if [[ "$md_file" == announcements/* ]]; then
               category_slug="announcements"
             else
-              category_slug="show-and-tell"
+              category_slug="$NEW_DISCUSSION_CATEGORY"
             fi
 
             # Find matching entry in discussion.json

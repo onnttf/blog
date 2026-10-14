@@ -53,7 +53,6 @@ jobs:
             }' -F owner=$OWNER -F repo=$REPO | jq '
             [.[].data.repository.discussions.nodes[]]
             | map(select(.authorAssociation == "OWNER"))
-            | map(select(.category.slug == "announcements" or .category.slug == "show-and-tell"))
             | group_by(.id)
             | map(max_by(.updatedAt))
             | sort_by(.updatedAt) | reverse
