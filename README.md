@@ -4,6 +4,7 @@
 
 | Title | Labels | Last Updated |
 | ----- | ------ | ------------ |
+| [刚刚好就很好](https://github.com/onnttf/blog/discussions/45) |  | 2026-10-14T02:15:42Z |
 | [日历订阅源指北：创建、发布、使用](https://github.com/onnttf/blog/discussions/36) |  | 2026-07-09T06:35:21Z |
 | [Keep Using Short Password on macOS (2024)](https://github.com/onnttf/blog/discussions/33) |  | 2026-07-09T06:34:54Z |
 | [一文了解 JWT](https://github.com/onnttf/blog/discussions/27) |  | 2026-07-09T06:34:22Z |
@@ -21,7 +22,7 @@
 | [Git 分支管理指北：选择适合的分支策略](https://github.com/onnttf/blog/discussions/40) |  | 2025-08-19T23:24:43Z |
 | [高效的文件匹配工具：Glob 模式](https://github.com/onnttf/blog/discussions/39) |  | 2025-03-13T02:56:26Z |
 | [Welcome to blog Discussions](https://github.com/onnttf/blog/discussions/1) |  | 2025-03-12T02:52:57Z |
-| [Go 编程入门：从实践中学习核心概念](https://github.com/onnttf/blog/discussions/38) |  | 2025-02-05T11:58:05Z |
+| [Go 编程入门：从实践中学习核心概念](https://github.com/onnttf/blog/discussions/38) | [golang](https://github.com/onnttf/blog/discussions?discussions_q=label%3Agolang) | 2025-02-05T11:58:05Z |
 | [SMART 原则：高效完成目标的秘诀](https://github.com/onnttf/blog/discussions/37) |  | 2025-02-05T11:57:40Z |
 | [聚焦问题本质](https://github.com/onnttf/blog/discussions/35) |  | 2025-02-05T11:56:44Z |
 | [古老的记数艺术](https://github.com/onnttf/blog/discussions/34) |  | 2025-02-05T11:56:23Z |
